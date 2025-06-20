@@ -67,6 +67,10 @@ export const courses = pgTable("courses", {
   completionDeadline: timestamp("completion_deadline"), // 수료 마감일
   prerequisites: text("prerequisites"), // 선수학습
   learningMethod: text("learning_method"), // 학습 방법
+  // 멀티미디어 콘텐츠 관련 필드
+  videoThumbnails: json("video_thumbnails"), // 동영상 썸네일 정보
+  quizData: json("quiz_data"), // 퀴즈 데이터
+  interactiveElements: json("interactive_elements"), // 인터랙티브 요소
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

@@ -723,7 +723,7 @@ export default function BusinessDashboardPage() {
               </div>
             </TabsContent>
             
-            {/* 과정 내용 탭 */}
+            {/* 과정 내용 탭 - 멀티미디어 콘텐츠 포함 */}
             <TabsContent value="content" className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="objectives">학습 목표</Label>
