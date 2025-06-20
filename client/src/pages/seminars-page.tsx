@@ -361,16 +361,22 @@ export default function SeminarsPage() {
 
                 <div className="flex flex-wrap gap-1 mb-4">
                   {seminar.tags.slice(0, 3).map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
+                    <Badge key={index} className={`text-xs text-white ${
+                      index === 0 ? 'bg-blue-500 hover:bg-blue-600' :
+                      index === 1 ? 'bg-green-500 hover:bg-green-600' :
+                      'bg-purple-500 hover:bg-purple-600'
+                    }`}>
                       {tag}
                     </Badge>
                   ))}
                 </div>
 
                 <div className="space-y-2">
-                  <Button className="w-full" variant={seminar.featured ? "default" : "outline"}>
-                    {seminar.status === "접수중" ? "신청하기" : "관심등록"}
-                  </Button>
+                  <Link href={`/seminars/${seminar.id}`}>
+                    <Button className="w-full" variant={seminar.featured ? "default" : "outline"}>
+                      {seminar.status === "접수중" ? "신청하기" : "관심등록"}
+                    </Button>
+                  </Link>
                   <p className="text-xs text-gray-500 text-center">주최: {seminar.organizer}</p>
                 </div>
               </CardContent>
