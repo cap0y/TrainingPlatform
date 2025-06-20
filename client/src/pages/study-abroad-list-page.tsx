@@ -164,10 +164,21 @@ export default function StudyAbroadListPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onNotificationClick={() => {}} />
-      
-      {/* Categories Section */}
-      <section className="py-8 bg-white border-b">
-        <div className="container mx-auto px-4">
+
+      <main className="container mx-auto px-4 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <div className="flex items-center text-sm text-gray-500 mb-4">
+            <Link href="/" className="hover:text-blue-600">홈</Link>
+            <ChevronRight className="h-4 w-4 mx-2" />
+            <span className="text-gray-800">해외연수</span>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">해외연수 프로그램</h1>
+          <p className="text-gray-600">글로벌 역량을 키우는 해외 교육 및 문화 체험 프로그램</p>
+        </div>
+
+        {/* Categories Section */}
+        <section className="py-8 bg-white rounded-lg shadow-sm mb-8">
           <div className="flex justify-center">
             <div className="grid grid-cols-3 md:grid-cols-6 gap-8 max-w-4xl">
               <Link href="/training-courses?category=법정의무교육">
@@ -255,20 +266,7 @@ export default function StudyAbroadListPage() {
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center text-sm text-gray-500 mb-4">
-            <Link href="/" className="hover:text-blue-600">홈</Link>
-            <ChevronRight className="h-4 w-4 mx-2" />
-            <span className="text-gray-800">해외연수</span>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">해외연수 프로그램</h1>
-          <p className="text-gray-600">글로벌 역량을 키우는 해외 교육 및 문화 체험 프로그램</p>
-        </div>
+        </section>
 
         {/* Search and Filters */}
         <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
