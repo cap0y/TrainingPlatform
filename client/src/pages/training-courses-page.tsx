@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import CourseCard from "@/components/ui/course-card";
@@ -75,65 +75,77 @@ export default function TrainingCoursesPage() {
       <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '법정의무교육' ? 'bg-blue-50 border-blue-200' : 'hover:bg-blue-50'}`}>
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                  <i className="fas fa-book-reader text-xl text-blue-600"></i>
-                </div>
-                <div className="font-medium text-gray-800">법정 의무교육</div>
-                <div className="text-xs text-gray-500 mt-1">화학물질 법정교육</div>
-              </CardContent>
-            </Card>
+            <Link href="/training-courses?category=법정의무교육">
+              <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '법정의무교육' ? 'bg-blue-50 border-blue-200' : 'hover:bg-blue-50'}`}>
+                <CardContent className="p-0">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                    <i className="fas fa-book-reader text-xl text-blue-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800">법정 의무교육</div>
+                  <div className="text-xs text-gray-500 mt-1">화학물질 법정교육</div>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '전문성강화교육' ? 'bg-blue-50 border-blue-200' : 'hover:bg-blue-50'}`}>
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                  <i className="fas fa-graduation-cap text-xl text-blue-600"></i>
-                </div>
-                <div className="font-medium text-gray-800">전문성 강화교육</div>
-                <div className="text-xs text-gray-500 mt-1">역량개발 프로그램</div>
-              </CardContent>
-            </Card>
+            <Link href="/professional-development">
+              <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '전문성강화교육' ? 'bg-purple-50 border-purple-200' : 'hover:bg-purple-50'}`}>
+                <CardContent className="p-0">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                    <i className="fas fa-graduation-cap text-xl text-purple-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800">전문성 강화교육</div>
+                  <div className="text-xs text-gray-500 mt-1">역량개발 프로그램</div>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '자격증' ? 'bg-green-50 border-green-200' : 'hover:bg-green-50'}`}>
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                  <i className="fas fa-certificate text-xl text-green-600"></i>
-                </div>
-                <div className="font-medium text-gray-800">자격증 과정</div>
-                <div className="text-xs text-gray-500 mt-1">공인자격 취득</div>
-              </CardContent>
-            </Card>
+            <Link href="/certificate-courses">
+              <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '자격증' ? 'bg-green-50 border-green-200' : 'hover:bg-green-50'}`}>
+                <CardContent className="p-0">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                    <i className="fas fa-certificate text-xl text-green-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800">자격증 과정</div>
+                  <div className="text-xs text-gray-500 mt-1">공인자격 취득</div>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className="p-4 text-center cursor-pointer hover:bg-purple-50 transition-colors">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                  <i className="fas fa-users text-xl text-purple-600"></i>
-                </div>
-                <div className="font-medium text-gray-800">세미나</div>
-                <div className="text-xs text-gray-500 mt-1">학회/컨퍼런스</div>
-              </CardContent>
-            </Card>
+            <Link href="/seminars">
+              <Card className="p-4 text-center cursor-pointer hover:bg-purple-50 transition-colors">
+                <CardContent className="p-0">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                    <i className="fas fa-users text-xl text-purple-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800">세미나</div>
+                  <div className="text-xs text-gray-500 mt-1">학회/컨퍼런스</div>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className="p-4 text-center cursor-pointer hover:bg-orange-50 transition-colors">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                  <i className="fas fa-globe text-xl text-orange-600"></i>
-                </div>
-                <div className="font-medium text-gray-800">해외연수</div>
-                <div className="text-xs text-gray-500 mt-1">글로벌 프로그램</div>
-              </CardContent>
-            </Card>
+            <Link href="/study-abroad">
+              <Card className="p-4 text-center cursor-pointer hover:bg-orange-50 transition-colors">
+                <CardContent className="p-0">
+                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                    <i className="fas fa-globe text-xl text-orange-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800">해외연수</div>
+                  <div className="text-xs text-gray-500 mt-1">글로벌 프로그램</div>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className="p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                  <i className="fas fa-question-circle text-xl text-gray-600"></i>
-                </div>
-                <div className="font-medium text-gray-800">고객센터</div>
-                <div className="text-xs text-gray-500 mt-1">문의/도움말</div>
-              </CardContent>
-            </Card>
+            <Link href="/help">
+              <Card className="p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors">
+                <CardContent className="p-0">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
+                    <i className="fas fa-question-circle text-xl text-gray-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800">고객센터</div>
+                  <div className="text-xs text-gray-500 mt-1">문의/도움말</div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>

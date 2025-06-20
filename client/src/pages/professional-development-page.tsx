@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import CourseCard from "@/components/ui/course-card";
@@ -90,15 +91,17 @@ export default function ProfessionalDevelopmentPage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">분야별 전문성 강화 과정</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {developmentFields.map((field) => (
-              <Card key={field.id} className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-purple-50">
-                <CardContent className="p-0">
-                  <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <i className={`${field.icon} text-2xl text-purple-600`}></i>
-                  </div>
-                  <div className="font-medium text-gray-800 mb-1">{field.name}</div>
-                  <div className="text-xs text-gray-500">{field.count}개 과정</div>
-                </CardContent>
-              </Card>
+              <Link key={field.id} href={`/professional-development?category=${field.id}`}>
+                <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-purple-50">
+                  <CardContent className="p-0">
+                    <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                      <i className={`${field.icon} text-2xl text-purple-600`}></i>
+                    </div>
+                    <div className="font-medium text-gray-800 mb-1">{field.name}</div>
+                    <div className="text-xs text-gray-500">{field.count}개 과정</div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </section>
