@@ -42,20 +42,20 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/signup" component={SignupPage} />
-      <ProtectedRoute path="/" component={HomePage} />
-      <ProtectedRoute path="/training" component={TrainingPage} />
-      <ProtectedRoute path="/courses" component={CoursesPage} />
-      <ProtectedRoute path="/courses/:id" component={EnhancedCourseDetailPage} />
-      <ProtectedRoute path="/training-courses" component={TrainingCoursesPage} />
-      <ProtectedRoute path="/certificate-courses" component={CertificateCoursesPage} />
-      <ProtectedRoute path="/professional-development" component={ProfessionalDevelopmentPage} />
-      <ProtectedRoute path="/seminars" component={SeminarsPage} />
-      <ProtectedRoute path="/seminars/:id" component={SeminarDetailPage} />
-      <ProtectedRoute path="/notices" component={NoticesPage} />
-      <ProtectedRoute path="/announcements" component={AllAnnouncementsPage} />
-      <ProtectedRoute path="/help" component={HelpCenterPage} />
-      <ProtectedRoute path="/study-abroad" component={StudyAbroadListPage} />
-      <ProtectedRoute path="/study-abroad/:id" component={StudyAbroadPage} />
+      <Route path="/" component={HomePage} />
+      <Route path="/training" component={TrainingPage} />
+      <Route path="/courses" component={CoursesPage} />
+      <Route path="/courses/:id" component={EnhancedCourseDetailPage} />
+      <Route path="/training-courses" component={TrainingCoursesPage} />
+      <Route path="/certificate-courses" component={CertificateCoursesPage} />
+      <Route path="/professional-development" component={ProfessionalDevelopmentPage} />
+      <Route path="/seminars" component={SeminarsPage} />
+      <Route path="/seminars/:id" component={SeminarDetailPage} />
+      <Route path="/notices" component={NoticesPage} />
+      <Route path="/announcements" component={AllAnnouncementsPage} />
+      <Route path="/help" component={HelpCenterPage} />
+      <Route path="/study-abroad" component={StudyAbroadListPage} />
+      <Route path="/study-abroad/:id" component={StudyAbroadPage} />
       <ProtectedRoute path="/training-application" component={TrainingApplicationPage} />
       <ProtectedRoute path="/all-training-programs" component={AllTrainingProgramsPage} />
       <ProtectedRoute path="/admin" component={AdminPage} />
