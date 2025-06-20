@@ -54,7 +54,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-        <div className="relative container mx-auto px-4 py-20 pt-[50px] pb-[50px] ml-[1.5px] mr-[1.5px] pl-[2px] pr-[2px]"></div>
+        <div className="relative container mx-auto px-4 py-20 pt-[25px] pb-[25px]">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               전문가가 되는 <span className="text-yellow-300">첫걸음</span>
