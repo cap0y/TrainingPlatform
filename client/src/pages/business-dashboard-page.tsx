@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { BarChart3, BookOpen, Users, TrendingUp, Plus, Search, Filter, MoreHorizontal, Eye, Edit, Trash2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { BarChart3, BookOpen, Users, TrendingUp, Plus, Search, Filter, MoreHorizontal, Eye, Edit, Trash2, CheckCircle, XCircle, Clock, Calendar, MapPin, User } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -42,6 +42,20 @@ export default function BusinessDashboardPage() {
     startDate: "",
     endDate: "",
     instructorId: "",
+    curriculum: "",
+    objectives: "",
+    requirements: "",
+    materials: "",
+    assessmentMethod: "",
+    certificateType: "",
+    instructorName: "",
+    instructorProfile: "",
+    instructorExpertise: "",
+    targetAudience: "",
+    difficulty: "",
+    language: "ko",
+    location: "",
+    tags: "",
   });
 
   // 내 강의 목록 조회
@@ -145,6 +159,20 @@ export default function BusinessDashboardPage() {
       startDate: "",
       endDate: "",
       instructorId: "",
+      curriculum: "",
+      objectives: "",
+      requirements: "",
+      materials: "",
+      assessmentMethod: "",
+      certificateType: "",
+      instructorName: "",
+      instructorProfile: "",
+      instructorExpertise: "",
+      targetAudience: "",
+      difficulty: "",
+      language: "ko",
+      location: "",
+      tags: "",
     });
     setEditingCourse(null);
   };
@@ -157,14 +185,28 @@ export default function BusinessDashboardPage() {
       category: course.category,
       type: course.type,
       level: course.level,
-      credit: course.credit.toString(),
-      price: course.price.toString(),
+      credit: course.credit?.toString() || "1",
+      price: course.price?.toString() || "",
       discountPrice: course.discountPrice?.toString() || "",
-      duration: course.duration,
+      duration: course.duration || "",
       maxStudents: course.maxStudents?.toString() || "",
       startDate: course.startDate ? new Date(course.startDate).toISOString().split('T')[0] : "",
       endDate: course.endDate ? new Date(course.endDate).toISOString().split('T')[0] : "",
       instructorId: course.instructorId?.toString() || "",
+      curriculum: course.curriculum || "",
+      objectives: course.objectives || "",
+      requirements: course.requirements || "",
+      materials: course.materials || "",
+      assessmentMethod: course.assessmentMethod || "",
+      certificateType: course.certificateType || "",
+      instructorName: course.instructorName || "",
+      instructorProfile: course.instructorProfile || "",
+      instructorExpertise: course.instructorExpertise || "",
+      targetAudience: course.targetAudience || "",
+      difficulty: course.difficulty || "",
+      language: course.language || "ko",
+      location: course.location || "",
+      tags: Array.isArray(course.tags) ? course.tags.join(", ") : (course.tags || ""),
     });
     setShowCourseDialog(true);
   };
@@ -480,7 +522,7 @@ export default function BusinessDashboardPage() {
 
       {/* Course Dialog */}
       <Dialog open={showCourseDialog} onOpenChange={setShowCourseDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingCourse ? "강의 수정" : "새 강의 등록"}
@@ -489,138 +531,351 @@ export default function BusinessDashboardPage() {
               {editingCourse ? "강의 정보를 수정하세요." : "새로운 강의를 등록하세요. 관리자 승인 후 공개됩니다."}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">강의명 *</Label>
-              <Input
-                id="title"
-                value={courseForm.title}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="강의명을 입력하세요"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="category">분야 *</Label>
-              <Select value={courseForm.category} onValueChange={(value) => setCourseForm(prev => ({ ...prev, category: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="분야를 선택하세요" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="교육학">교육학</SelectItem>
-                  <SelectItem value="심리학">심리학</SelectItem>
-                  <SelectItem value="교수법">교수법</SelectItem>
-                  <SelectItem value="교육정책">교육정책</SelectItem>
-                  <SelectItem value="교육평가">교육평가</SelectItem>
-                  <SelectItem value="안전교육">안전교육</SelectItem>
-                  <SelectItem value="화학물질">화학물질</SelectItem>
-                  <SelectItem value="산업안전">산업안전</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="type">수업 형태 *</Label>
-              <Select value={courseForm.type} onValueChange={(value) => setCourseForm(prev => ({ ...prev, type: value }))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="online">온라인</SelectItem>
-                  <SelectItem value="offline">오프라인</SelectItem>
-                  <SelectItem value="blended">블렌디드</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="level">난이도 *</Label>
-              <Select value={courseForm.level} onValueChange={(value) => setCourseForm(prev => ({ ...prev, level: value }))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="beginner">초급</SelectItem>
-                  <SelectItem value="intermediate">중급</SelectItem>
-                  <SelectItem value="advanced">고급</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="price">가격 *</Label>
-              <Input
-                id="price"
-                type="number"
-                value={courseForm.price}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, price: e.target.value }))}
-                placeholder="가격을 입력하세요"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="discountPrice">할인가격</Label>
-              <Input
-                id="discountPrice"
-                type="number"
-                value={courseForm.discountPrice}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, discountPrice: e.target.value }))}
-                placeholder="할인가격 (선택사항)"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="duration">기간 *</Label>
-              <Input
-                id="duration"
-                value={courseForm.duration}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, duration: e.target.value }))}
-                placeholder="예: 4주, 16시간"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="credit">학점</Label>
-              <Input
-                id="credit"
-                type="number"
-                value={courseForm.credit}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, credit: e.target.value }))}
-                placeholder="학점"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="maxStudents">최대 수강생 수</Label>
-              <Input
-                id="maxStudents"
-                type="number"
-                value={courseForm.maxStudents}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, maxStudents: e.target.value }))}
-                placeholder="최대 수강생 수 (선택사항)"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="startDate">시작일</Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={courseForm.startDate}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, startDate: e.target.value }))}
-              />
-            </div>
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="description">강의 설명 *</Label>
-              <Textarea
-                id="description"
-                value={courseForm.description}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="강의에 대한 자세한 설명을 입력하세요"
-                rows={4}
-              />
-            </div>
-          </div>
-          <DialogFooter>
+          
+          <Tabs defaultValue="basic" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="basic">기본 정보</TabsTrigger>
+              <TabsTrigger value="content">과정 내용</TabsTrigger>
+              <TabsTrigger value="instructor">강사 정보</TabsTrigger>
+              <TabsTrigger value="schedule">일정 및 기타</TabsTrigger>
+            </TabsList>
+            
+            {/* 기본 정보 탭 */}
+            <TabsContent value="basic" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">강의명 *</Label>
+                  <Input
+                    id="title"
+                    value={courseForm.title}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="강의명을 입력하세요"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">분야 *</Label>
+                  <Select value={courseForm.category} onValueChange={(value) => setCourseForm(prev => ({ ...prev, category: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="분야를 선택하세요" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="교육학">교육학</SelectItem>
+                      <SelectItem value="심리학">심리학</SelectItem>
+                      <SelectItem value="교수법">교수법</SelectItem>
+                      <SelectItem value="교육정책">교육정책</SelectItem>
+                      <SelectItem value="교육평가">교육평가</SelectItem>
+                      <SelectItem value="안전교육">안전교육</SelectItem>
+                      <SelectItem value="화학물질">화학물질</SelectItem>
+                      <SelectItem value="산업안전">산업안전</SelectItem>
+                      <SelectItem value="IT교육">IT교육</SelectItem>
+                      <SelectItem value="리더십">리더십</SelectItem>
+                      <SelectItem value="커뮤니케이션">커뮤니케이션</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="type">수업 형태 *</Label>
+                  <Select value={courseForm.type} onValueChange={(value) => setCourseForm(prev => ({ ...prev, type: value }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="online">온라인</SelectItem>
+                      <SelectItem value="offline">오프라인</SelectItem>
+                      <SelectItem value="blended">블렌디드</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="level">난이도 *</Label>
+                  <Select value={courseForm.level} onValueChange={(value) => setCourseForm(prev => ({ ...prev, level: value }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">초급</SelectItem>
+                      <SelectItem value="intermediate">중급</SelectItem>
+                      <SelectItem value="advanced">고급</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="price">정가 *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    value={courseForm.price}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, price: e.target.value }))}
+                    placeholder="정가를 입력하세요"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="discountPrice">할인가격</Label>
+                  <Input
+                    id="discountPrice"
+                    type="number"
+                    value={courseForm.discountPrice}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, discountPrice: e.target.value }))}
+                    placeholder="할인가격 (선택사항)"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="duration">교육기간 *</Label>
+                  <Input
+                    id="duration"
+                    value={courseForm.duration}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, duration: e.target.value }))}
+                    placeholder="예: 4주, 16시간, 3일"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="credit">학점</Label>
+                  <Input
+                    id="credit"
+                    type="number"
+                    value={courseForm.credit}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, credit: e.target.value }))}
+                    placeholder="학점"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="maxStudents">최대 수강생 수</Label>
+                  <Input
+                    id="maxStudents"
+                    type="number"
+                    value={courseForm.maxStudents}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, maxStudents: e.target.value }))}
+                    placeholder="최대 수강생 수"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="language">언어</Label>
+                  <Select value={courseForm.language} onValueChange={(value) => setCourseForm(prev => ({ ...prev, language: value }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ko">한국어</SelectItem>
+                      <SelectItem value="en">영어</SelectItem>
+                      <SelectItem value="both">한국어/영어</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="col-span-2 space-y-2">
+                <Label htmlFor="description">과정 소개 *</Label>
+                <Textarea
+                  id="description"
+                  value={courseForm.description}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="과정에 대한 상세한 소개를 입력하세요"
+                  rows={4}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="targetAudience">수강 대상</Label>
+                <Textarea
+                  id="targetAudience"
+                  value={courseForm.targetAudience}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, targetAudience: e.target.value }))}
+                  placeholder="이 과정의 수강 대상을 설명하세요 (예: 초등교사, 관리자, 신입사원 등)"
+                  rows={3}
+                />
+              </div>
+            </TabsContent>
+            
+            {/* 과정 내용 탭 */}
+            <TabsContent value="content" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="objectives">학습 목표</Label>
+                <Textarea
+                  id="objectives"
+                  value={courseForm.objectives}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, objectives: e.target.value }))}
+                  placeholder="이 과정을 통해 달성할 수 있는 학습 목표를 작성하세요"
+                  rows={4}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="curriculum">커리큘럼</Label>
+                <Textarea
+                  id="curriculum"
+                  value={courseForm.curriculum}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, curriculum: e.target.value }))}
+                  placeholder="차시별 교육 내용을 상세히 작성하세요 (예: 1차시: OO 이론 개요, 2차시: 실습 등)"
+                  rows={6}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="requirements">수강 요건</Label>
+                <Textarea
+                  id="requirements"
+                  value={courseForm.requirements}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, requirements: e.target.value }))}
+                  placeholder="수강을 위한 사전 요건이나 준비사항을 작성하세요"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="materials">교육 자료</Label>
+                <Textarea
+                  id="materials"
+                  value={courseForm.materials}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, materials: e.target.value }))}
+                  placeholder="제공되는 교육 자료나 교재에 대해 설명하세요"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="assessmentMethod">평가 방법</Label>
+                  <Select value={courseForm.assessmentMethod} onValueChange={(value) => setCourseForm(prev => ({ ...prev, assessmentMethod: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="평가 방법 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="quiz">퀴즈</SelectItem>
+                      <SelectItem value="assignment">과제</SelectItem>
+                      <SelectItem value="exam">시험</SelectItem>
+                      <SelectItem value="participation">참여도</SelectItem>
+                      <SelectItem value="project">프로젝트</SelectItem>
+                      <SelectItem value="portfolio">포트폴리오</SelectItem>
+                      <SelectItem value="attendance">출석</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="certificateType">수료증 종류</Label>
+                  <Select value={courseForm.certificateType} onValueChange={(value) => setCourseForm(prev => ({ ...prev, certificateType: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="수료증 종류 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="completion">수료증</SelectItem>
+                      <SelectItem value="participation">참가증</SelectItem>
+                      <SelectItem value="achievement">성취증</SelectItem>
+                      <SelectItem value="professional">전문자격증</SelectItem>
+                      <SelectItem value="none">없음</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </TabsContent>
+            
+            {/* 강사 정보 탭 */}
+            <TabsContent value="instructor" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="instructorName">강사명</Label>
+                <Input
+                  id="instructorName"
+                  value={courseForm.instructorName}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, instructorName: e.target.value }))}
+                  placeholder="강사 이름을 입력하세요"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="instructorProfile">강사 소개</Label>
+                <Textarea
+                  id="instructorProfile"
+                  value={courseForm.instructorProfile}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, instructorProfile: e.target.value }))}
+                  placeholder="강사의 경력, 학력, 전문 분야 등을 소개하세요"
+                  rows={5}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="instructorExpertise">강사 전문 분야</Label>
+                <Textarea
+                  id="instructorExpertise"
+                  value={courseForm.instructorExpertise}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, instructorExpertise: e.target.value }))}
+                  placeholder="강사의 주요 전문 분야와 연구 영역을 작성하세요"
+                  rows={3}
+                />
+              </div>
+            </TabsContent>
+            
+            {/* 일정 및 기타 탭 */}
+            <TabsContent value="schedule" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="startDate" className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>시작일</span>
+                  </Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={courseForm.startDate}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, startDate: e.target.value }))}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="endDate" className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>종료일</span>
+                  </Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={courseForm.endDate}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, endDate: e.target.value }))}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="location" className="flex items-center space-x-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>장소 (오프라인인 경우)</span>
+                </Label>
+                <Input
+                  id="location"
+                  value={courseForm.location}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, location: e.target.value }))}
+                  placeholder="교육 장소를 입력하세요 (온라인인 경우 플랫폼명)"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="tags">태그</Label>
+                <Input
+                  id="tags"
+                  value={courseForm.tags}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, tags: e.target.value }))}
+                  placeholder="태그를 쉼표로 구분하여 입력하세요 (예: 리더십, 커뮤니케이션, 온라인)"
+                />
+                <p className="text-xs text-gray-500">검색과 분류에 사용되는 키워드를 입력하세요</p>
+              </div>
+            </TabsContent>
+          </Tabs>
+          
+          <DialogFooter className="mt-6">
             <Button variant="outline" onClick={() => setShowCourseDialog(false)}>
               취소
             </Button>
             <Button 
-              onClick={() => courseMutation.mutate(courseForm)}
+              onClick={() => {
+                // 태그를 배열로 변환
+                const formDataWithTags = {
+                  ...courseForm,
+                  tags: courseForm.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
+                };
+                courseMutation.mutate(formDataWithTags);
+              }}
               disabled={courseMutation.isPending || !courseForm.title || !courseForm.category || !courseForm.price || !courseForm.duration || !courseForm.description}
             >
-              {courseMutation.isPending ? "처리 중..." : (editingCourse ? "수정" : "등록")}
+              {courseMutation.isPending ? "처리 중..." : (editingCourse ? "수정 완료" : "강의 등록")}
             </Button>
           </DialogFooter>
         </DialogContent>

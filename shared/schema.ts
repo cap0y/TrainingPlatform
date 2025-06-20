@@ -44,6 +44,21 @@ export const courses = pgTable("courses", {
   imageUrl: text("image_url"),
   status: text("status").default("pending"), // active, inactive, pending
   approvalStatus: text("approval_status").default("pending"), // pending, approved, rejected
+  // 추가 상세 정보 필드들
+  curriculum: text("curriculum"), // 커리큘럼
+  objectives: text("objectives"), // 학습 목표
+  requirements: text("requirements"), // 수강 요건
+  materials: text("materials"), // 교육 자료
+  assessmentMethod: text("assessment_method"), // 평가 방법
+  certificateType: text("certificate_type"), // 수료증 종류
+  instructorName: text("instructor_name"), // 강사명
+  instructorProfile: text("instructor_profile"), // 강사 소개
+  instructorExpertise: text("instructor_expertise"), // 강사 전문분야
+  targetAudience: text("target_audience"), // 수강 대상
+  difficulty: text("difficulty"), // 난이도 상세
+  language: text("language").default("ko"), // 언어
+  location: text("location"), // 장소
+  tags: json("tags"), // 태그 배열
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
