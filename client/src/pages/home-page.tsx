@@ -63,7 +63,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">카테고리별 교육과정</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <Link href="/courses?category=법정의무교육">
+            <Link href="/training-courses?category=법정의무교육">
               <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer bg-blue-50 hover:bg-blue-100">
                 <CardContent className="p-0">
                   <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
@@ -75,11 +75,11 @@ export default function HomePage() {
               </Card>
             </Link>
 
-            <Link href="/courses?category=전문성강화교육">
-              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-blue-50">
+            <Link href="/professional-development">
+              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-purple-50">
                 <CardContent className="p-0">
-                  <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <i className="fas fa-graduation-cap text-2xl text-blue-600"></i>
+                  <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                    <i className="fas fa-graduation-cap text-2xl text-purple-600"></i>
                   </div>
                   <div className="font-medium text-gray-800 mb-1">전문성 강화교육</div>
                   <div className="text-xs text-gray-500">역량개발 프로그램</div>
@@ -87,7 +87,7 @@ export default function HomePage() {
               </Card>
             </Link>
 
-            <Link href="/courses?category=자격증">
+            <Link href="/certificate-courses">
               <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-green-50">
                 <CardContent className="p-0">
                   <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
