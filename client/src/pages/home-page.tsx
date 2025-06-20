@@ -9,6 +9,7 @@ import NotificationPanel from "@/components/ui/notification-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "wouter";
 import { 
   BookOpen, 
@@ -26,12 +27,22 @@ import {
   CheckCircle,
   ArrowRight,
   Play,
-  MapPin
+  MapPin,
+  Eye,
+  Heart,
+  MessageCircle,
+  Phone,
+  Mail,
+  HelpCircle,
+  FileText,
+  Settings,
+  Zap
 } from "lucide-react";
 
 export default function HomePage() {
   const { user } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [activeTab, setActiveTab] = useState("popular");
 
   // Fetch featured courses
   const { data: coursesData, isLoading: coursesLoading } = useQuery({
