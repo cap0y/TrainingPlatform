@@ -744,7 +744,7 @@ export default function HomePage() {
         </div>
       </section>
       {/* Notice Section */}
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-white pt-[0px] pb-[0px]">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <div>
@@ -837,8 +837,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-
       <Footer />
       <ChatWidget />
       {showNotifications && <NotificationPanel onClose={() => setShowNotifications(false)} />}
