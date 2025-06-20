@@ -330,13 +330,7 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="text-center mt-8">
-            <Link href="/courses">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
-                전체 연수과정 둘러보기
-              </Button>
-            </Link>
-          </div>
+
         </div>
       </section>
 
