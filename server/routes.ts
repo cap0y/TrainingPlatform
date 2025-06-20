@@ -97,31 +97,41 @@ export function registerRoutes(app: Express): Server {
 
   // Update course
   app.put("/api/courses/:id", async (req, res) => {
-    if (!req.isAuthenticated()) {
+    console.log('Update course - Session ID:', req.sessionID);
+    console.log('Update course - isAuthenticated:', req.isAuthenticated());
+    console.log('Update course - User:', req.user);
+    
+    if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: "Authentication required" });
     }
 
-    console.log('Update course - User:', req.user);
-    console.log('Update course - Is Admin:', req.user?.isAdmin);
-
     const courseId = parseInt(req.params.id);
     
-    // Check if user is admin or course owner
+    // For admin users, allow editing any course
+    if (req.user.isAdmin) {
+      try {
+        const updatedCourse = await storage.updateCourse(courseId, req.body);
+        if (!updatedCourse) {
+          return res.status(404).json({ message: "Course not found" });
+        }
+        res.json(updatedCourse);
+        return;
+      } catch (error) {
+        console.error("Error updating course:", error);
+        res.status(500).json({ message: "Error updating course" });
+        return;
+      }
+    }
+
+    // For non-admin users, check if they own the course
     const existingCourse = await storage.getCourse(courseId);
     if (!existingCourse) {
       return res.status(404).json({ message: "Course not found" });
     }
 
     const isOwner = existingCourse.providerId === req.user.id;
-    const isAdmin = req.user?.isAdmin === true;
-
-    console.log('Course owner ID:', existingCourse.providerId);
-    console.log('Current user ID:', req.user.id);
-    console.log('Is owner:', isOwner);
-    console.log('Is admin:', isAdmin);
-
-    if (!isOwner && !isAdmin) {
-      return res.status(403).json({ message: "Access denied - not owner or admin" });
+    if (!isOwner) {
+      return res.status(403).json({ message: "Access denied - not owner" });
     }
 
     try {
@@ -138,23 +148,37 @@ export function registerRoutes(app: Express): Server {
 
   // Delete course
   app.delete("/api/courses/:id", async (req, res) => {
-    if (!req.isAuthenticated()) {
+    console.log('Delete course - isAuthenticated:', req.isAuthenticated());
+    console.log('Delete course - User:', req.user);
+    
+    if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: "Authentication required" });
     }
 
     const courseId = parseInt(req.params.id);
     
-    // Check if user is admin or course owner
+    // For admin users, allow deleting any course
+    if (req.user.isAdmin) {
+      try {
+        await storage.deleteCourse(courseId);
+        res.json({ message: "Course deleted successfully" });
+        return;
+      } catch (error) {
+        console.error("Error deleting course:", error);
+        res.status(500).json({ message: "Error deleting course" });
+        return;
+      }
+    }
+
+    // For non-admin users, check if they own the course
     const existingCourse = await storage.getCourse(courseId);
     if (!existingCourse) {
       return res.status(404).json({ message: "Course not found" });
     }
 
     const isOwner = existingCourse.providerId === req.user.id;
-    const isAdmin = req.user.isAdmin;
-
-    if (!isOwner && !isAdmin) {
-      return res.status(403).json({ message: "Access denied" });
+    if (!isOwner) {
+      return res.status(403).json({ message: "Access denied - not owner" });
     }
 
     try {
