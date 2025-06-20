@@ -12,6 +12,9 @@ import SignupPage from "@/pages/signup-page";
 import TrainingPage from "@/pages/training-page";
 import CoursesPage from "@/pages/courses-page";
 import CourseDetailPage from "@/pages/course-detail-page";
+import TrainingCoursesPage from "@/pages/training-courses-page";
+import CertificateCoursesPage from "@/pages/certificate-courses-page";
+import ProfessionalDevelopmentPage from "@/pages/professional-development-page";
 import SeminarsPage from "@/pages/seminars-page";
 import SeminarsListPage from "@/pages/seminars-list-page";
 import NoticesPage from "@/pages/notices-page";
@@ -33,6 +36,9 @@ function Router() {
       <ProtectedRoute path="/training" component={TrainingPage} />
       <ProtectedRoute path="/courses" component={CoursesPage} />
       <ProtectedRoute path="/courses/:id" component={CourseDetailPage} />
+      <ProtectedRoute path="/training-courses" component={TrainingCoursesPage} />
+      <ProtectedRoute path="/certificate-courses" component={CertificateCoursesPage} />
+      <ProtectedRoute path="/professional-development" component={ProfessionalDevelopmentPage} />
       <ProtectedRoute path="/seminars" component={SeminarsListPage} />
       <ProtectedRoute path="/notices" component={NoticesPage} />
       <ProtectedRoute path="/announcements" component={AllAnnouncementsPage} />
