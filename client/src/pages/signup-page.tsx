@@ -11,6 +11,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 
 const SignupPage: React.FC = () => {
   const [memberType, setMemberType] = useState('individual');
@@ -174,13 +176,15 @@ const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 max-w-2xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">회원가입</h1>
-          <p className="text-gray-600">에듀플랫폼에 오신 것을 환영합니다</p>
-        </div>
+    <div className="min-h-screen bg-white">
+      <Header />
+      <div className="bg-gray-50 py-8" style={{ minHeight: 'calc(100vh - 140px)' }}>
+        <div className="container mx-auto px-4 max-w-2xl">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">회원가입</h1>
+            <p className="text-gray-600">에듀플랫폼에 오신 것을 환영합니다</p>
+          </div>
 
         {/* Member Type Selection */}
         <Card className="mb-6">
@@ -422,7 +426,9 @@ const SignupPage: React.FC = () => {
             </form>
           </CardContent>
         </Card>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };

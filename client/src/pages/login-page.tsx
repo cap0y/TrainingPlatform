@@ -5,6 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 
 const LoginPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("personal");
@@ -18,31 +20,35 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md overflow-hidden">
-        <Tabs defaultValue="personal" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-2 w-full rounded-none">
-            <TabsTrigger
-              value="personal"
-              className={`py-4 text-base font-medium ${activeTab === "personal" ? "bg-gradient-to-r from-[#00BFFF] to-[#1E90FF] text-white" : "bg-gray-200 text-gray-700"} !rounded-button whitespace-nowrap`}
-            >
-              개인회원
-            </TabsTrigger>
-            <TabsTrigger
-              value="business"
-              className={`py-4 text-base font-medium ${activeTab === "business" ? "bg-gradient-to-r from-[#00BFFF] to-[#1E90FF] text-white" : "bg-gray-200 text-gray-700"} !rounded-button whitespace-nowrap`}
-            >
-              기관/사업자회원
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="personal" className="p-6 space-y-4">
-            <LoginForm />
-          </TabsContent>
-          <TabsContent value="business" className="p-6 space-y-4">
-            <LoginForm isBusiness={true} />
-          </TabsContent>
-        </Tabs>
+    <div className="min-h-screen bg-white">
+      <Header />
+      <div className="flex items-center justify-center bg-gray-50 py-12" style={{ minHeight: 'calc(100vh - 140px)' }}>
+        <div className="w-full max-w-md bg-white rounded-lg shadow-md overflow-hidden">
+          <Tabs defaultValue="personal" className="w-full" onValueChange={setActiveTab}>
+            <TabsList className="grid grid-cols-2 w-full rounded-none">
+              <TabsTrigger
+                value="personal"
+                className={`py-4 text-base font-medium ${activeTab === "personal" ? "bg-gradient-to-r from-[#00BFFF] to-[#1E90FF] text-white" : "bg-gray-200 text-gray-700"} !rounded-button whitespace-nowrap`}
+              >
+                개인회원
+              </TabsTrigger>
+              <TabsTrigger
+                value="business"
+                className={`py-4 text-base font-medium ${activeTab === "business" ? "bg-gradient-to-r from-[#00BFFF] to-[#1E90FF] text-white" : "bg-gray-200 text-gray-700"} !rounded-button whitespace-nowrap`}
+              >
+                기관/사업자회원
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="personal" className="p-6 space-y-4">
+              <LoginForm />
+            </TabsContent>
+            <TabsContent value="business" className="p-6 space-y-4">
+              <LoginForm isBusiness={true} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };
