@@ -54,25 +54,25 @@ export default function HomePage() {
       {/* Hero Section with Integrated Slideshow */}
       <section className="relative overflow-hidden">
         {/* Hero Content Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 via-blue-700/90 to-indigo-800/90 z-10"></div>
-        <div className="relative z-20 container mx-auto px-4 py-20 pt-[25px] pb-[25px]">
-          <div className="max-w-4xl mx-auto text-center text-white">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+        <div className="absolute inset-0 bg-black/30 z-10"></div>
+        <div className="relative z-20 container mx-auto px-4 py-12 pt-[20px] pb-[20px]">
+          <div className="max-w-2xl text-left text-white">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
               전문가가 되는 <span className="text-yellow-300">첫걸음</span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-blue-100 leading-relaxed">
+            <p className="text-lg md:text-xl mb-6 text-gray-100 leading-relaxed">
               지누켐과 함께하는 체계적인 연수 프로그램으로<br />
               여러분의 전문성을 한 단계 높여보세요
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/courses">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold">
-                  <BookOpen className="h-5 w-5 mr-2" />
+                <Button size="md" className="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 text-base font-semibold">
+                  <BookOpen className="h-4 w-4 mr-2" />
                   연수과정 보기
                 </Button>
               </Link>
               <Link href="/seminars">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg font-semibold">
+                <Button size="md" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-6 py-3 text-base font-semibold">
                   세미나 신청
                 </Button>
               </Link>
