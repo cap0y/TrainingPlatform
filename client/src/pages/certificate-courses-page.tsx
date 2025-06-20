@@ -38,7 +38,7 @@ export default function CertificateCoursesPage() {
       <section className="relative bg-gradient-to-r from-green-600 to-green-800 text-white py-16 overflow-hidden">
         <div className="absolute inset-0 opacity-25">
           <img 
-            src="/attached_assets/4901b8c8f6c3cdb40238ce25968be771_1750405130302.jpg" 
+            src="/uploads/images/4901b8c8f6c3cdb40238ce25968be771_1750405130302.jpg" 
             alt="Certificate of Completion"
             className="w-full h-full object-cover"
           />

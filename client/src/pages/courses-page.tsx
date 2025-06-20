@@ -45,7 +45,7 @@ export default function CoursesPage() {
       <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 overflow-hidden">
         <div className="absolute inset-0 opacity-25">
           <img 
-            src="/attached_assets/5c3b6edcb4dc90068fe0fa39e6431805_1750405130302.jpg" 
+            src="/uploads/images/5c3b6edcb4dc90068fe0fa39e6431805_1750405130302.jpg" 
             alt="Training Courses"
             className="w-full h-full object-cover"
           />
