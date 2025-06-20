@@ -88,11 +88,9 @@ export default function Header({ onNotificationClick }: HeaderProps) {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
               {navigation.map((item) => (
-                <Link key={item.name} href={item.href}>
-                  <a className="flex items-center space-x-1 text-gray-700 hover:text-primary font-medium cursor-pointer transition-colors">
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </a>
+                <Link key={item.name} href={item.href} className="flex items-center space-x-1 text-gray-700 hover:text-primary font-medium cursor-pointer transition-colors">
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.name}</span>
                 </Link>
               ))}
             </nav>
@@ -223,14 +221,14 @@ export default function Header({ onNotificationClick }: HeaderProps) {
             {/* Mobile Navigation */}
             <nav className="space-y-2">
               {navigation.map((item) => (
-                <Link key={item.name} href={item.href}>
-                  <a 
-                    className="flex items-center space-x-2 text-gray-700 hover:text-primary font-medium py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </a>
+                <Link 
+                  key={item.name} 
+                  href={item.href}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-primary font-medium py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.name}</span>
                 </Link>
               ))}
             </nav>
