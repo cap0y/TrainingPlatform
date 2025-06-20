@@ -51,7 +51,8 @@ export function setupAuth(app: Express) {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: 'lax'
     },
-    name: 'connect.sid'
+    name: 'connect.sid',
+    rolling: true
   };
 
   app.set("trust proxy", 1);
@@ -84,7 +85,7 @@ export function setupAuth(app: Express) {
     try {
       console.log('Deserializing user ID:', id);
       const user = await storage.getUser(id);
-      console.log('Deserialized user:', user);
+      console.log('Deserialized user:', user ? 'User found' : 'User not found');
       if (user) {
         done(null, user);
       } else {

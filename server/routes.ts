@@ -65,6 +65,11 @@ export function registerRoutes(app: Express): Server {
   });
 
   app.post("/api/courses", async (req, res) => {
+    console.log('Create course - Session ID:', req.sessionID);
+    console.log('Create course - isAuthenticated:', req.isAuthenticated());
+    console.log('Create course - User exists:', !!req.user);
+    console.log('Create course - User isAdmin:', req.user?.isAdmin);
+    
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Authentication required" });
     }
@@ -99,7 +104,7 @@ export function registerRoutes(app: Express): Server {
   app.put("/api/courses/:id", async (req, res) => {
     console.log('Update course - Session ID:', req.sessionID);
     console.log('Update course - isAuthenticated:', req.isAuthenticated());
-    console.log('Update course - User:', req.user);
+    console.log('Update course - User exists:', !!req.user);
     console.log('Update course - User isAdmin:', req.user?.isAdmin);
     
     if (!req.isAuthenticated() || !req.user) {
@@ -151,7 +156,7 @@ export function registerRoutes(app: Express): Server {
   app.delete("/api/courses/:id", async (req, res) => {
     console.log('Delete course - Session ID:', req.sessionID);
     console.log('Delete course - isAuthenticated:', req.isAuthenticated());
-    console.log('Delete course - User:', req.user);
+    console.log('Delete course - User exists:', !!req.user);
     console.log('Delete course - User isAdmin:', req.user?.isAdmin);
     
     if (!req.isAuthenticated() || !req.user) {

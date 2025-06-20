@@ -49,13 +49,15 @@ export default function AdminPage() {
     type: "online",
     level: "intermediate",
     credit: 1,
-    price: "",
-    discountPrice: "",
+    price: 0,
+    discountPrice: 0,
     duration: "",
-    maxStudents: "",
+    maxStudents: 0,
     startDate: "",
     endDate: "",
+    applicationDeadline: "",
     instructorId: "",
+    isActive: true,
   });
 
   // Notice form state
@@ -268,10 +270,10 @@ export default function AdminPage() {
       type: course.type || "online",
       level: course.level || "intermediate",
       credit: course.credit || 1,
-      price: course.price || "",
-      discountPrice: course.discountPrice || "",
+      price: course.price || 0,
+      discountPrice: course.discountPrice || 0,
       duration: course.duration || "",
-      maxStudents: course.maxStudents || "",
+      maxStudents: course.maxStudents || 0,
       startDate: course.startDate ? course.startDate.split('T')[0] : "",
       endDate: course.endDate ? course.endDate.split('T')[0] : "",
       applicationDeadline: course.applicationDeadline ? course.applicationDeadline.split('T')[0] : "",
@@ -1224,8 +1226,8 @@ export default function AdminPage() {
                   <Input
                     id="price"
                     type="number"
-                    value={courseForm.price}
-                    onChange={(e) => setCourseForm({ ...courseForm, price: Number(e.target.value) })}
+                    value={courseForm.price || ""}
+                    onChange={(e) => setCourseForm({ ...courseForm, price: parseInt(e.target.value) || 0 })}
                     required
                   />
                 </div>
@@ -1234,8 +1236,8 @@ export default function AdminPage() {
                   <Input
                     id="capacity"
                     type="number"
-                    value={courseForm.capacity}
-                    onChange={(e) => setCourseForm({ ...courseForm, capacity: Number(e.target.value) })}
+                    value={courseForm.maxStudents || ""}
+                    onChange={(e) => setCourseForm({ ...courseForm, maxStudents: parseInt(e.target.value) || 0 })}
                     required
                   />
                 </div>
