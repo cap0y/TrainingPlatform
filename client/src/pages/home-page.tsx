@@ -35,7 +35,7 @@ export default function HomePage() {
       <Header onNotificationClick={() => setShowNotifications(!showNotifications)} />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-secondary text-white">
+      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">전문가를 위한 최고의 연수교육 플랫폼</h1>
@@ -44,16 +44,96 @@ export default function HomePage() {
             </p>
             <div className="flex space-x-4">
               <Link href="/courses">
-                <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-gray-100">
+                <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
                   연수과정 보기
                 </Button>
               </Link>
               <Link href="/seminars">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
                   세미나 신청
                 </Button>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Navigation Categories */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">카테고리별 교육과정</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <Link href="/courses?category=법정의무교육">
+              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer bg-blue-50 hover:bg-blue-100">
+                <CardContent className="p-0">
+                  <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                    <i className="fas fa-book-reader text-2xl text-blue-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800 mb-1">법정 의무교육</div>
+                  <div className="text-xs text-gray-500">화학물질 법정교육</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/courses?category=전문성강화교육">
+              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-blue-50">
+                <CardContent className="p-0">
+                  <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                    <i className="fas fa-graduation-cap text-2xl text-blue-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800 mb-1">전문성 강화교육</div>
+                  <div className="text-xs text-gray-500">역량개발 프로그램</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/courses?category=자격증">
+              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-green-50">
+                <CardContent className="p-0">
+                  <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                    <i className="fas fa-certificate text-2xl text-green-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800 mb-1">자격증 과정</div>
+                  <div className="text-xs text-gray-500">공인자격 취득</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/seminars">
+              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-purple-50">
+                <CardContent className="p-0">
+                  <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                    <i className="fas fa-users text-2xl text-purple-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800 mb-1">세미나</div>
+                  <div className="text-xs text-gray-500">학회/컨퍼런스</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/study-abroad">
+              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-orange-50">
+                <CardContent className="p-0">
+                  <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                    <i className="fas fa-globe text-2xl text-orange-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800 mb-1">해외연수</div>
+                  <div className="text-xs text-gray-500">글로벌 프로그램</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/help">
+              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-gray-50">
+                <CardContent className="p-0">
+                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                    <i className="fas fa-question-circle text-2xl text-gray-600"></i>
+                  </div>
+                  <div className="font-medium text-gray-800 mb-1">고객센터</div>
+                  <div className="text-xs text-gray-500">문의/도움말</div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
