@@ -1,6 +1,16 @@
 import { db } from "./db";
 import { users, courses, instructors, notices } from "@shared/schema";
 import { eq } from "drizzle-orm";
+import { scrypt, randomBytes } from "crypto";
+import { promisify } from "util";
+
+const scryptAsync = promisify(scrypt);
+
+async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
 
 export async function seedDatabase() {
   console.log("Seeding database...");
@@ -13,7 +23,7 @@ export async function seedDatabase() {
     await db.insert(users).values({
       username: "admin",
       email: "admin@example.com", 
-      password: "$2b$10$abcdefghijklmnopqrstuvwxyz", // This will be hashed properly in auth
+      password: await hashPassword("admin123"), // Properly hashed password
       name: "관리자",
       phone: "010-1234-5678",
       userType: "individual",
@@ -59,12 +69,14 @@ export async function seedDatabase() {
         price: 50000,
         discountPrice: 40000,
         duration: "30시간",
+        totalHours: 30,
         maxStudents: 100,
         status: "active",
         approvalStatus: "approved",
         instructorId: 1,
         objectives: "교육과정 이해, 현장 적용 능력 향상",
         requirements: "교육 관련 업무 경험",
+        materials: "교육과정 개정안 자료집, 실습 워크북",
         curriculum: "1. 개정 배경\n2. 주요 변화사항\n3. 적용 방안"
       },
       {
@@ -76,12 +88,14 @@ export async function seedDatabase() {
         credit: 10,
         price: 30000,
         duration: "20시간",
+        totalHours: 20,
         maxStudents: 50,
         status: "active",
         approvalStatus: "approved",
         instructorId: 2,
         objectives: "디지털 도구 활용, 수업 효과성 향상",
         requirements: "기본적인 컴퓨터 활용 능력",
+        materials: "디지털 도구 매뉴얼, 실습용 소프트웨어",
         curriculum: "1. 디지털 도구 소개\n2. 실습\n3. 적용 사례"
       }
     ]);
