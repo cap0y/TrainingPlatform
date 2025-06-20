@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from "@/hooks/use-auth";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,11 +37,20 @@ interface Course {
 }
 
 const TrainingPage: React.FC = () => {
+  const { user, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState("regular");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTarget, setSelectedTarget] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [showFaq, setShowFaq] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   const courses: Course[] = [
     {
@@ -123,6 +135,7 @@ const TrainingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4">

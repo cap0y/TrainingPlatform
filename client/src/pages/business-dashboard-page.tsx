@@ -483,10 +483,12 @@ export default function BusinessDashboardPage() {
                                 <Eye className="mr-2 h-4 w-4" />
                                 보기
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleEditCourse(course)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                수정
-                              </DropdownMenuItem>
+                              {course.status !== "deleted" && (
+                                <DropdownMenuItem onClick={() => handleEditCourse(course)}>
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  수정
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuItem 
                                 onClick={() => handleDelete(course)}
                                 className="text-red-600"
