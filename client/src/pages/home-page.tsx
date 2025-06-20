@@ -333,9 +333,91 @@ export default function HomePage() {
       {/* Upcoming Seminars & Conferences */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">다가오는 학회 및 세미나</h2>
-            <p className="text-gray-600">최신 트렌드와 실무 노하우를 공유하는 전문가 세미나</p>
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">다가오는 학회 및 세미나</h2>
+              <p className="text-gray-600">최신 트렌드와 실무 노하우를 공유하는 전문가 세미나</p>
+            </div>
+            <Link href="/seminars">
+              <Button size="lg" variant="outline">모든 학회 및 세미나 보기</Button>
+            </Link>
+          </div>
+
+          {/* Seminar Categories */}
+          <div className="flex justify-center mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 max-w-3xl">
+              <div className="text-center group cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <img 
+                    src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center"
+                    alt="교육학회"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-blue-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm group-hover:text-blue-600 transition-colors">교육학회</div>
+              </div>
+
+              <div className="text-center group cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <img 
+                    src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=120&h=120&fit=crop&crop=center"
+                    alt="AI 컨퍼런스"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-purple-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm group-hover:text-purple-600 transition-colors">AI 컨퍼런스</div>
+              </div>
+
+              <div className="text-center group cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <img 
+                    src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop&crop=center"
+                    alt="워크샵"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-green-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm group-hover:text-green-600 transition-colors">워크샵</div>
+              </div>
+
+              <div className="text-center group cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <img 
+                    src="https://images.unsplash.com/photo-1559223607-a43c3004071b?w=120&h=120&fit=crop&crop=center"
+                    alt="심포지엄"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-orange-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm group-hover:text-orange-600 transition-colors">심포지엄</div>
+              </div>
+
+              <div className="text-center group cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <img 
+                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=120&h=120&fit=crop&crop=center"
+                    alt="국제행사"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-red-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm group-hover:text-red-600 transition-colors">국제행사</div>
+              </div>
+
+              <div className="text-center group cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <img 
+                    src="https://images.unsplash.com/photo-1552581234-26160f608093?w=120&h=120&fit=crop&crop=center"
+                    alt="온라인세미나"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-indigo-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm group-hover:text-indigo-600 transition-colors">온라인세미나</div>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -410,11 +492,7 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="text-center">
-            <Link href="/seminars">
-              <Button size="lg" variant="outline">모든 학회 및 세미나 보기</Button>
-            </Link>
-          </div>
+
         </div>
       </section>
 
