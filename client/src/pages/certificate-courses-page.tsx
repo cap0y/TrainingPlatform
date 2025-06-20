@@ -66,22 +66,42 @@ export default function CertificateCoursesPage() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {/* Category Navigation */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">자격증 분야별 과정</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {certificateCategories.map((category) => (
-              <Link key={category.id} href={`/certificate-courses?category=${category.id}`}>
-                <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-green-50">
-                  <CardContent className="p-0">
-                    <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                      <i className={`${category.icon} text-2xl text-green-600`}></i>
+        <section className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">자격증 분야별 과정</h2>
+            <div className="flex justify-center">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-4xl">
+                {certificateCategories.map((category) => (
+                  <Link key={category.id} href={`/certificate-courses?category=${category.id}`}>
+                    <div className="text-center group cursor-pointer">
+                      <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                        <img 
+                          src={category.id === "safety" 
+                            ? "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=120&h=120&fit=crop&crop=center"
+                            : category.id === "environment" 
+                              ? "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=120&fit=crop&crop=center"
+                              : category.id === "quality"
+                                ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=center"
+                                : category.id === "information"
+                                  ? "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=120&h=120&fit=crop&crop=center"
+                                  : category.id === "construction"
+                                    ? "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=120&h=120&fit=crop&crop=center"
+                                    : "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=120&h=120&fit=crop&crop=center"
+                          }
+                          alt={category.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-green-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                      </div>
+                      <div className="font-medium text-sm text-gray-800 group-hover:text-green-600 transition-colors">
+                        {category.name}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">{category.count}개 과정</div>
                     </div>
-                    <div className="font-medium text-gray-800 mb-1">{category.name}</div>
-                    <div className="text-xs text-gray-500">{category.count}개 과정</div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
