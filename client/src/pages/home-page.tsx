@@ -95,36 +95,54 @@ export default function HomePage() {
           <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">카테고리별 교육과정</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <Link href="/training-courses?category=법정의무교육">
-              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer bg-blue-50 hover:bg-blue-100">
+              <Card className="p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer bg-blue-50 hover:bg-blue-100 group">
                 <CardContent className="p-0">
-                  <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <i className="fas fa-book-reader text-2xl text-blue-600"></i>
+                  <div className="relative w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-3 mx-auto overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=center" 
+                      alt="법정의무교육"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-blue-600 bg-opacity-20"></div>
+                    <BookOpen className="absolute text-white text-xl" />
                   </div>
-                  <div className="font-medium text-gray-800 mb-1">법정 의무교육</div>
+                  <div className="font-medium text-gray-800 mb-1 text-sm">법정 의무교육</div>
                   <div className="text-xs text-gray-500">화학물질 법정교육</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href="/professional-development">
-              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-purple-50">
+              <Card className="p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer hover:bg-purple-50 group">
                 <CardContent className="p-0">
-                  <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <i className="fas fa-graduation-cap text-2xl text-purple-600"></i>
+                  <div className="relative w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-3 mx-auto overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=100&h=100&fit=crop&crop=center" 
+                      alt="전문성강화교육"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-purple-600 bg-opacity-20"></div>
+                    <Award className="absolute text-white text-xl" />
                   </div>
-                  <div className="font-medium text-gray-800 mb-1">전문성 강화교육</div>
+                  <div className="font-medium text-gray-800 mb-1 text-sm">전문성 강화교육</div>
                   <div className="text-xs text-gray-500">역량개발 프로그램</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href="/certificate-courses">
-              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-green-50">
+              <Card className="p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer hover:bg-green-50 group">
                 <CardContent className="p-0">
-                  <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <i className="fas fa-certificate text-2xl text-green-600"></i>
+                  <div className="relative w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-3 mx-auto overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop&crop=center" 
+                      alt="자격증과정"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-green-600 bg-opacity-20"></div>
+                    <Award className="absolute text-white text-xl" />
                   </div>
-                  <div className="font-medium text-gray-800 mb-1">자격증 과정</div>
+                  <div className="font-medium text-gray-800 mb-1 text-sm">자격증 과정</div>
                   <div className="text-xs text-gray-500">공인자격 취득</div>
                 </CardContent>
               </Card>

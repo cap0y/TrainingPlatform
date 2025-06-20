@@ -11,14 +11,19 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <div className="flex items-center mb-4">
-              <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center mr-3">
-                <Award className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold">한국연수교육플랫폼</span>
+              <img 
+                src="/attached_assets/logo_1749658792927_1750413164821.webp" 
+                alt="Jinuchem 로고" 
+                className="h-8 w-auto mr-3"
+              />
+              <span className="text-xl font-bold">연수플랫폼</span>
             </div>
-            <p className="text-gray-400 mb-4 leading-relaxed">
-              교육 전문가를 위한 최고의 연수 플랫폼으로 전문성 향상과 경력 개발을 지원합니다.
-            </p>
+            <div className="text-gray-400 text-sm space-y-2 mb-4">
+              <p className="font-medium text-white">(주)지누켐</p>
+              <p>경상남도 진주시 진주대로 501, 창업보육센터 B동 202호</p>
+              <p>대표 : 김병선 | 사업자 등록번호 : 470-81-02870</p>
+              <p className="mt-4 text-gray-500">Copyright © Jinuchem All rights reserved.</p>
+            </div>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook className="h-5 w-5" />
