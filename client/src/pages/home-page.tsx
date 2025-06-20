@@ -53,7 +53,6 @@ export default function HomePage() {
       <Header onNotificationClick={() => setShowNotifications(true)} />
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
         <div className="relative container mx-auto px-4 py-20 pt-[25px] pb-[25px]">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
