@@ -380,50 +380,134 @@ export default function HomePage() {
             </TabsContent>
 
             <TabsContent value="category" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
-                  { category: "교육정책", count: 45, color: "bg-blue-500" },
-                  { category: "교수법", count: 38, color: "bg-green-500" },
-                  { category: "교육기술", count: 32, color: "bg-purple-500" },
-                  { category: "평가방법", count: 28, color: "bg-orange-500" }
-                ].map((item) => (
-                  <Card key={item.category} className="p-6 text-center hover:shadow-lg transition-shadow">
-                    <div className={`w-16 h-16 ${item.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                      <BookOpen className="h-8 w-8 text-white" />
+                  {
+                    id: 4,
+                    title: "창의적 평가방법 개발 및 적용",
+                    category: "평가방법",
+                    students: 820,
+                    rating: 4.6,
+                    price: "140,000원",
+                    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop",
+                    trending: false
+                  },
+                  {
+                    id: 5,
+                    title: "학습자 중심 교수학습방법론",
+                    category: "교수법",
+                    students: 1100,
+                    rating: 4.8,
+                    price: "160,000원",
+                    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop",
+                    trending: false
+                  },
+                  {
+                    id: 6,
+                    title: "다문화교육 전문가 양성과정",
+                    category: "교육정책",
+                    students: 680,
+                    rating: 4.5,
+                    price: "180,000원",
+                    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=200&fit=crop",
+                    trending: false
+                  }
+                ].map((course) => (
+                  <Card key={course.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
+                    <div className="relative">
+                      <img src={course.image} alt={course.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div className="absolute top-3 right-3">
+                        <Badge variant="outline" className="bg-white/90">{course.category}</Badge>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-lg mb-2">{item.category}</h3>
-                    <p className="text-gray-600 mb-4">{item.count}개 과정</p>
-                    <Button variant="outline" size="sm">보기</Button>
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors">{course.title}</h3>
+                      <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-1">
+                            <Users className="h-4 w-4" />
+                            <span>{course.students}명</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span>{course.rating}</span>
+                          </div>
+                        </div>
+                        <span className="font-semibold text-blue-600">{course.price}</span>
+                      </div>
+                      <Button className="w-full">수강신청</Button>
+                    </CardContent>
                   </Card>
                 ))}
               </div>
             </TabsContent>
 
             <TabsContent value="upcoming" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
                   {
+                    id: 7,
                     title: "메타버스 교육 플랫폼 활용법",
-                    date: "2025.08.15 개설 예정",
-                    description: "차세대 교육 기술인 메타버스를 활용한 혁신적인 교육 방법론을 학습합니다.",
-                    image: "https://images.unsplash.com/photo-1592478411213-6153e4ebc696?w=300&h=200&fit=crop"
+                    category: "교육기술",
+                    students: 320,
+                    rating: 4.9,
+                    price: "220,000원",
+                    image: "https://images.unsplash.com/photo-1592478411213-6153e4ebc696?w=300&h=200&fit=crop",
+                    isNew: true
                   },
                   {
+                    id: 8,
                     title: "블록체인 기반 학습 관리 시스템",
-                    date: "2025.09.01 개설 예정", 
-                    description: "블록체인 기술을 교육 분야에 적용하는 최신 트렌드와 실무 활용법을 다룹니다.",
-                    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=300&h=200&fit=crop"
+                    category: "교육기술",
+                    students: 180,
+                    rating: 4.7,
+                    price: "250,000원",
+                    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=300&h=200&fit=crop",
+                    isNew: true
+                  },
+                  {
+                    id: 9,
+                    title: "VR/AR 활용 체험형 교육과정",
+                    category: "교육기술",
+                    students: 95,
+                    rating: 4.8,
+                    price: "280,000원",
+                    image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=300&h=200&fit=crop",
+                    isNew: true
                   }
-                ].map((course, index) => (
-                  <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="md:flex">
-                      <img src={course.image} alt={course.title} className="w-full md:w-48 h-48 md:h-32 object-cover" />
-                      <CardContent className="p-4 flex-1">
-                        <h3 className="font-semibold text-lg mb-2">{course.title}</h3>
-                        <p className="text-sm text-gray-600 mb-2">{course.description}</p>
-                        <p className="text-sm text-blue-600 font-medium">{course.date}</p>
-                      </CardContent>
+                ].map((course) => (
+                  <Card key={course.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
+                    <div className="relative">
+                      <img src={course.image} alt={course.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+                      {course.isNew && (
+                        <div className="absolute top-3 left-3">
+                          <Badge className="bg-green-500 text-white">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            NEW
+                          </Badge>
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3">
+                        <Badge variant="outline" className="bg-white/90">{course.category}</Badge>
+                      </div>
                     </div>
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors">{course.title}</h3>
+                      <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-1">
+                            <Users className="h-4 w-4" />
+                            <span>{course.students}명</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span>{course.rating}</span>
+                          </div>
+                        </div>
+                        <span className="font-semibold text-blue-600">{course.price}</span>
+                      </div>
+                      <Button className="w-full">수강신청</Button>
+                    </CardContent>
                   </Card>
                 ))}
               </div>
