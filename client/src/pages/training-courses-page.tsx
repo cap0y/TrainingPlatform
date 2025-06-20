@@ -71,81 +71,144 @@ export default function TrainingCoursesPage() {
         </div>
       </div>
 
-      {/* Category Navigation */}
-      <section className="py-8 bg-white">
+      {/* Category Navigation with Circular Images */}
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <Link href="/training-courses?category=법정의무교육">
-              <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '법정의무교육' ? 'bg-blue-50 border-blue-200' : 'hover:bg-blue-50'}`}>
-                <CardContent className="p-0">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                    <i className="fas fa-book-reader text-xl text-blue-600"></i>
+          <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">연수과정 분야</h2>
+          <div className="flex justify-center">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-4xl">
+              <Link href="/training-courses?category=법정의무교육">
+                <div className={`text-center group cursor-pointer ${
+                  category === '법정의무교육' ? 'transform scale-105' : ''
+                }`}>
+                  <div className={`relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300 ${
+                    category === '법정의무교육' ? 'ring-4 ring-blue-500' : ''
+                  }`}>
+                    <img 
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=center"
+                      alt="법정의무교육"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className={`absolute inset-0 bg-blue-600 ${
+                      category === '법정의무교육' 
+                        ? 'bg-opacity-30' 
+                        : 'bg-opacity-20 group-hover:bg-opacity-10'
+                    } transition-opacity duration-300`}></div>
                   </div>
-                  <div className="font-medium text-gray-800">법정 의무교육</div>
+                  <div className={`font-medium text-sm transition-colors ${
+                    category === '법정의무교육' 
+                      ? 'text-blue-600 font-semibold' 
+                      : 'text-gray-800 group-hover:text-blue-600'
+                  }`}>
+                    법정교육
+                  </div>
                   <div className="text-xs text-gray-500 mt-1">화학물질 법정교육</div>
-                </CardContent>
-              </Card>
-            </Link>
+                </div>
+              </Link>
 
-            <Link href="/professional-development">
-              <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '전문성강화교육' ? 'bg-purple-50 border-purple-200' : 'hover:bg-purple-50'}`}>
-                <CardContent className="p-0">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                    <i className="fas fa-graduation-cap text-xl text-purple-600"></i>
+              <Link href="/professional-development">
+                <div className={`text-center group cursor-pointer ${
+                  category === '전문성강화교육' ? 'transform scale-105' : ''
+                }`}>
+                  <div className={`relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300 ${
+                    category === '전문성강화교육' ? 'ring-4 ring-purple-500' : ''
+                  }`}>
+                    <img 
+                      src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=120&h=120&fit=crop&crop=center"
+                      alt="전문성강화교육"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className={`absolute inset-0 bg-purple-600 ${
+                      category === '전문성강화교육' 
+                        ? 'bg-opacity-30' 
+                        : 'bg-opacity-20 group-hover:bg-opacity-10'
+                    } transition-opacity duration-300`}></div>
                   </div>
-                  <div className="font-medium text-gray-800">전문성 강화교육</div>
+                  <div className={`font-medium text-sm transition-colors ${
+                    category === '전문성강화교육' 
+                      ? 'text-purple-600 font-semibold' 
+                      : 'text-gray-800 group-hover:text-purple-600'
+                  }`}>
+                    전문성강화
+                  </div>
                   <div className="text-xs text-gray-500 mt-1">역량개발 프로그램</div>
-                </CardContent>
-              </Card>
-            </Link>
+                </div>
+              </Link>
 
-            <Link href="/certificate-courses">
-              <Card className={`p-4 text-center cursor-pointer transition-colors ${category === '자격증' ? 'bg-green-50 border-green-200' : 'hover:bg-green-50'}`}>
-                <CardContent className="p-0">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                    <i className="fas fa-certificate text-xl text-green-600"></i>
+              <Link href="/certificate-courses">
+                <div className={`text-center group cursor-pointer ${
+                  category === '자격증' ? 'transform scale-105' : ''
+                }`}>
+                  <div className={`relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300 ${
+                    category === '자격증' ? 'ring-4 ring-green-500' : ''
+                  }`}>
+                    <img 
+                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=120&h=120&fit=crop&crop=center"
+                      alt="자격증과정"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className={`absolute inset-0 bg-green-600 ${
+                      category === '자격증' 
+                        ? 'bg-opacity-30' 
+                        : 'bg-opacity-20 group-hover:bg-opacity-10'
+                    } transition-opacity duration-300`}></div>
                   </div>
-                  <div className="font-medium text-gray-800">자격증 과정</div>
+                  <div className={`font-medium text-sm transition-colors ${
+                    category === '자격증' 
+                      ? 'text-green-600 font-semibold' 
+                      : 'text-gray-800 group-hover:text-green-600'
+                  }`}>
+                    자격증
+                  </div>
                   <div className="text-xs text-gray-500 mt-1">공인자격 취득</div>
-                </CardContent>
-              </Card>
-            </Link>
+                </div>
+              </Link>
 
-            <Link href="/seminars">
-              <Card className="p-4 text-center cursor-pointer hover:bg-purple-50 transition-colors">
-                <CardContent className="p-0">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                    <i className="fas fa-users text-xl text-purple-600"></i>
+              <Link href="/seminars">
+                <div className="text-center group cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                    <img 
+                      src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center"
+                      alt="세미나"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-yellow-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
                   </div>
-                  <div className="font-medium text-gray-800">세미나</div>
+                  <div className="font-medium text-gray-800 text-sm group-hover:text-yellow-600 transition-colors">세미나</div>
                   <div className="text-xs text-gray-500 mt-1">학회/컨퍼런스</div>
-                </CardContent>
-              </Card>
-            </Link>
+                </div>
+              </Link>
 
-            <Link href="/study-abroad">
-              <Card className="p-4 text-center cursor-pointer hover:bg-orange-50 transition-colors">
-                <CardContent className="p-0">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                    <i className="fas fa-globe text-xl text-orange-600"></i>
+              <Link href="/study-abroad">
+                <div className="text-center group cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                    <img 
+                      src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=120&h=120&fit=crop&crop=center"
+                      alt="해외연수"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-red-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
                   </div>
-                  <div className="font-medium text-gray-800">해외연수</div>
+                  <div className="font-medium text-gray-800 text-sm group-hover:text-red-600 transition-colors">해외연수</div>
                   <div className="text-xs text-gray-500 mt-1">글로벌 프로그램</div>
-                </CardContent>
-              </Card>
-            </Link>
+                </div>
+              </Link>
 
-            <Link href="/help">
-              <Card className="p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors">
-                <CardContent className="p-0">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                    <i className="fas fa-question-circle text-xl text-gray-600"></i>
+              <Link href="/help">
+                <div className="text-center group cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                    <img 
+                      src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=120&h=120&fit=crop&crop=center"
+                      alt="고객센터"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-indigo-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
                   </div>
-                  <div className="font-medium text-gray-800">고객센터</div>
+                  <div className="font-medium text-gray-800 text-sm group-hover:text-indigo-600 transition-colors">고객센터</div>
                   <div className="text-xs text-gray-500 mt-1">문의/도움말</div>
-                </CardContent>
-              </Card>
-            </Link>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
