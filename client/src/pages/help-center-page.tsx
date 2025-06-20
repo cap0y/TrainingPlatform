@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 
 const HelpCenterPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("faq");
@@ -161,27 +163,7 @@ const HelpCenterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-2xl font-bold text-blue-600">에듀플랫폼</h1>
-              <nav className="hidden md:flex space-x-6">
-                <a href="/" className="text-gray-600 hover:text-blue-600">홈</a>
-                <a href="/training" className="text-gray-600 hover:text-blue-600">연수 프로그램</a>
-                <a href="/courses" className="text-gray-600 hover:text-blue-600">교육과정</a>
-                <a href="/seminars" className="text-gray-600 hover:text-blue-600">세미나</a>
-                <a href="/help" className="text-blue-600 font-medium">고객센터</a>
-              </nav>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="outline">로그인</Button>
-              <Button>회원가입</Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header onNotificationClick={() => {}} />
 
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
@@ -476,32 +458,7 @@ const HelpCenterPage: React.FC = () => {
         </Tabs>
       </main>
 
-      {/* Contact Section */}
-      <section className="bg-white py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-2xl font-bold mb-8">문의하기</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <i className="fas fa-phone text-3xl text-blue-600 mb-4"></i>
-              <h4 className="font-semibold mb-2">전화 문의</h4>
-              <p className="text-gray-600">02-1234-5678</p>
-              <p className="text-sm text-gray-500">평일 09:00 - 18:00</p>
-            </div>
-            <div>
-              <i className="fas fa-envelope text-3xl text-blue-600 mb-4"></i>
-              <h4 className="font-semibold mb-2">이메일 문의</h4>
-              <p className="text-gray-600">support@eduplatform.kr</p>
-              <p className="text-sm text-gray-500">24시간 접수 가능</p>
-            </div>
-            <div>
-              <i className="fas fa-comment text-3xl text-blue-600 mb-4"></i>
-              <h4 className="font-semibold mb-2">채팅 상담</h4>
-              <p className="text-gray-600">실시간 채팅 상담</p>
-              <p className="text-sm text-gray-500">평일 09:00 - 18:00</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Footer />
     </div>
   );
 };
