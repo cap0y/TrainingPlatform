@@ -78,7 +78,258 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      
+      {/* Training Programs Slideshow */}
+      <section className="py-16 bg-gradient-to-r from-gray-50 to-white ml-[0px] mr-[0px] pl-[0px] pr-[0px] pt-[9px] pb-[9px]">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">다양한 연수 프로그램</h2>
+            <p className="text-gray-600 text-lg">전문성 향상을 위한 체계적인 교육과정을 만나보세요</p>
+          </div>
+          
+          <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+            <div className="flex animate-slide">
+              {/* Slide 1 - 교육과정 개정안 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-blue-600 to-blue-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=400&fit=crop" 
+                  alt="교육과정 개정안 이해와 적용"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">2025 교육과정 개정안 이해와 적용</h3>
+                      <p className="text-xl mb-6 text-blue-100">새로운 교육과정의 핵심 내용과 현장 적용 방안을 체계적으로 학습하세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">교육정책</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">15시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">1,250명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 2 - 디지털 교수법 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-green-600 to-green-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1200&h=400&fit=crop" 
+                  alt="디지털 교수법 심화과정"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">디지털 교수법 심화과정</h3>
+                      <p className="text-xl mb-6 text-green-100">온라인과 오프라인을 연계한 효과적인 디지털 교육 방법론을 습득하세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">교수법</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">20시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">980명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 3 - AI 교육혁신 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-purple-600 to-purple-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&h=400&fit=crop" 
+                  alt="AI 시대의 교육 혁신"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">AI 시대의 교육 혁신</h3>
+                      <p className="text-xl mb-6 text-purple-100">인공지능 기술을 활용한 미래 교육의 새로운 패러다임을 탐구하세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">교육기술</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">25시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">750명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 4 - 평가방법 개선 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-orange-600 to-orange-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&h=400&fit=crop" 
+                  alt="창의적 평가방법 개발"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">창의적 평가방법 개발</h3>
+                      <p className="text-xl mb-6 text-orange-100">학습자 중심의 다양한 평가 도구와 방법론을 개발하고 적용하세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">평가방법</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">18시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">620명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 5 - 학습자 중심 교육 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-red-600 to-red-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=400&fit=crop" 
+                  alt="학습자 중심 교육방법론"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">학습자 중심 교육방법론</h3>
+                      <p className="text-xl mb-6 text-red-100">개별 학습자의 특성을 고려한 맞춤형 교육 전략을 수립하세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">교수학습</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">22시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">890명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 6 - 창의융합교육 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-indigo-600 to-indigo-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&h=400&fit=crop" 
+                  alt="창의융합교육 실무과정"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">창의융합교육 실무과정</h3>
+                      <p className="text-xl mb-6 text-indigo-100">교과간 융합과 창의적 사고력 향상을 위한 실무 중심 교육과정</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">창의교육</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">16시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">540명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 7 - 다문화교육 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-teal-600 to-teal-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&h=400&fit=crop" 
+                  alt="다문화교육 전문가과정"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">다문화교육 전문가과정</h3>
+                      <p className="text-xl mb-6 text-teal-100">글로벌 시대에 맞는 다문화 감수성과 교육 역량을 기르세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">다문화교육</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">20시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">430명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 8 - 특수교육 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-pink-600 to-pink-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=400&fit=crop" 
+                  alt="특수교육 지원 전문과정"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">특수교육 지원 전문과정</h3>
+                      <p className="text-xl mb-6 text-pink-100">특별한 교육적 요구를 가진 학습자를 위한 전문적 지원 방법을 학습하세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">특수교육</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">24시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">380명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 9 - 진로진학상담 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-cyan-600 to-cyan-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=1200&h=400&fit=crop" 
+                  alt="진로진학상담 전문과정"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">진로진학상담 전문과정</h3>
+                      <p className="text-xl mb-6 text-cyan-100">학생들의 미래 설계를 돕는 전문적인 상담 기법과 진로 지도 방법을 익히세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">진로상담</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">18시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">720명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 10 - 학교안전교육 */}
+              <div className="min-w-full relative h-96 bg-gradient-to-r from-yellow-600 to-yellow-800">
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=1200&h=400&fit=crop" 
+                  alt="학교안전교육 관리자과정"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-8">
+                    <div className="max-w-2xl text-white">
+                      <h3 className="text-4xl font-bold mb-4">학교안전교육 관리자과정</h3>
+                      <p className="text-xl mb-6 text-yellow-100">안전한 교육환경 조성을 위한 체계적인 안전관리 방안을 수립하세요</p>
+                      <div className="flex space-x-4">
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">안전교육</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">12시간</span>
+                        <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">950명 수강</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Slide indicators */}
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {Array.from({ length: 10 }, (_, i) => (
+                <div key={i} className="w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 transition-opacity cursor-pointer"></div>
+              ))}
+            </div>
+          </div>
+          
+
+        </div>
+      </section>
       {/* Categories Section with Circular Images */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
