@@ -33,6 +33,12 @@ export async function seedDatabase() {
       isActive: true
     });
     console.log("Admin user created");
+  } else {
+    // Update existing admin password to use correct hash
+    await db.update(users)
+      .set({ password: await hashPassword("admin123") })
+      .where(eq(users.username, "admin"));
+    console.log("Admin password updated");
   }
 
   // Create sample instructors
