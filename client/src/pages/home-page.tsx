@@ -149,24 +149,36 @@ export default function HomePage() {
             </Link>
 
             <Link href="/seminars">
-              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-purple-50">
+              <Card className="p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer hover:bg-yellow-50 group">
                 <CardContent className="p-0">
-                  <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <i className="fas fa-users text-2xl text-purple-600"></i>
+                  <div className="relative w-16 h-16 bg-yellow-100 rounded-lg flex items-center justify-center mb-3 mx-auto overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=100&h=100&fit=crop&crop=center" 
+                      alt="세미나"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-yellow-600 bg-opacity-20"></div>
+                    <Users className="absolute text-white text-xl" />
                   </div>
-                  <div className="font-medium text-gray-800 mb-1">세미나</div>
+                  <div className="font-medium text-gray-800 mb-1 text-sm">세미나</div>
                   <div className="text-xs text-gray-500">학회/컨퍼런스</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href="/study-abroad">
-              <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-orange-50">
+              <Card className="p-4 text-center hover:shadow-lg transition-all duration-300 cursor-pointer hover:bg-red-50 group">
                 <CardContent className="p-0">
-                  <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <i className="fas fa-globe text-2xl text-orange-600"></i>
+                  <div className="relative w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mb-3 mx-auto overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=100&h=100&fit=crop&crop=center" 
+                      alt="해외연수"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-red-600 bg-opacity-20"></div>
+                    <Globe className="absolute text-white text-xl" />
                   </div>
-                  <div className="font-medium text-gray-800 mb-1">해외연수</div>
+                  <div className="font-medium text-gray-800 mb-1 text-sm">해외연수</div>
                   <div className="text-xs text-gray-500">글로벌 프로그램</div>
                 </CardContent>
               </Card>

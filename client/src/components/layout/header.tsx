@@ -73,9 +73,11 @@ export default function Header({ onNotificationClick }: HeaderProps) {
           {/* Logo */}
           <div className="flex items-center space-x-10">
             <Link href="/" className="flex items-center">
-              <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center mr-3">
-                <Award className="h-6 w-6 text-white" />
-              </div>
+              <img 
+                src="/attached_assets/logo_1749658792927_1750413164821.webp" 
+                alt="Jinuchem 로고" 
+                className="h-10 w-auto mr-3"
+              />
               <span className="text-2xl font-bold text-primary">연수플랫폼</span>
             </Link>
 
