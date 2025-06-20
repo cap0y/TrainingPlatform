@@ -72,7 +72,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/seminars">
-                <Button size="md" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-6 py-3 text-base font-semibold">
+                <Button size="md" variant="outline" className="border-white text-[#2362eb] hover:bg-white hover:text-blue-600 px-6 py-3 text-base font-semibold">
                   세미나 신청
                 </Button>
               </Link>
