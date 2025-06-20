@@ -72,7 +72,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/seminars">
-                <Button size="md" variant="outline" className="border-white text-[#2362eb] hover:bg-white hover:text-blue-600 px-6 py-3 text-base font-semibold">
+                <Button size="md" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-6 py-3 text-base font-semibold">
                   세미나 신청
                 </Button>
               </Link>
@@ -85,13 +85,15 @@ export default function HomePage() {
           <div className="relative overflow-hidden h-full">
             <div className="flex animate-slide h-screen">
               {/* Slide 1 - 교육과정 개정안 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-blue-600 to-blue-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=400&fit=crop" 
-                  alt="교육과정 개정안 이해와 적용"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-blue-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop" 
+                    alt="교육과정 개정안 이해와 적용"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -108,13 +110,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 2 - 디지털 교수법 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-green-600 to-green-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1200&h=400&fit=crop" 
-                  alt="디지털 교수법 심화과정"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-green-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=600&fit=crop" 
+                    alt="디지털 교수법 심화과정"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -131,13 +135,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 3 - AI 교육혁신 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-purple-600 to-purple-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&h=400&fit=crop" 
-                  alt="AI 시대의 교육 혁신"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-purple-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=600&fit=crop" 
+                    alt="AI 시대의 교육 혁신"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -154,13 +160,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 4 - 평가방법 개선 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-orange-600 to-orange-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&h=400&fit=crop" 
-                  alt="창의적 평가방법 개발"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-orange-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop" 
+                    alt="창의적 평가방법 개발"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -177,13 +185,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 5 - 학습자 중심 교육 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-red-600 to-red-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=400&fit=crop" 
-                  alt="학습자 중심 교육방법론"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-red-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop" 
+                    alt="학습자 중심 교육방법론"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -200,13 +210,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 6 - 창의융합교육 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-indigo-600 to-indigo-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&h=400&fit=crop" 
-                  alt="창의융합교육 실무과정"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-indigo-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop" 
+                    alt="창의융합교육 실무과정"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -223,13 +235,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 7 - 다문화교육 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-teal-600 to-teal-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&h=400&fit=crop" 
-                  alt="다문화교육 전문가과정"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-teal-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop" 
+                    alt="다문화교육 전문가과정"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -246,13 +260,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 8 - 특수교육 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-pink-600 to-pink-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=400&fit=crop" 
-                  alt="특수교육 지원 전문과정"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-pink-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&h=600&fit=crop" 
+                    alt="특수교육 지원 전문과정"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -269,13 +285,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 9 - 진로진학상담 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-cyan-600 to-cyan-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=1200&h=400&fit=crop" 
-                  alt="진로진학상담 전문과정"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-cyan-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=800&h=600&fit=crop" 
+                    alt="진로진학상담 전문과정"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
@@ -292,13 +310,15 @@ export default function HomePage() {
               </div>
 
               {/* Slide 10 - 학교안전교육 */}
-              <div className="min-w-full relative h-full bg-gradient-to-r from-yellow-600 to-yellow-800">
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=1200&h=400&fit=crop" 
-                  alt="학교안전교육 관리자과정"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+              <div className="min-w-full relative h-full bg-gradient-to-r from-transparent via-yellow-600 to-transparent">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&h=600&fit=crop" 
+                    alt="학교안전교육 관리자과정"
+                    className="max-w-2xl max-h-96 object-contain rounded-lg shadow-lg"
+                  />
+                </div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto px-8">
                     <div className="max-w-2xl text-white">
