@@ -93,23 +93,30 @@ export default function ProfessionalDevelopmentPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {/* Field Navigation */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">분야별 전문성 강화 과정</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {developmentFields.map((field) => (
-              <Link key={field.id} href={`/professional-development?category=${field.id}`}>
-                <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer hover:bg-purple-50">
-                  <CardContent className="p-0">
-                    <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                      <i className={`${field.icon} text-2xl text-purple-600`}></i>
+        {/* Field Navigation with Circular Images */}
+        <section className="mb-12 py-8">
+          <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">분야별 전문성 강화 과정</h2>
+          <div className="flex justify-center">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-4xl">
+              {developmentFields.map((field) => (
+                <Link key={field.id} href={`/professional-development?category=${field.id}`}>
+                  <div className="text-center group cursor-pointer">
+                    <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                      <img 
+                        src={field.imageUrl}
+                        alt={field.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className={`absolute inset-0 ${field.overlay} bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300`}></div>
                     </div>
-                    <div className="font-medium text-gray-800 mb-1">{field.name}</div>
-                    <div className="text-xs text-gray-500">{field.count}개 과정</div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                    <div className={`font-medium text-sm transition-colors text-gray-800 group-hover:${field.hoverColor}`}>
+                      {field.name}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">{field.count}개 과정</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
 
