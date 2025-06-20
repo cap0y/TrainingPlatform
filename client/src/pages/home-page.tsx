@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   BookOpen, Users, Award, Star, ArrowRight, Calendar, MapPin, Phone, Mail, 
   MessageCircle, HelpCircle, FileText, Settings, Eye, Zap, Target, Globe,
-  TrendingUp, CheckCircle
+  TrendingUp, CheckCircle, Bell, Headphones
 } from "lucide-react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
