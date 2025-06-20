@@ -61,29 +61,7 @@ export default function CertificateCoursesPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">50+</div>
-              <div className="text-gray-600">자격증 과정</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">3,200+</div>
-              <div className="text-gray-600">합격자 배출</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">85%</div>
-              <div className="text-gray-600">평균 합격률</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">24시간</div>
-              <div className="text-gray-600">학습 지원</div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">

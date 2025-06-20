@@ -360,15 +360,21 @@ export default function SeminarsPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-1 mb-4">
-                  {seminar.tags.slice(0, 3).map((tag, index) => (
-                    <Badge key={index} className={`text-xs text-white ${
-                      index === 0 ? 'bg-blue-500 hover:bg-blue-600' :
-                      index === 1 ? 'bg-green-500 hover:bg-green-600' :
-                      'bg-purple-500 hover:bg-purple-600'
-                    }`}>
-                      {tag}
-                    </Badge>
-                  ))}
+                  {seminar.tags.slice(0, 3).map((tag, index) => {
+                    const colors = [
+                      "bg-blue-100 text-blue-800",
+                      "bg-green-100 text-green-800", 
+                      "bg-purple-100 text-purple-800",
+                      "bg-yellow-100 text-yellow-800",
+                      "bg-pink-100 text-pink-800",
+                      "bg-indigo-100 text-indigo-800"
+                    ];
+                    return (
+                      <Badge key={index} className={`text-xs ${colors[index % colors.length]}`}>
+                        {tag}
+                      </Badge>
+                    );
+                  })}
                 </div>
 
                 <div className="space-y-2">
