@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 
 const StudyAbroadPage: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState("creditCard");
@@ -43,39 +45,7 @@ const StudyAbroadPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 네비게이션 바 */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <a href="/" className="flex items-center">
-              <i className="fas fa-graduation-cap text-2xl text-blue-600 mr-2"></i>
-              <span className="text-xl font-bold text-gray-800">에듀코리아</span>
-            </a>
-            
-            <nav className="hidden md:flex space-x-6">
-              <a href="/" className="text-gray-600 hover:text-blue-600 font-medium">홈</a>
-              <a href="/training" className="text-blue-600 font-medium">연수 프로그램</a>
-              <a href="/courses" className="text-gray-600 hover:text-blue-600 font-medium">교육과정</a>
-              <a href="/seminars" className="text-gray-600 hover:text-blue-600 font-medium">세미나</a>
-              <a href="/help" className="text-gray-600 hover:text-blue-600 font-medium">고객센터</a>
-            </nav>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" className="!rounded-button whitespace-nowrap hidden md:flex cursor-pointer">
-              <i className="fas fa-sign-in-alt mr-2"></i>
-              로그인
-            </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white !rounded-button whitespace-nowrap hidden md:flex cursor-pointer">
-              <i className="fas fa-user-plus mr-2"></i>
-              회원가입
-            </Button>
-            <button className="md:hidden text-gray-600">
-              <i className="fas fa-bars text-xl"></i>
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header onNotificationClick={() => {}} />
       
       {/* 메인 컨텐츠 */}
       <main className="container mx-auto px-4 py-8">
@@ -349,37 +319,7 @@ const StudyAbroadPage: React.FC = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 mt-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h4 className="font-semibold mb-4">에듀코리아</h4>
-              <p className="text-gray-400">글로벌 교육 경험을 제공하는 전문 교육기관입니다.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">바로가기</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="/training" className="hover:text-white">연수 프로그램</a></li>
-                <li><a href="/courses" className="hover:text-white">교육과정</a></li>
-                <li><a href="/seminars" className="hover:text-white">세미나</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">고객지원</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>전화: 02-1234-5678</li>
-                <li>이메일: info@edukorea.kr</li>
-                <li>운영시간: 평일 09:00-18:00</li>
-              </ul>
-            </div>
-          </div>
-          <Separator className="my-8 bg-gray-700" />
-          <div className="text-center text-gray-400">
-            <p>&copy; 2025 에듀코리아. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
