@@ -204,7 +204,7 @@ export default function ChatWidget() {
       ) : (
         <Button
           onClick={() => setIsOpen(true)}
-          className="rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-700 shadow-lg animate-pulse"
+          className="rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-700 shadow-lg animate-pulse mt-[65px] mb-[65px]"
         >
           <Bot className="h-6 w-6" />
         </Button>
