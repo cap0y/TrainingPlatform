@@ -293,57 +293,7 @@ export default function AdminPage() {
     setShowNoticeDialog(true);
   };
 
-  // Save course mutation (create or update)
-  const saveCourse = useMutation({
-    mutationFn: async (courseData: any) => {
-      const url = editingCourse ? `/api/courses/${editingCourse.id}` : "/api/courses";
-      const method = editingCourse ? "PUT" : "POST";
-      const response = await apiRequest(method, url, courseData);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/courses"] });
-      setShowCourseDialog(false);
-      resetCourseForm();
-      toast({
-        title: "성공",
-        description: editingCourse ? "과정이 수정되었습니다." : "과정이 추가되었습니다.",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "오류",
-        description: "과정 저장 중 오류가 발생했습니다.",
-        variant: "destructive",
-      });
-    },
-  });
 
-  // Save notice mutation (create or update)
-  const saveNotice = useMutation({
-    mutationFn: async (noticeData: any) => {
-      const url = editingNotice ? `/api/notices/${editingNotice.id}` : "/api/notices";
-      const method = editingNotice ? "PUT" : "POST";
-      const response = await apiRequest(method, url, noticeData);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notices"] });
-      setShowNoticeDialog(false);
-      resetNoticeForm();
-      toast({
-        title: "성공",
-        description: editingNotice ? "공지사항이 수정되었습니다." : "공지사항이 추가되었습니다.",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "오류",
-        description: "공지사항 저장 중 오류가 발생했습니다.",
-        variant: "destructive",
-      });
-    },
-  });
 
 
 
@@ -372,13 +322,13 @@ export default function AdminPage() {
   // Handle course form submission
   const handleCourseSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    saveCourse.mutate(courseForm);
+    courseMutation.mutate(courseForm);
   };
 
   // Handle notice form submission
   const handleNoticeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    saveNotice.mutate(noticeForm);
+    noticeMutation.mutate(noticeForm);
   };
 
   const resetCourseForm = () => {
@@ -395,7 +345,9 @@ export default function AdminPage() {
       maxStudents: "",
       startDate: "",
       endDate: "",
+      applicationDeadline: "",
       instructorId: "",
+      isActive: true,
     });
     setEditingCourse(null);
   };
@@ -583,7 +535,10 @@ export default function AdminPage() {
           <TabsContent value="courses" className="mt-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">과정 관리</h2>
-              <Button onClick={() => setShowCourseDialog(true)}>
+              <Button onClick={() => {
+                resetCourseForm();
+                setShowCourseDialog(true);
+              }}>
                 <Plus className="h-4 w-4 mr-2" />
                 새 과정 추가
               </Button>
@@ -1203,10 +1158,13 @@ export default function AdminPage() {
         setShowCourseDialog(open);
         if (!open) resetCourseForm();
       }}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto" aria-describedby="course-dialog-description">
           <DialogHeader>
             <DialogTitle>{editingCourse ? "과정 수정" : "새 과정 추가"}</DialogTitle>
           </DialogHeader>
+          <div id="course-dialog-description" className="sr-only">
+            {editingCourse ? "기존 과정의 정보를 수정할 수 있습니다." : "새로운 교육 과정을 추가할 수 있습니다."}
+          </div>
           <form onSubmit={handleCourseSubmit}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
@@ -1349,8 +1307,8 @@ export default function AdminPage() {
               <Button type="button" variant="outline" onClick={() => setShowCourseDialog(false)}>
                 취소
               </Button>
-              <Button type="submit" disabled={saveCourse.isPending}>
-                {saveCourse.isPending ? "저장 중..." : editingCourse ? "수정" : "추가"}
+              <Button type="submit" disabled={courseMutation.isPending}>
+                {courseMutation.isPending ? "저장 중..." : editingCourse ? "수정" : "추가"}
               </Button>
             </DialogFooter>
           </form>
@@ -1362,10 +1320,13 @@ export default function AdminPage() {
         setShowNoticeDialog(open);
         if (!open) resetNoticeForm();
       }}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto" aria-describedby="notice-dialog-description">
           <DialogHeader>
             <DialogTitle>{editingNotice ? "공지사항 수정" : "새 공지사항 작성"}</DialogTitle>
           </DialogHeader>
+          <div id="notice-dialog-description" className="sr-only">
+            {editingNotice ? "기존 공지사항을 수정할 수 있습니다." : "새로운 공지사항을 작성할 수 있습니다."}
+          </div>
           <form onSubmit={handleNoticeSubmit}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
@@ -1432,8 +1393,8 @@ export default function AdminPage() {
               <Button type="button" variant="outline" onClick={() => setShowNoticeDialog(false)}>
                 취소
               </Button>
-              <Button type="submit" disabled={saveNotice.isPending}>
-                {saveNotice.isPending ? "저장 중..." : editingNotice ? "수정" : "작성"}
+              <Button type="submit" disabled={noticeMutation.isPending}>
+                {noticeMutation.isPending ? "저장 중..." : editingNotice ? "수정" : "작성"}
               </Button>
             </DialogFooter>
           </form>
@@ -1442,10 +1403,13 @@ export default function AdminPage() {
 
       {/* Refund Dialog */}
       <Dialog open={showRefundDialog} onOpenChange={setShowRefundDialog}>
-        <DialogContent>
+        <DialogContent aria-describedby="refund-dialog-description">
           <DialogHeader>
             <DialogTitle>환불 처리</DialogTitle>
           </DialogHeader>
+          <div id="refund-dialog-description" className="sr-only">
+            결제 환불을 처리할 수 있습니다. 환불 사유를 입력해주세요.
+          </div>
           <div className="py-4">
             <Label htmlFor="refundReason">환불 사유</Label>
             <Textarea

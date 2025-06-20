@@ -45,13 +45,13 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">서비스</h4>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <Link href="/courses">
-                  <a className="hover:text-white transition-colors cursor-pointer">연수과정</a>
+                <Link href="/courses" className="hover:text-white transition-colors cursor-pointer">
+                  연수과정
                 </Link>
               </li>
               <li>
-                <Link href="/seminars">
-                  <a className="hover:text-white transition-colors cursor-pointer">학회/세미나</a>
+                <Link href="/seminars" className="hover:text-white transition-colors cursor-pointer">
+                  학회/세미나
                 </Link>
               </li>
               <li>

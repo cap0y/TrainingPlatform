@@ -42,12 +42,12 @@ async function comparePasswords(supplied: string, stored: string) {
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || 'default-secret-key-for-development',
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
       secure: false,
-      httpOnly: false, // Allow client-side access for debugging
+      httpOnly: false,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: 'lax'
     },
