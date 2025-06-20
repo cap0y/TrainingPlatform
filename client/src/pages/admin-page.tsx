@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Users, BookOpen, Calendar, CreditCard, Settings, Plus, Edit, Trash2, Check, X, Shield, ShieldOff, RefreshCw, DollarSign, TrendingUp, AlertCircle } from "lucide-react";
+import { BarChart, Users, BookOpen, Calendar, CreditCard, Settings, Plus, Edit, Trash2, Check, X, Shield, ShieldOff, RefreshCw, DollarSign, TrendingUp, AlertCircle, Bell } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
@@ -25,12 +25,13 @@ export default function AdminPage() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showCourseDialog, setShowCourseDialog] = useState(false);
+  const [showSeminarDialog, setShowSeminarDialog] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
+  const [showRefundDialog, setShowRefundDialog] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
   const [editingNotice, setEditingNotice] = useState(null);
   const [userFilter, setUserFilter] = useState("all");
   const [paymentFilter, setPaymentFilter] = useState("all");
-  const [showRefundDialog, setShowRefundDialog] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [refundReason, setRefundReason] = useState("");
 
@@ -470,7 +471,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="dashboard" className="flex items-center space-x-2">
               <BarChart className="h-4 w-4" />
               <span>대시보드</span>
@@ -479,8 +480,12 @@ export default function AdminPage() {
               <BookOpen className="h-4 w-4" />
               <span>과정관리</span>
             </TabsTrigger>
-            <TabsTrigger value="notices" className="flex items-center space-x-2">
+            <TabsTrigger value="seminars" className="flex items-center space-x-2">
               <Calendar className="h-4 w-4" />
+              <span>세미나관리</span>
+            </TabsTrigger>
+            <TabsTrigger value="notices" className="flex items-center space-x-2">
+              <Bell className="h-4 w-4" />
               <span>공지관리</span>
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center space-x-2">
@@ -655,6 +660,77 @@ export default function AdminPage() {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          {/* Seminars Tab */}
+          <TabsContent value="seminars" className="mt-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">세미나 관리</h2>
+              <Button onClick={() => setShowSeminarDialog(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                새 세미나 추가
+              </Button>
+            </div>
+
+            <Card>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>세미나명</TableHead>
+                      <TableHead>주제</TableHead>
+                      <TableHead>강사</TableHead>
+                      <TableHead>일시</TableHead>
+                      <TableHead>참가자</TableHead>
+                      <TableHead>상태</TableHead>
+                      <TableHead>작업</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">AI 교육 혁신 세미나</TableCell>
+                      <TableCell>교육 기술</TableCell>
+                      <TableCell>김교수</TableCell>
+                      <TableCell>2025-07-15 14:00</TableCell>
+                      <TableCell>25/50</TableCell>
+                      <TableCell>
+                        <Badge variant="default">예정</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">디지털 리터러시 워크숍</TableCell>
+                      <TableCell>디지털 교육</TableCell>
+                      <TableCell>이박사</TableCell>
+                      <TableCell>2025-07-20 10:00</TableCell>
+                      <TableCell>18/30</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">접수중</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Notices Tab */}
