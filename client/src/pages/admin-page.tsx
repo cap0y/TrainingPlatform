@@ -273,7 +273,9 @@ export default function AdminPage() {
       maxStudents: course.maxStudents || "",
       startDate: course.startDate ? course.startDate.split('T')[0] : "",
       endDate: course.endDate ? course.endDate.split('T')[0] : "",
+      applicationDeadline: course.applicationDeadline ? course.applicationDeadline.split('T')[0] : "",
       instructorId: course.instructorId || "",
+      isActive: course.isActive || false,
     });
     setShowCourseDialog(true);
   };
@@ -1286,10 +1288,16 @@ export default function AdminPage() {
                       <SelectValue placeholder="카테고리 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="general">일반</SelectItem>
-                      <SelectItem value="course">과정</SelectItem>
-                      <SelectItem value="system">시스템</SelectItem>
+                      <SelectItem value="notice">공지사항</SelectItem>
+                      <SelectItem value="news">뉴스/소식</SelectItem>
+                      <SelectItem value="announcement">안내</SelectItem>
                       <SelectItem value="event">이벤트</SelectItem>
+                      <SelectItem value="system">시스템</SelectItem>
+                      <SelectItem value="update">업데이트</SelectItem>
+                      <SelectItem value="maintenance">점검</SelectItem>
+                      <SelectItem value="policy">정책</SelectItem>
+                      <SelectItem value="guide">가이드</SelectItem>
+                      <SelectItem value="faq">FAQ</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
