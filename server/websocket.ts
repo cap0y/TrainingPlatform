@@ -9,7 +9,7 @@ export function setupWebSocket(server: Server) {
   wss = new WebSocketServer({ server, path: '/ws' });
 
   wss.on('connection', (ws: WebSocket, req) => {
-    console.log('New WebSocket connection');
+    console.log('New WebSocket connection established');
 
     ws.on('message', async (data: string) => {
       try {
@@ -61,12 +61,14 @@ export function setupWebSocket(server: Server) {
       message: 'WebSocket connection established'
     }));
 
-    // Send initial chat history
+    // Send initial chat history (with error handling)
     storage.getChatMessages(20).then(messages => {
       ws.send(JSON.stringify({
         type: 'chat_history',
         data: messages
       }));
+    }).catch(error => {
+      console.error('Failed to load chat history:', error);
     });
   });
 

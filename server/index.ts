@@ -44,14 +44,19 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Seed database on startup
+  // Seed database on startup (with better error handling)
   try {
     await seedDatabase();
+    console.log("Database seeded successfully");
   } catch (error) {
     console.error("Database seeding failed:", error);
+    // Continue running even if seeding fails
   }
   
   const server = await registerRoutes(app);
+  
+  // Setup WebSocket after server is created
+  setupWebSocket(server);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
