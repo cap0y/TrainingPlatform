@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Users, BookOpen, Calendar, CreditCard, Settings, Plus, Edit, Trash2 } from "lucide-react";
+import { BarChart, Users, BookOpen, Calendar, CreditCard, Settings, Plus, Edit, Trash2, Check, X, Shield, ShieldOff } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
@@ -27,6 +27,7 @@ export default function AdminPage() {
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
   const [editingNotice, setEditingNotice] = useState(null);
+  const [userFilter, setUserFilter] = useState("all");
 
   // Redirect if not admin
   if (!user?.isAdmin) {
@@ -72,6 +73,11 @@ export default function AdminPage() {
   // Fetch notices for management
   const { data: noticesData, isLoading: noticesLoading } = useQuery({
     queryKey: ["/api/notices", { limit: 50 }],
+  });
+
+  // Fetch users for management
+  const { data: usersData, isLoading: usersLoading } = useQuery({
+    queryKey: ["/api/admin/users"],
   });
 
   // Fetch instructors
@@ -154,6 +160,48 @@ export default function AdminPage() {
     },
   });
 
+  // Update user status mutation
+  const updateUserStatus = useMutation({
+    mutationFn: async ({ userId, isActive }: { userId: number; isActive: boolean }) => {
+      return apiRequest("PUT", `/api/admin/users/${userId}/status`, { isActive });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      toast({
+        title: "성공",
+        description: "사용자 상태가 업데이트되었습니다.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "오류",
+        description: "사용자 상태 업데이트에 실패했습니다.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update user role mutation
+  const updateUserRole = useMutation({
+    mutationFn: async ({ userId, role, isAdmin }: { userId: number; role: string; isAdmin: boolean }) => {
+      return apiRequest("PUT", `/api/admin/users/${userId}/role`, { role, isAdmin });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      toast({
+        title: "성공",
+        description: "사용자 역할이 업데이트되었습니다.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "오류",
+        description: "사용자 역할 업데이트에 실패했습니다.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const resetCourseForm = () => {
     setCourseForm({
       title: "",
@@ -182,6 +230,17 @@ export default function AdminPage() {
     });
     setEditingNotice(null);
   };
+
+  // Filter users
+  const filteredUsers = usersData?.filter((user: any) => {
+    if (userFilter === "all") return true;
+    if (userFilter === "individual") return user.userType === "individual";
+    if (userFilter === "business") return user.userType === "business";
+    if (userFilter === "admin") return user.isAdmin;
+    if (userFilter === "active") return user.isActive;
+    if (userFilter === "inactive") return !user.isActive;
+    return true;
+  }) || [];
 
   const handleEditCourse = (course) => {
     setEditingCourse(course);
@@ -491,14 +550,173 @@ export default function AdminPage() {
 
           {/* Users Tab */}
           <TabsContent value="users" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>회원 관리</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">회원 관리 기능이 구현될 예정입니다.</p>
-              </CardContent>
-            </Card>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">회원 관리</h2>
+              <div className="flex items-center space-x-4">
+                <Select value={userFilter} onValueChange={setUserFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="필터 선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">전체 회원</SelectItem>
+                    <SelectItem value="individual">개인 회원</SelectItem>
+                    <SelectItem value="business">기관 회원</SelectItem>
+                    <SelectItem value="admin">관리자</SelectItem>
+                    <SelectItem value="active">활성 회원</SelectItem>
+                    <SelectItem value="inactive">비활성 회원</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {usersLoading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Card key={i} className="animate-pulse">
+                    <CardContent className="p-6">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>이름</TableHead>
+                        <TableHead>이메일</TableHead>
+                        <TableHead>사용자명</TableHead>
+                        <TableHead>유형</TableHead>
+                        <TableHead>역할</TableHead>
+                        <TableHead>상태</TableHead>
+                        <TableHead>가입일</TableHead>
+                        <TableHead>작업</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredUsers.map((user: any) => (
+                        <TableRow key={user.id}>
+                          <TableCell className="font-medium">{user.name}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>{user.username}</TableCell>
+                          <TableCell>
+                            <Badge variant={user.userType === 'business' ? 'secondary' : 'outline'}>
+                              {user.userType === 'individual' ? '개인' : '기관'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <Badge variant={user.isAdmin ? 'default' : 'outline'}>
+                                {user.role === 'admin' ? '슈퍼관리자' : user.isAdmin ? '관리자' : '사용자'}
+                              </Badge>
+                              {user.isAdmin && <Shield className="h-4 w-4 text-primary" />}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={user.isActive ? 'default' : 'secondary'}>
+                              {user.isActive ? '활성' : '비활성'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {new Date(user.createdAt).toLocaleDateString('ko-KR')}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              {/* Toggle Active Status */}
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateUserStatus.mutate({ 
+                                  userId: user.id, 
+                                  isActive: !user.isActive 
+                                })}
+                                disabled={updateUserStatus.isPending}
+                                title={user.isActive ? "비활성화" : "활성화"}
+                              >
+                                {user.isActive ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+                              </Button>
+                              
+                              {/* Toggle Admin Role */}
+                              {user.role !== 'admin' && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => updateUserRole.mutate({ 
+                                    userId: user.id, 
+                                    role: user.isAdmin ? 'user' : 'admin',
+                                    isAdmin: !user.isAdmin
+                                  })}
+                                  disabled={updateUserRole.isPending}
+                                  title={user.isAdmin ? "관리자 해제" : "관리자 권한 부여"}
+                                >
+                                  {user.isAdmin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* User Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">전체 회원</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{usersData?.length || 0}</div>
+                  <p className="text-xs text-muted-foreground">등록된 회원 수</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">개인 회원</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {usersData?.filter((u: any) => u.userType === 'individual').length || 0}
+                  </div>
+                  <p className="text-xs text-muted-foreground">개인 회원</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">기관 회원</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {usersData?.filter((u: any) => u.userType === 'business').length || 0}
+                  </div>
+                  <p className="text-xs text-muted-foreground">기관 회원</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">관리자</CardTitle>
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {usersData?.filter((u: any) => u.isAdmin).length || 0}
+                  </div>
+                  <p className="text-xs text-muted-foreground">관리자 권한</p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Payments Tab */}
