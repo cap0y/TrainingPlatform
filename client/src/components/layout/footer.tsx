@@ -97,15 +97,15 @@ export default function Footer() {
             <ul className="space-y-3 text-gray-400">
               <li className="flex items-center">
                 <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
-                <span>02-1234-5678</span>
+                <span>055-772-2226</span>
               </li>
               <li className="flex items-center">
                 <Mail className="h-4 w-4 mr-2 flex-shrink-0" />
-                <span>info@eduplatform.kr</span>
+                <span>bkim@jinuchem.co.kr</span>
               </li>
               <li className="flex items-start">
                 <MapPin className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
-                <span>서울시 강남구 테헤란로 123<br />에듀타워 10층</span>
+                <span>경상남도 진주시 진주대로 501<br />창업보육센터 B동 202호</span>
               </li>
               <li className="flex items-center">
                 <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
