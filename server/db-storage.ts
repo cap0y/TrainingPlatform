@@ -279,9 +279,36 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async getPayments(userId?: number): Promise<Payment[]> {
+  async getPayments(userId?: number): Promise<any[]> {
     const whereClause = userId ? eq(payments.userId, userId) : undefined;
-    return await db.select().from(payments).where(whereClause).orderBy(desc(payments.createdAt));
+    return await db
+      .select({
+        id: payments.id,
+        userId: payments.userId,
+        courseId: payments.courseId,
+        amount: payments.amount,
+        status: payments.status,
+        paymentMethod: payments.paymentMethod,
+        transactionId: payments.transactionId,
+        createdAt: payments.createdAt,
+        user: {
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          username: users.username,
+        },
+        course: {
+          id: courses.id,
+          title: courses.title,
+          category: courses.category,
+          price: courses.price,
+        },
+      })
+      .from(payments)
+      .leftJoin(users, eq(payments.userId, users.id))
+      .leftJoin(courses, eq(payments.courseId, courses.id))
+      .where(whereClause)
+      .orderBy(desc(payments.createdAt));
   }
 
   async createPayment(paymentData: InsertPayment): Promise<Payment> {

@@ -140,4 +140,66 @@ export function registerAdminRoutes(app: Express) {
       res.status(500).json({ message: "사용자 삭제 중 오류가 발생했습니다." });
     }
   });
+
+  // 결제 목록 조회
+  app.get("/api/admin/payments", requireAdmin, async (req, res) => {
+    try {
+      const { status, userId, courseId, page = 1, limit = 50 } = req.query;
+      const payments = await storage.getPayments(
+        userId ? parseInt(userId as string) : undefined
+      );
+      
+      // 필터링
+      let filteredPayments = payments;
+      if (status && status !== 'all') {
+        filteredPayments = payments.filter(p => p.status === status);
+      }
+      if (courseId) {
+        filteredPayments = filteredPayments.filter(p => p.courseId === parseInt(courseId as string));
+      }
+
+      res.json({
+        payments: filteredPayments,
+        total: filteredPayments.length
+      });
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+      res.status(500).json({ message: "결제 목록 조회 중 오류가 발생했습니다." });
+    }
+  });
+
+  // 결제 상태 업데이트
+  app.put("/api/admin/payments/:paymentId/status", requireAdmin, async (req, res) => {
+    try {
+      const paymentId = parseInt(req.params.paymentId);
+      const { status } = req.body;
+
+      if (!["pending", "completed", "failed", "refunded"].includes(status)) {
+        return res.status(400).json({ message: "유효하지 않은 결제 상태입니다." });
+      }
+
+      const result = await storage.updatePayment(paymentId, { status });
+      res.json(result);
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+      res.status(500).json({ message: "결제 상태 업데이트 중 오류가 발생했습니다." });
+    }
+  });
+
+  // 환불 처리
+  app.post("/api/admin/payments/:paymentId/refund", requireAdmin, async (req, res) => {
+    try {
+      const paymentId = parseInt(req.params.paymentId);
+      const { reason } = req.body;
+
+      const result = await storage.updatePayment(paymentId, { 
+        status: "refunded",
+        refundReason: reason 
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error processing refund:", error);
+      res.status(500).json({ message: "환불 처리 중 오류가 발생했습니다." });
+    }
+  });
 }

@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Users, BookOpen, Calendar, CreditCard, Settings, Plus, Edit, Trash2, Check, X, Shield, ShieldOff } from "lucide-react";
+import { BarChart, Users, BookOpen, Calendar, CreditCard, Settings, Plus, Edit, Trash2, Check, X, Shield, ShieldOff, RefreshCw, DollarSign, TrendingUp, AlertCircle } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
@@ -28,6 +28,10 @@ export default function AdminPage() {
   const [editingCourse, setEditingCourse] = useState(null);
   const [editingNotice, setEditingNotice] = useState(null);
   const [userFilter, setUserFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
+  const [showRefundDialog, setShowRefundDialog] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [refundReason, setRefundReason] = useState("");
 
   // Redirect if not admin
   if (!user?.isAdmin) {
@@ -78,6 +82,11 @@ export default function AdminPage() {
   // Fetch users for management
   const { data: usersData, isLoading: usersLoading } = useQuery({
     queryKey: ["/api/admin/users"],
+  });
+
+  // Fetch payments for management
+  const { data: paymentsData, isLoading: paymentsLoading } = useQuery({
+    queryKey: ["/api/admin/payments"],
   });
 
   // Fetch instructors
@@ -202,6 +211,51 @@ export default function AdminPage() {
     },
   });
 
+  // Update payment status mutation
+  const updatePaymentStatus = useMutation({
+    mutationFn: async ({ paymentId, status }: { paymentId: number; status: string }) => {
+      return apiRequest("PUT", `/api/admin/payments/${paymentId}/status`, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/payments"] });
+      toast({
+        title: "성공",
+        description: "결제 상태가 업데이트되었습니다.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "오류",
+        description: "결제 상태 업데이트에 실패했습니다.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Process refund mutation
+  const processRefund = useMutation({
+    mutationFn: async ({ paymentId, reason }: { paymentId: number; reason: string }) => {
+      return apiRequest("POST", `/api/admin/payments/${paymentId}/refund`, { reason });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/payments"] });
+      setShowRefundDialog(false);
+      setSelectedPayment(null);
+      setRefundReason("");
+      toast({
+        title: "성공",
+        description: "환불이 처리되었습니다.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "오류",
+        description: "환불 처리에 실패했습니다.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const resetCourseForm = () => {
     setCourseForm({
       title: "",
@@ -241,6 +295,40 @@ export default function AdminPage() {
     if (userFilter === "inactive") return !user.isActive;
     return true;
   }) || [];
+
+  // Filter payments
+  const filteredPayments = paymentsData?.payments?.filter((payment: any) => {
+    if (paymentFilter === "all") return true;
+    if (paymentFilter === "pending") return payment.status === "pending";
+    if (paymentFilter === "completed") return payment.status === "completed";
+    if (paymentFilter === "failed") return payment.status === "failed";
+    if (paymentFilter === "refunded") return payment.status === "refunded";
+    return true;
+  }) || [];
+
+  // Payment statistics
+  const paymentStats = paymentsData?.payments ? {
+    total: paymentsData.payments.length,
+    completed: paymentsData.payments.filter((p: any) => p.status === "completed").length,
+    pending: paymentsData.payments.filter((p: any) => p.status === "pending").length,
+    failed: paymentsData.payments.filter((p: any) => p.status === "failed").length,
+    refunded: paymentsData.payments.filter((p: any) => p.status === "refunded").length,
+    totalRevenue: paymentsData.payments
+      .filter((p: any) => p.status === "completed")
+      .reduce((sum: number, p: any) => sum + Number(p.amount), 0)
+  } : {
+    total: 0,
+    completed: 0,
+    pending: 0,
+    failed: 0,
+    refunded: 0,
+    totalRevenue: 0
+  };
+
+  const handleRefund = (payment: any) => {
+    setSelectedPayment(payment);
+    setShowRefundDialog(true);
+  };
 
   const handleEditCourse = (course) => {
     setEditingCourse(course);
@@ -721,14 +809,211 @@ export default function AdminPage() {
 
           {/* Payments Tab */}
           <TabsContent value="payments" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>결제 관리</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">결제 관리 기능이 구현될 예정입니다.</p>
-              </CardContent>
-            </Card>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">결제 관리</h2>
+              <div className="flex items-center space-x-4">
+                <Select value={paymentFilter} onValueChange={setPaymentFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="상태 필터" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">전체 결제</SelectItem>
+                    <SelectItem value="completed">완료</SelectItem>
+                    <SelectItem value="pending">대기중</SelectItem>
+                    <SelectItem value="failed">실패</SelectItem>
+                    <SelectItem value="refunded">환불</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Payment Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">전체 결제</CardTitle>
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{paymentStats.total}</div>
+                  <p className="text-xs text-muted-foreground">총 결제 건수</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">완료</CardTitle>
+                  <Check className="h-4 w-4 text-green-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">{paymentStats.completed}</div>
+                  <p className="text-xs text-muted-foreground">완료된 결제</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">대기중</CardTitle>
+                  <RefreshCw className="h-4 w-4 text-yellow-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-yellow-600">{paymentStats.pending}</div>
+                  <p className="text-xs text-muted-foreground">처리 대기중</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">실패/환불</CardTitle>
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-red-600">{paymentStats.failed + paymentStats.refunded}</div>
+                  <p className="text-xs text-muted-foreground">실패 및 환불</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">총 매출</CardTitle>
+                  <DollarSign className="h-4 w-4 text-green-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">
+                    {paymentStats.totalRevenue.toLocaleString()}원
+                  </div>
+                  <p className="text-xs text-muted-foreground">완료된 결제 총액</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {paymentsLoading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Card key={i} className="animate-pulse">
+                    <CardContent className="p-6">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>결제 ID</TableHead>
+                        <TableHead>사용자</TableHead>
+                        <TableHead>과정</TableHead>
+                        <TableHead>금액</TableHead>
+                        <TableHead>결제 방법</TableHead>
+                        <TableHead>상태</TableHead>
+                        <TableHead>결제일</TableHead>
+                        <TableHead>작업</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredPayments.map((payment: any) => (
+                        <TableRow key={payment.id}>
+                          <TableCell className="font-medium">#{payment.id}</TableCell>
+                          <TableCell>
+                            {payment.user ? (
+                              <div>
+                                <div className="font-medium">{payment.user.name}</div>
+                                <div className="text-sm text-gray-500">{payment.user.email}</div>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">사용자 정보 없음</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {payment.course ? (
+                              <div>
+                                <div className="font-medium">{payment.course.title}</div>
+                                <div className="text-sm text-gray-500">{payment.course.category}</div>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">과정 정보 없음</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {Number(payment.amount).toLocaleString()}원
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">
+                              {payment.paymentMethod || "미지정"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant={
+                                payment.status === 'completed' ? 'default' : 
+                                payment.status === 'pending' ? 'secondary' : 
+                                payment.status === 'failed' ? 'destructive' : 
+                                'outline'
+                              }
+                            >
+                              {payment.status === 'completed' ? '완료' :
+                               payment.status === 'pending' ? '대기중' :
+                               payment.status === 'failed' ? '실패' :
+                               payment.status === 'refunded' ? '환불' : payment.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {new Date(payment.createdAt).toLocaleDateString('ko-KR')}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              {payment.status === 'pending' && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => updatePaymentStatus.mutate({ 
+                                      paymentId: payment.id, 
+                                      status: 'completed' 
+                                    })}
+                                    disabled={updatePaymentStatus.isPending}
+                                    title="결제 승인"
+                                  >
+                                    <Check className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => updatePaymentStatus.mutate({ 
+                                      paymentId: payment.id, 
+                                      status: 'failed' 
+                                    })}
+                                    disabled={updatePaymentStatus.isPending}
+                                    title="결제 실패 처리"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </>
+                              )}
+                              {payment.status === 'completed' && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleRefund(payment)}
+                                  disabled={processRefund.isPending}
+                                  title="환불 처리"
+                                >
+                                  <RefreshCw className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>
@@ -929,6 +1214,54 @@ export default function AdminPage() {
               disabled={noticeMutation.isPending}
             >
               {noticeMutation.isPending ? "처리 중..." : editingNotice ? "수정" : "작성"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Refund Dialog */}
+      <Dialog open={showRefundDialog} onOpenChange={setShowRefundDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>환불 처리</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            {selectedPayment && (
+              <div className="space-y-2">
+                <p><strong>결제 ID:</strong> #{selectedPayment.id}</p>
+                <p><strong>사용자:</strong> {selectedPayment.user?.name}</p>
+                <p><strong>과정:</strong> {selectedPayment.course?.title}</p>
+                <p><strong>금액:</strong> {Number(selectedPayment.amount).toLocaleString()}원</p>
+              </div>
+            )}
+            
+            <div>
+              <Label htmlFor="refundReason">환불 사유</Label>
+              <Textarea
+                id="refundReason"
+                value={refundReason}
+                onChange={(e) => setRefundReason(e.target.value)}
+                placeholder="환불 사유를 입력해주세요..."
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setShowRefundDialog(false);
+              setSelectedPayment(null);
+              setRefundReason("");
+            }}>
+              취소
+            </Button>
+            <Button 
+              onClick={() => selectedPayment && processRefund.mutate({
+                paymentId: selectedPayment.id,
+                reason: refundReason
+              })}
+              disabled={processRefund.isPending || !refundReason.trim()}
+            >
+              {processRefund.isPending ? "처리 중..." : "환불 처리"}
             </Button>
           </DialogFooter>
         </DialogContent>

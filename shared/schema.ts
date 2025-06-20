@@ -163,9 +163,10 @@ export const payments = pgTable("payments", {
   userId: integer("user_id").references(() => users.id).notNull(),
   courseId: integer("course_id").references(() => courses.id),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
-  status: text("status").notNull().default("pending"), // pending, completed, failed
+  status: text("status").notNull().default("pending"), // pending, completed, failed, refunded
   paymentMethod: text("payment_method"),
   transactionId: text("transaction_id"),
+  refundReason: text("refund_reason"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
