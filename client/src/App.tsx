@@ -26,6 +26,9 @@ import AdminPage from "@/pages/admin-page";
 import MyPage from "@/pages/my-page";
 import AllTrainingProgramsPage from "@/pages/all-training-programs-page";
 import EnhancedAdminPage from "@/pages/enhanced-admin-page";
+import BusinessDashboardPage from "@/pages/business-dashboard-page";
+import SuperAdminPage from "@/pages/super-admin-page";
+import BusinessRegistrationPage from "@/pages/business-registration-page";
 import EnhancedHelpCenterPage from "@/pages/enhanced-help-center-page";
 import EnhancedNoticePage from "@/pages/enhanced-notice-page";
 import NotFound from "@/pages/not-found";
@@ -52,6 +55,8 @@ function Router() {
       <ProtectedRoute path="/all-training-programs" component={AllTrainingProgramsPage} />
       <ProtectedRoute path="/admin" component={AdminPage} />
       <ProtectedRoute path="/enhanced-admin" component={EnhancedAdminPage} />
+      <ProtectedRoute path="/business-dashboard" component={BusinessDashboardPage} />
+      <ProtectedRoute path="/super-admin" component={SuperAdminPage} />
       <ProtectedRoute path="/enhanced-help" component={EnhancedHelpCenterPage} />
       <ProtectedRoute path="/enhanced-notice" component={EnhancedNoticePage} />
       <ProtectedRoute path="/mypage" component={MyPage} />

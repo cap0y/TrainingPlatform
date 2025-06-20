@@ -11,8 +11,12 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   phone: text("phone"),
   userType: text("user_type").notNull().default("individual"), // individual, business
-  businessName: text("business_name"),
+  role: text("role").default("user"), // user, business, admin
+  organizationName: text("organization_name"),
   businessNumber: text("business_number"),
+  representativeName: text("representative_name"),
+  address: text("address"),
+  isApproved: boolean("is_approved").default(false), // 기관/사업자 승인 여부
   isAdmin: boolean("is_admin").default(false),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
@@ -28,15 +32,18 @@ export const courses = pgTable("courses", {
   type: text("type").notNull(), // online, offline, blended
   level: text("level").notNull(), // beginner, intermediate, advanced
   credit: integer("credit").notNull(),
-  price: text("price").notNull(),
-  discountPrice: text("discount_price"),
-  duration: integer("duration").notNull(), // hours
+  price: integer("price").notNull(),
+  discountPrice: integer("discount_price"),
+  duration: text("duration").notNull(),
   maxStudents: integer("max_students"),
   enrolledCount: integer("enrolled_count").default(0),
+  providerId: integer("provider_id").references(() => users.id), // 강의 제공자 (기관/사업자)
   startDate: timestamp("start_date"),
   endDate: timestamp("end_date"),
   instructorId: integer("instructor_id").references(() => instructors.id),
   imageUrl: text("image_url"),
+  status: text("status").default("pending"), // active, inactive, pending
+  approvalStatus: text("approval_status").default("pending"), // pending, approved, rejected
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

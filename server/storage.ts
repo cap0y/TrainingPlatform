@@ -11,6 +11,9 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
+  getAllUsers(): Promise<User[]>;
+  getPendingBusinesses(): Promise<User[]>;
+  updateBusinessApproval(businessId: number, action: string, reason?: string): Promise<User | undefined>;
   
   // Course management
   getCourses(filters?: {
@@ -25,6 +28,9 @@ export interface IStorage {
   createCourse(course: InsertCourse): Promise<Course>;
   updateCourse(id: number, course: Partial<InsertCourse>): Promise<Course | undefined>;
   deleteCourse(id: number): Promise<void>;
+  getCoursesByProvider(providerId: number): Promise<Course[]>;
+  getPendingCourses(): Promise<Course[]>;
+  updateCourseApproval(courseId: number, action: string, reason?: string): Promise<Course | undefined>;
   
   // Instructor management
   getInstructors(): Promise<Instructor[]>;
@@ -62,6 +68,9 @@ export interface IStorage {
   getPayments(userId?: number): Promise<Payment[]>;
   createPayment(payment: InsertPayment): Promise<Payment>;
   updatePayment(id: number, payment: Partial<InsertPayment>): Promise<Payment | undefined>;
+  
+  // Admin management
+  getDashboardStats(): Promise<any>;
   
   // Session store
   sessionStore: any;
@@ -317,7 +326,8 @@ export class MemStorage implements IStorage {
       id,
       ...courseData,
       enrolledCount: 0,
-      status: "active",
+      status: courseData.providerId ? "pending" : "active",
+      approvalStatus: courseData.providerId ? "pending" : "approved",
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
