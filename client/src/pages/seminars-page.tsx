@@ -19,9 +19,9 @@ export default function SeminarsPage() {
   const [selectedSeminar, setSelectedSeminar] = useState(null);
   const [showRegistrationDialog, setShowRegistrationDialog] = useState(false);
   const [filters, setFilters] = useState({
-    type: "",
+    type: "all",
     search: "",
-    month: "",
+    month: "all",
   });
 
   // Fetch seminars
@@ -66,7 +66,7 @@ export default function SeminarsPage() {
   };
 
   const filteredSeminars = seminars?.filter(seminar => {
-    const matchesType = !filters.type || seminar.type === filters.type;
+    const matchesType = filters.type === "all" || seminar.type === filters.type;
     const matchesSearch = !filters.search || 
       seminar.title.toLowerCase().includes(filters.search.toLowerCase()) ||
       seminar.description?.toLowerCase().includes(filters.search.toLowerCase());
@@ -99,7 +99,7 @@ export default function SeminarsPage() {
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">전체</SelectItem>
+                    <SelectItem value="all">전체</SelectItem>
                     <SelectItem value="online">온라인</SelectItem>
                     <SelectItem value="offline">오프라인</SelectItem>
                   </SelectContent>
@@ -115,7 +115,7 @@ export default function SeminarsPage() {
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">전체</SelectItem>
+                    <SelectItem value="all">전체</SelectItem>
                     {Array.from({ length: 12 }, (_, i) => (
                       <SelectItem key={i + 1} value={String(i + 1)}>
                         {i + 1}월

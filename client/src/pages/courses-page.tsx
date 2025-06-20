@@ -10,9 +10,10 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function CoursesPage() {
   const [filters, setFilters] = useState({
-    category: "",
-    type: "",
-    level: "",
+    category: "all",
+    type: "all", 
+    level: "all",
+    credit: "all",
     search: "",
     page: 1,
     limit: 12,
@@ -40,13 +41,29 @@ export default function CoursesPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">연수과정</h1>
-          <div className="text-sm text-gray-600">
-            총 {coursesData?.total || 0}개 과정
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 overflow-hidden">
+        <div className="absolute inset-0 opacity-25">
+          <img 
+            src="/attached_assets/5c3b6edcb4dc90068fe0fa39e6431805_1750405130302.jpg" 
+            alt="Training Courses"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="relative container mx-auto px-4">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-4">연수과정</h1>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              전문성 향상을 위한 다양한 연수과정을 만나보세요. 체계적인 교육과정으로 역량을 강화하실 수 있습니다.
+            </p>
+            <div className="text-lg font-medium">
+              총 {coursesData?.total || 0}개 과정
+            </div>
           </div>
         </div>
+      </section>
+
+      <div className="container mx-auto px-4 py-8">
 
         {/* Filters */}
         <Card className="mb-8">
@@ -61,12 +78,12 @@ export default function CoursesPage() {
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">전체</SelectItem>
-                    <SelectItem value="교육학">교육학</SelectItem>
-                    <SelectItem value="심리학">심리학</SelectItem>
-                    <SelectItem value="교수법">교수법</SelectItem>
-                    <SelectItem value="교육정책">교육정책</SelectItem>
-                    <SelectItem value="교육평가">교육평가</SelectItem>
+                    <SelectItem value="all">전체</SelectItem>
+                    <SelectItem value="education">교육학</SelectItem>
+                    <SelectItem value="psychology">심리학</SelectItem>
+                    <SelectItem value="teaching">교수법</SelectItem>
+                    <SelectItem value="policy">교육정책</SelectItem>
+                    <SelectItem value="evaluation">교육평가</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -80,7 +97,7 @@ export default function CoursesPage() {
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">전체</SelectItem>
+                    <SelectItem value="all">전체</SelectItem>
                     <SelectItem value="online">온라인</SelectItem>
                     <SelectItem value="offline">오프라인</SelectItem>
                     <SelectItem value="blended">블렌디드</SelectItem>
@@ -97,7 +114,7 @@ export default function CoursesPage() {
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">전체</SelectItem>
+                    <SelectItem value="all">전체</SelectItem>
                     <SelectItem value="beginner">초급</SelectItem>
                     <SelectItem value="intermediate">중급</SelectItem>
                     <SelectItem value="advanced">고급</SelectItem>
@@ -114,7 +131,7 @@ export default function CoursesPage() {
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">전체</SelectItem>
+                    <SelectItem value="all">전체</SelectItem>
                     <SelectItem value="1">1학점</SelectItem>
                     <SelectItem value="2">2학점</SelectItem>
                     <SelectItem value="3">3학점</SelectItem>
@@ -162,7 +179,7 @@ export default function CoursesPage() {
             <Button 
               variant="outline" 
               className="mt-4"
-              onClick={() => setFilters({ category: "", type: "", level: "", search: "", page: 1, limit: 12 })}
+              onClick={() => setFilters({ category: "all", type: "all", level: "all", credit: "all", search: "", page: 1, limit: 12 })}
             >
               전체 보기
             </Button>
