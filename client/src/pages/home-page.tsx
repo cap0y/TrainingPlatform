@@ -81,10 +81,7 @@ export default function HomePage() {
       {/* Training Programs Slideshow */}
       <section className="py-16 bg-gradient-to-r from-gray-50 to-white ml-[0px] mr-[0px] pl-[0px] pr-[0px] pt-[9px] pb-[9px]">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">다양한 연수 프로그램</h2>
-            <p className="text-gray-600 text-lg">전문성 향상을 위한 체계적인 교육과정을 만나보세요</p>
-          </div>
+
           
           <div className="relative overflow-hidden rounded-2xl shadow-2xl">
             <div className="flex animate-slide">
