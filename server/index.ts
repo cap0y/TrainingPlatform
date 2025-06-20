@@ -1,6 +1,9 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupAuth } from "./auth";
+import { setupWebSocket } from "./websocket";
+import { seedDatabase } from "./seed";
 
 const app = express();
 app.use(express.json());
