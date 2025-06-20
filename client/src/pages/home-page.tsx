@@ -743,6 +743,101 @@ export default function HomePage() {
 
         </div>
       </section>
+      {/* Notice Section */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">공지사항</h2>
+              <p className="text-gray-600">중요한 공지사항과 업데이트 소식을 확인하세요</p>
+            </div>
+            <Link href="/notices">
+              <Button variant="outline" size="lg">더보기</Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Notice List */}
+            <Card className="p-6 bg-white">
+              <CardHeader className="p-0 mb-4">
+                <CardTitle className="flex items-center space-x-2">
+                  <Bell className="h-5 w-5 text-blue-600" />
+                  <span>최신 공지사항</span>
+                </CardTitle>
+              </CardHeader>
+              <div className="space-y-3">
+                {[
+                  { type: "공지", title: "2025년 하계 연수 일정 안내", date: "2025.06.15", urgent: true },
+                  { type: "안내", title: "교육부 인정 연수 과정 업데이트 안내", date: "2025.06.10", urgent: false },
+                  { type: "공지", title: "연수 플랫폼 서비스 개선 안내", date: "2025.06.05", urgent: true },
+                  { type: "안내", title: "하계 휴원 참가 신청 마감 연장", date: "2025.06.01", urgent: false }
+                ].map((notice, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                    <div className="flex items-center space-x-3">
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        notice.urgent 
+                          ? 'bg-red-100 text-red-600' 
+                          : 'bg-blue-100 text-blue-600'
+                      }`}>
+                        {notice.type}
+                      </span>
+                      <span className="text-sm font-medium">{notice.title}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs text-gray-500">{notice.date}</span>
+                      <ArrowRight className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Customer Service Center */}
+            <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
+              <CardHeader className="p-0 mb-6">
+                <CardTitle className="flex items-center justify-center space-x-2 text-center">
+                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                    <Headphones className="h-6 w-6 text-white" />
+                  </div>
+                </CardTitle>
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">연수 상담 센터</h3>
+                  <p className="text-sm text-gray-600 mb-4">평일 09:00 - 18:00 (점심시간 12:00 - 13:00)</p>
+                </div>
+              </CardHeader>
+              
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg">
+                  <Phone className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <div className="text-sm text-gray-600">전화 문의</div>
+                    <div className="font-semibold text-gray-900">02-1234-5678</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg">
+                  <Mail className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <div className="text-sm text-gray-600">이메일 문의</div>
+                    <div className="font-semibold text-gray-900">support@eduplatform.kr</div>
+                  </div>
+                </div>
+
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  실시간 상담 시작하기
+                </Button>
+
+                <Button variant="outline" className="w-full">
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  자주 묻는 질문 FAQ
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Customer Support */}
       <section className="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="container mx-auto px-4">
