@@ -39,6 +39,7 @@ interface Notice {
 export default function HomePage() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [activeTab, setActiveTab] = useState("popular");
+  const [selectedSeminarCategory, setSelectedSeminarCategory] = useState("전체");
 
   const { data: coursesData, isLoading: coursesLoading } = useQuery<{ courses: Course[]; total: number }>({
     queryKey: ["/api/courses"],
@@ -47,6 +48,75 @@ export default function HomePage() {
   const { data: noticesData, isLoading: noticesLoading } = useQuery<{ notices: Notice[] }>({
     queryKey: ["/api/notices"],
   });
+
+  // All seminar events data
+  const allSeminarEvents = [
+    {
+      id: 1,
+      title: "2025 한국교육학회 춘계학술대회",
+      date: "2025.07.15-16",
+      location: "서울대학교",
+      type: "교육학회",
+      participants: 500,
+      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop",
+      featured: true
+    },
+    {
+      id: 2,
+      title: "디지털 교육혁신 국제 컨퍼런스",
+      date: "2025.08.10",
+      location: "온라인",
+      type: "AI 컨퍼런스",
+      participants: 1200,
+      image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=300&h=200&fit=crop",
+      featured: true
+    },
+    {
+      id: 3,
+      title: "AI와 교육의 미래 심포지엄",
+      date: "2025.08.25",
+      location: "COEX",
+      type: "심포지엄",
+      participants: 300,
+      image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop",
+      featured: false
+    },
+    {
+      id: 4,
+      title: "창의교육 실무 워크샵",
+      date: "2025.09.05",
+      location: "경기대학교",
+      type: "워크샵",
+      participants: 150,
+      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop",
+      featured: false
+    },
+    {
+      id: 5,
+      title: "글로벌 교육정책 국제행사",
+      date: "2025.09.20",
+      location: "부산 BEXCO",
+      type: "국제행사",
+      participants: 800,
+      image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300&h=200&fit=crop",
+      featured: true
+    },
+    {
+      id: 6,
+      title: "온라인 수업설계 세미나",
+      date: "2025.10.10",
+      location: "온라인",
+      type: "온라인세미나",
+      participants: 2000,
+      image: "https://images.unsplash.com/photo-1552581234-26160f608093?w=300&h=200&fit=crop",
+      featured: false
+    }
+  ];
+
+  // Filter seminars based on selected category
+  const filteredSeminars = selectedSeminarCategory === "전체" 
+    ? allSeminarEvents 
+    : allSeminarEvents.filter(event => event.type === selectedSeminarCategory);
 
   return (
     <div className="min-h-screen bg-white">
@@ -530,8 +600,24 @@ export default function HomePage() {
 
           {/* Seminar Categories */}
           <div className="flex justify-center mb-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 max-w-3xl">
-              <div className="text-center cursor-pointer">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 max-w-4xl">
+              <div 
+                className={`text-center cursor-pointer ${selectedSeminarCategory === "전체" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedSeminarCategory("전체")}
+              >
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                  <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <Globe className="h-8 w-8 text-white" />
+                  </div>
+                  {selectedSeminarCategory === "전체" && <div className="absolute inset-0 ring-2 ring-blue-500 rounded-full"></div>}
+                </div>
+                <div className="font-medium text-gray-800 text-sm">전체</div>
+              </div>
+
+              <div 
+                className={`text-center cursor-pointer ${selectedSeminarCategory === "교육학회" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedSeminarCategory("교육학회")}
+              >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center"
@@ -539,11 +625,15 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-blue-600 bg-opacity-10"></div>
+                  {selectedSeminarCategory === "교육학회" && <div className="absolute inset-0 ring-2 ring-blue-500 rounded-full"></div>}
                 </div>
                 <div className="font-medium text-gray-800 text-sm">교육학회</div>
               </div>
 
-              <div className="text-center cursor-pointer">
+              <div 
+                className={`text-center cursor-pointer ${selectedSeminarCategory === "AI 컨퍼런스" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedSeminarCategory("AI 컨퍼런스")}
+              >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=120&h=120&fit=crop&crop=center"
@@ -551,11 +641,15 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-purple-600 bg-opacity-10"></div>
+                  {selectedSeminarCategory === "AI 컨퍼런스" && <div className="absolute inset-0 ring-2 ring-purple-500 rounded-full"></div>}
                 </div>
                 <div className="font-medium text-gray-800 text-sm">AI 컨퍼런스</div>
               </div>
 
-              <div className="text-center cursor-pointer">
+              <div 
+                className={`text-center cursor-pointer ${selectedSeminarCategory === "워크샵" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedSeminarCategory("워크샵")}
+              >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop&crop=center"
@@ -563,11 +657,15 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-green-600 bg-opacity-10"></div>
+                  {selectedSeminarCategory === "워크샵" && <div className="absolute inset-0 ring-2 ring-green-500 rounded-full"></div>}
                 </div>
                 <div className="font-medium text-gray-800 text-sm">워크샵</div>
               </div>
 
-              <div className="text-center cursor-pointer">
+              <div 
+                className={`text-center cursor-pointer ${selectedSeminarCategory === "심포지엄" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedSeminarCategory("심포지엄")}
+              >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1559223607-a43c3004071b?w=120&h=120&fit=crop&crop=center"
@@ -575,11 +673,15 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-orange-600 bg-opacity-10"></div>
+                  {selectedSeminarCategory === "심포지엄" && <div className="absolute inset-0 ring-2 ring-orange-500 rounded-full"></div>}
                 </div>
                 <div className="font-medium text-gray-800 text-sm">심포지엄</div>
               </div>
 
-              <div className="text-center cursor-pointer">
+              <div 
+                className={`text-center cursor-pointer ${selectedSeminarCategory === "국제행사" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedSeminarCategory("국제행사")}
+              >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=120&h=120&fit=crop&crop=center"
@@ -587,11 +689,15 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-red-600 bg-opacity-10"></div>
+                  {selectedSeminarCategory === "국제행사" && <div className="absolute inset-0 ring-2 ring-red-500 rounded-full"></div>}
                 </div>
                 <div className="font-medium text-gray-800 text-sm">국제행사</div>
               </div>
 
-              <div className="text-center cursor-pointer">
+              <div 
+                className={`text-center cursor-pointer ${selectedSeminarCategory === "온라인세미나" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedSeminarCategory("온라인세미나")}
+              >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1552581234-26160f608093?w=120&h=120&fit=crop&crop=center"
@@ -599,6 +705,7 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-indigo-600 bg-opacity-10"></div>
+                  {selectedSeminarCategory === "온라인세미나" && <div className="absolute inset-0 ring-2 ring-indigo-500 rounded-full"></div>}
                 </div>
                 <div className="font-medium text-gray-800 text-sm">온라인세미나</div>
               </div>
@@ -606,38 +713,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {[
-              {
-                id: 1,
-                title: "2025 한국교육학회 춘계학술대회",
-                date: "2025.07.15-16",
-                location: "서울대학교",
-                type: "학회",
-                participants: 500,
-                image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop",
-                featured: true
-              },
-              {
-                id: 2,
-                title: "디지털 교육혁신 국제 컨퍼런스",
-                date: "2025.08.10",
-                location: "온라인",
-                type: "컨퍼런스",
-                participants: 1200,
-                image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=300&h=200&fit=crop",
-                featured: true
-              },
-              {
-                id: 3,
-                title: "AI와 교육의 미래 심포지엄",
-                date: "2025.08.25",
-                location: "COEX",
-                type: "심포지엄",
-                participants: 300,
-                image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop",
-                featured: false
-              }
-            ].map((event) => (
+            {filteredSeminars.map((event) => (
               <Card key={event.id} className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${event.featured ? 'border-2 border-yellow-400' : ''}`}>
                 <div className="relative">
                   <img src={event.image} alt={event.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
