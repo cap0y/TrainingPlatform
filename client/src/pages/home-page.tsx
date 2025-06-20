@@ -72,7 +72,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/seminars">
-                <Button size="md" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-6 py-3 text-base font-semibold">
+                <Button size="md" variant="outline" className="border-white text-white bg-white/20 px-6 py-3 text-base font-semibold">
                   세미나 신청
                 </Button>
               </Link>
@@ -191,86 +191,86 @@ export default function HomePage() {
           <div className="flex justify-center">
             <div className="grid grid-cols-3 md:grid-cols-6 gap-8 max-w-4xl">
               <Link href="/training-courses?category=법정의무교육">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                <div className="text-center cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img 
                       src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=center" 
                       alt="법정의무교육"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-blue-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-blue-600 bg-opacity-10"></div>
                   </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-blue-600 transition-colors">법정교육</div>
+                  <div className="font-medium text-gray-800 text-sm">법정교육</div>
                 </div>
               </Link>
 
               <Link href="/professional-development">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                <div className="text-center cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img 
                       src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=120&h=120&fit=crop&crop=center" 
                       alt="전문성강화교육"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-purple-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-purple-600 bg-opacity-10"></div>
                   </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-purple-600 transition-colors">전문성강화</div>
+                  <div className="font-medium text-gray-800 text-sm">전문성강화</div>
                 </div>
               </Link>
 
               <Link href="/certificate-courses">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                <div className="text-center cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img 
                       src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=120&h=120&fit=crop&crop=center" 
                       alt="자격증과정"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-green-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-green-600 bg-opacity-10"></div>
                   </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-green-600 transition-colors">자격증</div>
+                  <div className="font-medium text-gray-800 text-sm">자격증</div>
                 </div>
               </Link>
 
               <Link href="/seminars">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                <div className="text-center cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img 
                       src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center" 
                       alt="세미나"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-yellow-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-yellow-600 bg-opacity-10"></div>
                   </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-yellow-600 transition-colors">세미나</div>
+                  <div className="font-medium text-gray-800 text-sm">세미나</div>
                 </div>
               </Link>
 
               <Link href="/study-abroad">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                <div className="text-center cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img 
                       src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=120&h=120&fit=crop&crop=center" 
                       alt="해외연수"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-red-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-red-600 bg-opacity-10"></div>
                   </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-red-600 transition-colors">해외연수</div>
+                  <div className="font-medium text-gray-800 text-sm">해외연수</div>
                 </div>
               </Link>
 
               <Link href="/help">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                <div className="text-center cursor-pointer">
+                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img 
                       src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=120&h=120&fit=crop&crop=center" 
                       alt="고객센터"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-indigo-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-indigo-600 bg-opacity-10"></div>
                   </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-indigo-600 transition-colors">고객센터</div>
+                  <div className="font-medium text-gray-800 text-sm">고객센터</div>
                 </div>
               </Link>
             </div>
@@ -447,76 +447,76 @@ export default function HomePage() {
           {/* Seminar Categories */}
           <div className="flex justify-center mb-8">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 max-w-3xl">
-              <div className="text-center group cursor-pointer">
-                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+              <div className="text-center cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center"
                     alt="교육학회"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-blue-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-blue-600 bg-opacity-10"></div>
                 </div>
-                <div className="font-medium text-gray-800 text-sm group-hover:text-blue-600 transition-colors">교육학회</div>
+                <div className="font-medium text-gray-800 text-sm">교육학회</div>
               </div>
 
-              <div className="text-center group cursor-pointer">
-                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+              <div className="text-center cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=120&h=120&fit=crop&crop=center"
                     alt="AI 컨퍼런스"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-purple-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-purple-600 bg-opacity-10"></div>
                 </div>
-                <div className="font-medium text-gray-800 text-sm group-hover:text-purple-600 transition-colors">AI 컨퍼런스</div>
+                <div className="font-medium text-gray-800 text-sm">AI 컨퍼런스</div>
               </div>
 
-              <div className="text-center group cursor-pointer">
-                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+              <div className="text-center cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop&crop=center"
                     alt="워크샵"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-green-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-green-600 bg-opacity-10"></div>
                 </div>
-                <div className="font-medium text-gray-800 text-sm group-hover:text-green-600 transition-colors">워크샵</div>
+                <div className="font-medium text-gray-800 text-sm">워크샵</div>
               </div>
 
-              <div className="text-center group cursor-pointer">
-                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+              <div className="text-center cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1559223607-a43c3004071b?w=120&h=120&fit=crop&crop=center"
                     alt="심포지엄"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-orange-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-orange-600 bg-opacity-10"></div>
                 </div>
-                <div className="font-medium text-gray-800 text-sm group-hover:text-orange-600 transition-colors">심포지엄</div>
+                <div className="font-medium text-gray-800 text-sm">심포지엄</div>
               </div>
 
-              <div className="text-center group cursor-pointer">
-                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+              <div className="text-center cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=120&h=120&fit=crop&crop=center"
                     alt="국제행사"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-red-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-red-600 bg-opacity-10"></div>
                 </div>
-                <div className="font-medium text-gray-800 text-sm group-hover:text-red-600 transition-colors">국제행사</div>
+                <div className="font-medium text-gray-800 text-sm">국제행사</div>
               </div>
 
-              <div className="text-center group cursor-pointer">
-                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+              <div className="text-center cursor-pointer">
+                <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1552581234-26160f608093?w=120&h=120&fit=crop&crop=center"
                     alt="온라인세미나"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-indigo-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-indigo-600 bg-opacity-10"></div>
                 </div>
-                <div className="font-medium text-gray-800 text-sm group-hover:text-indigo-600 transition-colors">온라인세미나</div>
+                <div className="font-medium text-gray-800 text-sm">온라인세미나</div>
               </div>
             </div>
           </div>
