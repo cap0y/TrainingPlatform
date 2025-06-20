@@ -84,13 +84,6 @@ export default function ProfessionalDevelopmentPage() {
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-purple-600 to-purple-800 text-white py-16 overflow-hidden">
-        <div className="absolute inset-0 opacity-25">
-          <img 
-            src="/uploads/images/f6cd9b1fc9e4bcb321d6de9fb9e3c914_1750405130301.jpg" 
-            alt="Professional Development Brain"
-            className="w-full h-full object-cover"
-          />
-        </div>
         <div className="relative container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">전문성 강화교육</h1>
