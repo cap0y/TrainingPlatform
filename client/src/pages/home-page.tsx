@@ -51,7 +51,6 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <Header onNotificationClick={() => setShowNotifications(true)} />
-      
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
@@ -80,9 +79,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* Training Programs Slideshow */}
-      <section className="py-16 bg-gradient-to-r from-gray-50 to-white">
+      <section className="py-16 bg-gradient-to-r from-gray-50 to-white ml-[0px] mr-[0px] pl-[0px] pr-[0px] pt-[9px] pb-[9px]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">다양한 연수 프로그램</h2>
@@ -333,7 +331,6 @@ export default function HomePage() {
 
         </div>
       </section>
-
       {/* Categories Section with Circular Images */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
@@ -427,7 +424,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* Popular Courses with Tabs */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -582,7 +578,6 @@ export default function HomePage() {
           </Tabs>
         </div>
       </section>
-
       {/* Upcoming Seminars & Conferences */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
@@ -748,7 +743,6 @@ export default function HomePage() {
 
         </div>
       </section>
-
       {/* Customer Support */}
       <section className="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="container mx-auto px-4">
@@ -842,7 +836,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       <Footer />
       <ChatWidget />
       {showNotifications && <NotificationPanel onClose={() => setShowNotifications(false)} />}
