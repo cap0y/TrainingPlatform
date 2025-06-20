@@ -298,7 +298,7 @@ export default function BusinessDashboardPage() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="dashboard">대시보드</TabsTrigger>
-            <TabsTrigger value="courses">내 강의 관리</TabsTrigger>
+            <TabsTrigger value="courses">강의 관리</TabsTrigger>
             <TabsTrigger value="students">수강생 관리</TabsTrigger>
             <TabsTrigger value="analytics">분석</TabsTrigger>
           </TabsList>
@@ -388,7 +388,7 @@ export default function BusinessDashboardPage() {
 
           {/* Courses Management Tab */}
           <TabsContent value="courses" className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
@@ -404,12 +404,16 @@ export default function BusinessDashboardPage() {
                   필터
                 </Button>
               </div>
-              <Button onClick={() => {
-                resetCourseForm();
-                setShowCourseDialog(true);
-              }} disabled={!user?.isApproved}>
+              <Button 
+                onClick={() => {
+                  resetCourseForm();
+                  setShowCourseDialog(true);
+                }} 
+                disabled={!user?.isApproved}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+              >
                 <Plus className="h-4 w-4 mr-2" />
-                새 강의 등록
+                새 강의 등록 (4개 탭 편집)
               </Button>
             </div>
 
@@ -556,6 +560,12 @@ export default function BusinessDashboardPage() {
               {editingCourse ? "강의 정보를 수정하세요." : "새로운 강의를 등록하세요. 관리자 승인 후 공개됩니다."}
             </DialogDescription>
           </DialogHeader>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <p className="text-blue-800 text-sm font-medium">
+              📝 상세 편집 폼: 아래 4개 탭에서 강의의 모든 정보를 편집할 수 있습니다
+            </p>
+          </div>
           
           <Tabs defaultValue="basic" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
