@@ -24,6 +24,10 @@ import StudyAbroadPage from "@/pages/study-abroad-page";
 import TrainingApplicationPage from "@/pages/training-application-page";
 import AdminPage from "@/pages/admin-page";
 import MyPage from "@/pages/my-page";
+import AllTrainingProgramsPage from "@/pages/all-training-programs-page";
+import EnhancedAdminPage from "@/pages/enhanced-admin-page";
+import EnhancedHelpCenterPage from "@/pages/enhanced-help-center-page";
+import EnhancedNoticePage from "@/pages/enhanced-notice-page";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -45,7 +49,11 @@ function Router() {
       <ProtectedRoute path="/help" component={HelpCenterPage} />
       <ProtectedRoute path="/study-abroad" component={StudyAbroadPage} />
       <ProtectedRoute path="/training-application" component={TrainingApplicationPage} />
+      <ProtectedRoute path="/all-training-programs" component={AllTrainingProgramsPage} />
       <ProtectedRoute path="/admin" component={AdminPage} />
+      <ProtectedRoute path="/enhanced-admin" component={EnhancedAdminPage} />
+      <ProtectedRoute path="/enhanced-help" component={EnhancedHelpCenterPage} />
+      <ProtectedRoute path="/enhanced-notice" component={EnhancedNoticePage} />
       <ProtectedRoute path="/mypage" component={MyPage} />
       <Route component={NotFound} />
     </Switch>
