@@ -713,7 +713,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {filteredSeminars.map((event) => (
+            {filteredSeminars.slice(0, 3).map((event) => (
               <Card key={event.id} className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${event.featured ? 'border-2 border-yellow-400' : ''}`}>
                 <div className="relative">
                   <img src={event.image} alt={event.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
