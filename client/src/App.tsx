@@ -7,9 +7,18 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
+import LoginPage from "@/pages/login-page";
+import SignupPage from "@/pages/signup-page";
+import TrainingPage from "@/pages/training-page";
 import CoursesPage from "@/pages/courses-page";
 import CourseDetailPage from "@/pages/course-detail-page";
 import SeminarsPage from "@/pages/seminars-page";
+import SeminarsListPage from "@/pages/seminars-list-page";
+import NoticesPage from "@/pages/notices-page";
+import AllAnnouncementsPage from "@/pages/all-announcements-page";
+import HelpCenterPage from "@/pages/help-center-page";
+import StudyAbroadPage from "@/pages/study-abroad-page";
+import TrainingApplicationPage from "@/pages/training-application-page";
 import AdminPage from "@/pages/admin-page";
 import MyPage from "@/pages/my-page";
 import NotFound from "@/pages/not-found";
@@ -18,10 +27,18 @@ function Router() {
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
+      <Route path="/login" component={LoginPage} />
+      <Route path="/signup" component={SignupPage} />
       <ProtectedRoute path="/" component={HomePage} />
+      <ProtectedRoute path="/training" component={TrainingPage} />
       <ProtectedRoute path="/courses" component={CoursesPage} />
       <ProtectedRoute path="/courses/:id" component={CourseDetailPage} />
-      <ProtectedRoute path="/seminars" component={SeminarsPage} />
+      <ProtectedRoute path="/seminars" component={SeminarsListPage} />
+      <ProtectedRoute path="/notices" component={NoticesPage} />
+      <ProtectedRoute path="/announcements" component={AllAnnouncementsPage} />
+      <ProtectedRoute path="/help" component={HelpCenterPage} />
+      <ProtectedRoute path="/study-abroad" component={StudyAbroadPage} />
+      <ProtectedRoute path="/training-application" component={TrainingApplicationPage} />
       <ProtectedRoute path="/admin" component={AdminPage} />
       <ProtectedRoute path="/mypage" component={MyPage} />
       <Route component={NotFound} />

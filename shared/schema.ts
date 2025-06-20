@@ -144,7 +144,7 @@ export const insertUserSchema = createInsertSchema(users).omit({
 
 export const insertCourseSchema = createInsertSchema(courses).omit({
   id: true,
-  currentStudents: true,
+  enrolledCount: true,
   createdAt: true,
   updatedAt: true,
 });
