@@ -109,35 +109,7 @@ export default function ProfessionalDevelopmentPage() {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">전문성 강화교육의 장점</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <i className="fas fa-rocket text-3xl text-purple-600"></i>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">경력 발전</h3>
-              <p className="text-gray-600">전문 스킬 향상으로 승진과 이직에 유리한 포지션 확보</p>
-            </div>
-            <div className="text-center">
-              <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <i className="fas fa-brain text-3xl text-purple-600"></i>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">실무 역량</h3>
-              <p className="text-gray-600">현장에서 바로 적용 가능한 실무 중심의 교육 콘텐츠</p>
-            </div>
-            <div className="text-center">
-              <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <i className="fas fa-network-wired text-3xl text-purple-600"></i>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">네트워킹</h3>
-              <p className="text-gray-600">동종 업계 전문가들과의 네트워킹 기회 제공</p>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
