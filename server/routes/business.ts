@@ -35,6 +35,11 @@ export function registerBusinessRoutes(app: Express) {
 
       const courseData = {
         ...req.body,
+        // 숫자 필드들을 올바르게 변환
+        credit: req.body.credit ? parseInt(req.body.credit) : 1,
+        price: req.body.price ? parseInt(req.body.price) : 0,
+        discountPrice: req.body.discountPrice ? parseInt(req.body.discountPrice) : null,
+        maxStudents: req.body.maxStudents ? parseInt(req.body.maxStudents) : null,
         providerId: user.id,
         status: "pending",
         approvalStatus: "pending",
@@ -72,7 +77,16 @@ export function registerBusinessRoutes(app: Express) {
         return res.status(404).json({ message: "강의를 찾을 수 없거나 수정 권한이 없습니다." });
       }
 
-      const course = await storage.updateCourse(courseId, req.body);
+      // 문자열 필드들을 숫자로 변환
+      const updateData = {
+        ...req.body,
+        credit: req.body.credit ? parseInt(req.body.credit) : existingCourse.credit,
+        price: req.body.price ? parseInt(req.body.price) : existingCourse.price,
+        discountPrice: req.body.discountPrice ? parseInt(req.body.discountPrice) : existingCourse.discountPrice,
+        maxStudents: req.body.maxStudents ? parseInt(req.body.maxStudents) : existingCourse.maxStudents,
+      };
+
+      const course = await storage.updateCourse(courseId, updateData);
       res.json(course);
     } catch (error) {
       console.error("Error updating course:", error);

@@ -328,6 +328,21 @@ export class MemStorage implements IStorage {
       enrolledCount: 0,
       status: courseData.providerId ? "pending" : "active",
       approvalStatus: courseData.providerId ? "pending" : "approved",
+      // 기본값 설정 - 새로 추가된 필드들
+      curriculum: courseData.curriculum || null,
+      objectives: courseData.objectives || null,
+      requirements: courseData.requirements || null,
+      materials: courseData.materials || null,
+      assessmentMethod: courseData.assessmentMethod || null,
+      certificateType: courseData.certificateType || null,
+      instructorName: courseData.instructorName || null,
+      instructorProfile: courseData.instructorProfile || null,
+      instructorExpertise: courseData.instructorExpertise || null,
+      targetAudience: courseData.targetAudience || null,
+      difficulty: courseData.difficulty || null,
+      language: courseData.language || "ko",
+      location: courseData.location || null,
+      tags: courseData.tags || null,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -343,6 +358,11 @@ export class MemStorage implements IStorage {
     const updatedCourse: Course = {
       ...existingCourse,
       ...courseData,
+      // 숫자 필드들을 올바르게 처리
+      credit: courseData.credit !== undefined ? courseData.credit : existingCourse.credit,
+      price: courseData.price !== undefined ? courseData.price : existingCourse.price,
+      discountPrice: courseData.discountPrice !== undefined ? courseData.discountPrice : existingCourse.discountPrice,
+      maxStudents: courseData.maxStudents !== undefined ? courseData.maxStudents : existingCourse.maxStudents,
       updatedAt: new Date(),
     };
     this.courses.set(id, updatedCourse);
