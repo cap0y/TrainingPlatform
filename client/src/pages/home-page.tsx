@@ -7,8 +7,27 @@ import ChatWidget from "@/components/chat/chat-widget";
 import CourseCard from "@/components/ui/course-card";
 import NotificationPanel from "@/components/ui/notification-panel";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import { 
+  BookOpen, 
+  Users, 
+  Award, 
+  Calendar, 
+  Star, 
+  Clock, 
+  Globe,
+  Video,
+  FileQuestion,
+  Laptop,
+  Target,
+  TrendingUp,
+  CheckCircle,
+  ArrowRight,
+  Play,
+  MapPin
+} from "lucide-react";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -24,6 +43,11 @@ export default function HomePage() {
     queryKey: ["/api/notices", { limit: 5 }],
   });
 
+  // Fetch recommended seminars
+  const { data: seminarsData, isLoading: seminarsLoading } = useQuery({
+    queryKey: ["/api/seminars", { limit: 4 }],
+  });
+
   // Fetch statistics for display
   const { data: statsData } = useQuery({
     queryKey: ["/api/stats"],
@@ -36,10 +60,10 @@ export default function HomePage() {
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-30">
           <img 
-            src="/uploads/images/9bffd170d5f3d7a992728c3c754bb4ac_1750405130300.jpg" 
-            alt="Training Conference"
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&h=600&fit=crop&crop=center" 
+            alt="Modern Education Platform"
             className="w-full h-full object-cover"
           />
         </div>
