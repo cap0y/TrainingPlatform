@@ -3,17 +3,24 @@ import { Server } from 'http';
 import { storage } from './storage';
 import { insertChatMessageSchema } from '@shared/schema';
 
-export function setupWebSocket(server: Server) {
-  const wss = new WebSocketServer({ server, path: '/ws' });
+let wss: WebSocketServer;
 
-  wss.on('connection', (ws: WebSocket) => {
+export function setupWebSocket(server: Server) {
+  wss = new WebSocketServer({ server, path: '/ws' });
+
+  wss.on('connection', (ws: WebSocket, req) => {
     console.log('New WebSocket connection');
 
     ws.on('message', async (data: string) => {
       try {
         const message = JSON.parse(data);
         
-        if (message.type === 'chat') {
+        if (message.type === 'auth') {
+          // Store user authentication info
+          (ws as any).userId = message.userId;
+          (ws as any).isAdmin = message.isAdmin;
+          console.log(`User ${message.userId} authenticated, admin: ${message.isAdmin}`);
+        } else if (message.type === 'chat') {
           // Validate and save chat message
           const chatMessage = insertChatMessageSchema.parse({
             userId: message.userId,
@@ -48,6 +55,12 @@ export function setupWebSocket(server: Server) {
       console.log('WebSocket connection closed');
     });
 
+    // Send welcome message
+    ws.send(JSON.stringify({
+      type: 'connected',
+      message: 'WebSocket connection established'
+    }));
+
     // Send initial chat history
     storage.getChatMessages(20).then(messages => {
       ws.send(JSON.stringify({
@@ -58,4 +71,48 @@ export function setupWebSocket(server: Server) {
   });
 
   return wss;
+}
+
+// Send notification to all admin users
+export function sendAdminNotification(notification: {
+  type: string;
+  title: string;
+  message: string;
+  data?: any;
+}) {
+  if (!wss) return;
+
+  const adminNotification = {
+    type: 'admin_notification',
+    ...notification,
+    timestamp: new Date().toISOString()
+  };
+
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN && (client as any).isAdmin) {
+      client.send(JSON.stringify(adminNotification));
+    }
+  });
+}
+
+// Send notification to specific user
+export function sendUserNotification(userId: number, notification: {
+  type: string;
+  title: string;
+  message: string;
+  data?: any;
+}) {
+  if (!wss) return;
+
+  const userNotification = {
+    type: 'user_notification',
+    ...notification,
+    timestamp: new Date().toISOString()
+  };
+
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN && (client as any).userId === userId) {
+      client.send(JSON.stringify(userNotification));
+    }
+  });
 }

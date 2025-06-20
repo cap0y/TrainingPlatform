@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
-import { setupWebSocket } from "./websocket";
+import { setupWebSocket, sendAdminNotification } from "./websocket";
 import { registerAdminRoutes } from "./routes/admin";
 import { insertCourseSchema, insertInstructorSchema, insertEnrollmentSchema, insertSeminarSchema, insertNoticeSchema, insertReviewSchema, insertPaymentSchema } from "@shared/schema";
 import multer from "multer";
