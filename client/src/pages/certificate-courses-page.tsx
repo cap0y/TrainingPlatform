@@ -35,8 +35,15 @@ export default function CertificateCoursesPage() {
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-green-600 to-green-800 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section className="relative bg-gradient-to-r from-green-600 to-green-800 text-white py-16 overflow-hidden">
+        <div className="absolute inset-0 opacity-25">
+          <img 
+            src="/attached_assets/4901b8c8f6c3cdb40238ce25968be771_1750405130302.jpg" 
+            alt="Certificate of Completion"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="relative container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">자격증 취득 과정</h1>
             <p className="text-xl text-green-100 mb-6">
