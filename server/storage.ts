@@ -1,6 +1,7 @@
 import { type User, type InsertUser, type Course, type InsertCourse, type Instructor, type InsertInstructor, type Enrollment, type InsertEnrollment, type Seminar, type InsertSeminar, type Notice, type InsertNotice, type Review, type InsertReview, type ChatMessage, type InsertChatMessage, type Payment, type InsertPayment } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import { DbStorage } from "./db-storage";
 
 const MemoryStore = createMemoryStore(session);
 
@@ -635,4 +636,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Use database storage instead of memory storage
+export const storage = new DbStorage();

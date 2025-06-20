@@ -4,7 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { setupAuth } from "./auth";
 import path from "path";
 import { setupWebSocket } from "./websocket";
-import { seedDatabase } from "./seed";
+import { seedDatabase } from "./seed-db";
 
 const app = express();
 app.use(express.json());
@@ -44,6 +44,13 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Seed database on startup
+  try {
+    await seedDatabase();
+  } catch (error) {
+    console.error("Database seeding failed:", error);
+  }
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
