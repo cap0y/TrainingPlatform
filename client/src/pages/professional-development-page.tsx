@@ -22,12 +22,60 @@ export default function ProfessionalDevelopmentPage() {
   });
 
   const developmentFields = [
-    { id: "leadership", name: "리더십", icon: "fas fa-user-tie", count: 12 },
-    { id: "communication", name: "커뮤니케이션", icon: "fas fa-comments", count: 8 },
-    { id: "project", name: "프로젝트 관리", icon: "fas fa-tasks", count: 10 },
-    { id: "innovation", name: "혁신 역량", icon: "fas fa-lightbulb", count: 6 },
-    { id: "digital", name: "디지털 역량", icon: "fas fa-laptop-code", count: 15 },
-    { id: "analysis", name: "데이터 분석", icon: "fas fa-chart-bar", count: 9 }
+    { 
+      id: "leadership", 
+      name: "리더십", 
+      icon: "fas fa-user-tie", 
+      count: 12,
+      imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=120&h=120&fit=crop&crop=center",
+      overlay: "bg-blue-600",
+      hoverColor: "text-blue-600"
+    },
+    { 
+      id: "communication", 
+      name: "커뮤니케이션", 
+      icon: "fas fa-comments", 
+      count: 8,
+      imageUrl: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=120&h=120&fit=crop&crop=center",
+      overlay: "bg-green-600",
+      hoverColor: "text-green-600"
+    },
+    { 
+      id: "project", 
+      name: "프로젝트 관리", 
+      icon: "fas fa-tasks", 
+      count: 10,
+      imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=120&h=120&fit=crop&crop=center",
+      overlay: "bg-purple-600",
+      hoverColor: "text-purple-600"
+    },
+    { 
+      id: "innovation", 
+      name: "혁신 역량", 
+      icon: "fas fa-lightbulb", 
+      count: 6,
+      imageUrl: "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=120&h=120&fit=crop&crop=center",
+      overlay: "bg-yellow-600",
+      hoverColor: "text-yellow-600"
+    },
+    { 
+      id: "digital", 
+      name: "디지털 역량", 
+      icon: "fas fa-laptop-code", 
+      count: 15,
+      imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop&crop=center",
+      overlay: "bg-indigo-600",
+      hoverColor: "text-indigo-600"
+    },
+    { 
+      id: "analysis", 
+      name: "데이터 분석", 
+      icon: "fas fa-chart-bar", 
+      count: 9,
+      imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&h=120&fit=crop&crop=center",
+      overlay: "bg-red-600",
+      hoverColor: "text-red-600"
+    }
   ];
 
   return (
