@@ -427,9 +427,14 @@ export default function HomePage() {
       {/* Popular Courses with Tabs */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">인기 연수과정</h2>
-            <p className="text-gray-600">실시간으로 업데이트되는 인기 연수과정을 확인해보세요</p>
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">인기 연수과정</h2>
+              <p className="text-gray-600">실시간으로 업데이트되는 인기 연수과정을 확인해보세요</p>
+            </div>
+            <Link href="/courses">
+              <Button variant="outline" size="lg">전체 과정 보기</Button>
+            </Link>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -518,11 +523,6 @@ export default function HomePage() {
                     </CardContent>
                   </Card>
                 ))}
-              </div>
-              <div className="text-center">
-                <Link href="/courses">
-                  <Button variant="outline" size="lg">전체 과정 보기</Button>
-                </Link>
               </div>
             </TabsContent>
 
