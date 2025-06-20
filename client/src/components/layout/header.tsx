@@ -39,6 +39,10 @@ export default function Header({ onNotificationClick }: HeaderProps) {
     navigation.push({ name: '관리자', href: '/admin', icon: Settings });
   }
 
+  if (user?.role === 'admin') {
+    navigation.push({ name: '슈퍼 관리자', href: '/super-admin', icon: Settings });
+  }
+
   return (
     <header className="bg-white shadow-sm border-b">
       {/* Top Bar */}

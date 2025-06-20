@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { setupWebSocket } from "./websocket";
+import { registerAdminRoutes } from "./routes/admin";
 import { insertCourseSchema, insertInstructorSchema, insertEnrollmentSchema, insertSeminarSchema, insertNoticeSchema, insertReviewSchema, insertPaymentSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
@@ -29,6 +30,9 @@ const upload = multer({
 export function registerRoutes(app: Express): Server {
   // Setup authentication routes
   setupAuth(app);
+  
+  // Setup admin routes
+  registerAdminRoutes(app);
 
   // Course routes
   app.get("/api/courses", async (req, res) => {
