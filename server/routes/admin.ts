@@ -4,11 +4,16 @@ import { storage } from "../storage";
 export function registerAdminRoutes(app: Express) {
   // 관리자 권한 확인 미들웨어
   const requireAdmin = (req: any, res: any, next: any) => {
+    console.log('requireAdmin - isAuthenticated:', req.isAuthenticated());
+    console.log('requireAdmin - user:', req.user);
+    console.log('requireAdmin - user.isAdmin:', req.user?.isAdmin);
+    console.log('requireAdmin - user.role:', req.user?.role);
+    
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "로그인이 필요합니다." });
     }
 
-    if (!req.user.isAdmin && req.user.role !== "admin") {
+    if (!req.user || (!req.user.isAdmin && req.user.role !== "admin")) {
       return res.status(403).json({ message: "관리자 권한이 필요합니다." });
     }
 

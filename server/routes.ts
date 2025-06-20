@@ -100,6 +100,7 @@ export function registerRoutes(app: Express): Server {
     console.log('Update course - Session ID:', req.sessionID);
     console.log('Update course - isAuthenticated:', req.isAuthenticated());
     console.log('Update course - User:', req.user);
+    console.log('Update course - User isAdmin:', req.user?.isAdmin);
     
     if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: "Authentication required" });
@@ -148,8 +149,10 @@ export function registerRoutes(app: Express): Server {
 
   // Delete course
   app.delete("/api/courses/:id", async (req, res) => {
+    console.log('Delete course - Session ID:', req.sessionID);
     console.log('Delete course - isAuthenticated:', req.isAuthenticated());
     console.log('Delete course - User:', req.user);
+    console.log('Delete course - User isAdmin:', req.user?.isAdmin);
     
     if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: "Authentication required" });

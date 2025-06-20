@@ -1145,12 +1145,33 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <Label htmlFor="category">카테고리</Label>
-                  <Input
-                    id="category"
-                    value={courseForm.category}
-                    onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value })}
-                    required
-                  />
+                  <Select value={courseForm.category} onValueChange={(value) => setCourseForm({ ...courseForm, category: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="카테고리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="교육학">교육학</SelectItem>
+                      <SelectItem value="심리학">심리학</SelectItem>
+                      <SelectItem value="교수법">교수법</SelectItem>
+                      <SelectItem value="교육정책">교육정책</SelectItem>
+                      <SelectItem value="교육평가">교육평가</SelectItem>
+                      <SelectItem value="상담학">상담학</SelectItem>
+                      <SelectItem value="특수교육">특수교육</SelectItem>
+                      <SelectItem value="유아교육">유아교육</SelectItem>
+                      <SelectItem value="국어교육">국어교육</SelectItem>
+                      <SelectItem value="영어교육">영어교육</SelectItem>
+                      <SelectItem value="수학교육">수학교육</SelectItem>
+                      <SelectItem value="과학교육">과학교육</SelectItem>
+                      <SelectItem value="사회교육">사회교육</SelectItem>
+                      <SelectItem value="예체능교육">예체능교육</SelectItem>
+                      <SelectItem value="진로교육">진로교육</SelectItem>
+                      <SelectItem value="생활지도">생활지도</SelectItem>
+                      <SelectItem value="학교경영">학교경영</SelectItem>
+                      <SelectItem value="교육행정">교육행정</SelectItem>
+                      <SelectItem value="교육공학">교육공학</SelectItem>
+                      <SelectItem value="기타">기타</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div>
