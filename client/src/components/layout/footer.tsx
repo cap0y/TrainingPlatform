@@ -134,11 +134,13 @@ export default function Footer() {
         {/* Business Info */}
         <div className="mt-4 pt-4 border-t border-gray-700 text-xs text-gray-500">
           <p>
-            사업자등록번호: 123-45-67890 | 대표자: 김교육 | 통신판매업신고번호: 2024-서울강남-1234 | 
-            개인정보보호책임자: 이관리 (privacy@eduplatform.kr)
+            (주)지누켐 | 대표: 김병선 | 사업자등록번호: 470-81-02870
           </p>
           <p className="mt-1">
-            한국연수교육플랫폼은 교육부에서 인정하는 정식 교원연수기관입니다. (인가번호: 교육부-2024-001)
+            경상남도 진주시 진주대로 501, 창업보육센터 B동 202호
+          </p>
+          <p className="mt-1">
+            Tel: 055-772-2226 | Email: bkim@jinuchem.co.kr
           </p>
         </div>
       </div>
