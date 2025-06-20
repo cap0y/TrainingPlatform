@@ -145,9 +145,9 @@ export default function Header({ onNotificationClick }: HeaderProps) {
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/mypage" className="flex items-center cursor-pointer">
+                      <Link href={user.userType === "business" ? "/business-dashboard" : "/mypage"} className="flex items-center cursor-pointer">
                         <User className="mr-2 h-4 w-4" />
-                        마이페이지
+                        {user.userType === "business" ? "기관 관리" : "마이페이지"}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
