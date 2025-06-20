@@ -59,6 +59,14 @@ export const courses = pgTable("courses", {
   language: text("language").default("ko"), // 언어
   location: text("location"), // 장소
   tags: json("tags"), // 태그 배열
+  // 추가 세부 정보 필드들
+  features: text("features"), // 과정 특징
+  recommendations: text("recommendations"), // 추천 대상
+  totalHours: integer("total_hours"), // 총 교육시간
+  enrollmentDeadline: timestamp("enrollment_deadline"), // 신청 마감일
+  completionDeadline: timestamp("completion_deadline"), // 수료 마감일
+  prerequisites: text("prerequisites"), // 선수학습
+  learningMethod: text("learning_method"), // 학습 방법
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

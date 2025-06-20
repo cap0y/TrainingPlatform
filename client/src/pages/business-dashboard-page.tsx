@@ -56,6 +56,14 @@ export default function BusinessDashboardPage() {
     language: "ko",
     location: "",
     tags: "",
+    // 추가 세부 정보
+    features: "",
+    recommendations: "",
+    totalHours: "",
+    enrollmentDeadline: "",
+    completionDeadline: "",
+    prerequisites: "",
+    learningMethod: "",
   });
 
   // 내 강의 목록 조회
@@ -173,6 +181,13 @@ export default function BusinessDashboardPage() {
       language: "ko",
       location: "",
       tags: "",
+      features: "",
+      recommendations: "",
+      totalHours: "",
+      enrollmentDeadline: "",
+      completionDeadline: "",
+      prerequisites: "",
+      learningMethod: "",
     });
     setEditingCourse(null);
   };
@@ -207,6 +222,13 @@ export default function BusinessDashboardPage() {
       language: course.language || "ko",
       location: course.location || "",
       tags: Array.isArray(course.tags) ? course.tags.join(", ") : (course.tags || ""),
+      features: course.features || "",
+      recommendations: course.recommendations || "",
+      totalHours: course.totalHours?.toString() || "",
+      enrollmentDeadline: course.enrollmentDeadline ? new Date(course.enrollmentDeadline).toISOString().split('T')[0] : "",
+      completionDeadline: course.completionDeadline ? new Date(course.completionDeadline).toISOString().split('T')[0] : "",
+      prerequisites: course.prerequisites || "",
+      learningMethod: course.learningMethod || "",
     });
     setShowCourseDialog(true);
   };
@@ -382,7 +404,10 @@ export default function BusinessDashboardPage() {
                   필터
                 </Button>
               </div>
-              <Button onClick={() => setShowCourseDialog(true)} disabled={!user?.isApproved}>
+              <Button onClick={() => {
+                resetCourseForm();
+                setShowCourseDialog(true);
+              }} disabled={!user?.isApproved}>
                 <Plus className="h-4 w-4 mr-2" />
                 새 강의 등록
               </Button>
@@ -694,7 +719,7 @@ export default function BusinessDashboardPage() {
                   id="objectives"
                   value={courseForm.objectives}
                   onChange={(e) => setCourseForm(prev => ({ ...prev, objectives: e.target.value }))}
-                  placeholder="이 과정을 통해 달성할 수 있는 학습 목표를 작성하세요"
+                  placeholder="이 과정을 통해 달성할 수 있는 학습 목표를 작성하세요 (줄바꿈으로 구분)"
                   rows={4}
                 />
               </div>
@@ -706,7 +731,18 @@ export default function BusinessDashboardPage() {
                   value={courseForm.curriculum}
                   onChange={(e) => setCourseForm(prev => ({ ...prev, curriculum: e.target.value }))}
                   placeholder="차시별 교육 내용을 상세히 작성하세요 (예: 1차시: OO 이론 개요, 2차시: 실습 등)"
-                  rows={6}
+                  rows={8}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="features">과정 특징</Label>
+                <Textarea
+                  id="features"
+                  value={courseForm.features}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, features: e.target.value }))}
+                  placeholder="이 과정만의 특별한 특징이나 장점을 설명하세요"
+                  rows={3}
                 />
               </div>
               
@@ -717,6 +753,17 @@ export default function BusinessDashboardPage() {
                   value={courseForm.requirements}
                   onChange={(e) => setCourseForm(prev => ({ ...prev, requirements: e.target.value }))}
                   placeholder="수강을 위한 사전 요건이나 준비사항을 작성하세요"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="prerequisites">선수학습</Label>
+                <Textarea
+                  id="prerequisites"
+                  value={courseForm.prerequisites}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, prerequisites: e.target.value }))}
+                  placeholder="이 과정을 수강하기 전에 필요한 지식이나 경험을 작성하세요"
                   rows={3}
                 />
               </div>
@@ -747,6 +794,7 @@ export default function BusinessDashboardPage() {
                       <SelectItem value="project">프로젝트</SelectItem>
                       <SelectItem value="portfolio">포트폴리오</SelectItem>
                       <SelectItem value="attendance">출석</SelectItem>
+                      <SelectItem value="mixed">복합평가</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -766,6 +814,22 @@ export default function BusinessDashboardPage() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="learningMethod">학습 방법</Label>
+                <Select value={courseForm.learningMethod} onValueChange={(value) => setCourseForm(prev => ({ ...prev, learningMethod: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="학습 방법 선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="self-paced">자기주도학습</SelectItem>
+                    <SelectItem value="instructor-led">강사진행</SelectItem>
+                    <SelectItem value="blended">혼합형</SelectItem>
+                    <SelectItem value="cohort">코호트</SelectItem>
+                    <SelectItem value="mentoring">멘토링</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </TabsContent>
             
@@ -834,6 +898,39 @@ export default function BusinessDashboardPage() {
                 </div>
               </div>
               
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="enrollmentDeadline">신청 마감일</Label>
+                  <Input
+                    id="enrollmentDeadline"
+                    type="date"
+                    value={courseForm.enrollmentDeadline}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, enrollmentDeadline: e.target.value }))}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="completionDeadline">수료 마감일</Label>
+                  <Input
+                    id="completionDeadline"
+                    type="date"
+                    value={courseForm.completionDeadline}
+                    onChange={(e) => setCourseForm(prev => ({ ...prev, completionDeadline: e.target.value }))}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="totalHours">총 교육시간</Label>
+                <Input
+                  id="totalHours"
+                  type="number"
+                  value={courseForm.totalHours}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, totalHours: e.target.value }))}
+                  placeholder="총 교육시간 (시간 단위)"
+                />
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="location" className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4" />
@@ -844,6 +941,17 @@ export default function BusinessDashboardPage() {
                   value={courseForm.location}
                   onChange={(e) => setCourseForm(prev => ({ ...prev, location: e.target.value }))}
                   placeholder="교육 장소를 입력하세요 (온라인인 경우 플랫폼명)"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="recommendations">추천 대상</Label>
+                <Textarea
+                  id="recommendations"
+                  value={courseForm.recommendations}
+                  onChange={(e) => setCourseForm(prev => ({ ...prev, recommendations: e.target.value }))}
+                  placeholder="이 과정을 추천하는 대상을 구체적으로 작성하세요 (예: 5년 이상 경력의 중등교사, 교육관리자 등)"
+                  rows={3}
                 />
               </div>
               
