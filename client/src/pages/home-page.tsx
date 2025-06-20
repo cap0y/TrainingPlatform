@@ -55,7 +55,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden">
         {/* Hero Content Overlay */}
         <div className="absolute inset-0 bg-black/30 z-10"></div>
-        <div className="relative z-20 container mx-auto px-4 py-12 pt-[20px] pb-[20px]">
+        <div className="relative z-20 container mx-auto px-4 py-12 pt-[80px] pb-[80px]">
           <div className="max-w-2xl text-left text-white">
             <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
               전문가가 되는 <span className="text-yellow-300">첫걸음</span>
