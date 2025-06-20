@@ -47,7 +47,7 @@ function Router() {
       <ProtectedRoute path="/training-courses" component={TrainingCoursesPage} />
       <ProtectedRoute path="/certificate-courses" component={CertificateCoursesPage} />
       <ProtectedRoute path="/professional-development" component={ProfessionalDevelopmentPage} />
-      <ProtectedRoute path="/seminars" component={SeminarsListPage} />
+      <ProtectedRoute path="/seminars" component={SeminarsPage} />
       <ProtectedRoute path="/notices" component={NoticesPage} />
       <ProtectedRoute path="/announcements" component={AllAnnouncementsPage} />
       <ProtectedRoute path="/help" component={HelpCenterPage} />
