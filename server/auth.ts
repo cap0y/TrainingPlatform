@@ -49,13 +49,13 @@ export function setupAuth(app: Express) {
       secure: false,
       httpOnly: false,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'lax'
+      sameSite: 'lax',
+      domain: undefined
     },
     name: 'connect.sid',
     rolling: true
   };
 
-  app.set("trust proxy", 1);
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
