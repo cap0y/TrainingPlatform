@@ -65,44 +65,95 @@ export function registerRoutes(app: Express): Server {
   });
 
   app.post("/api/courses", async (req, res) => {
-    if (!req.isAuthenticated() || !req.user?.isAdmin) {
-      return res.status(403).json({ message: "Admin access required" });
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
     }
-    
+
     try {
-      const course = insertCourseSchema.parse(req.body);
-      const newCourse = await storage.createCourse(course);
-      res.status(201).json(newCourse);
+      const courseData = {
+        ...req.body,
+        providerId: req.user.id,
+        enrolledCount: 0,
+        isActive: false,
+        approvalStatus: "pending",
+      };
+      
+      const course = await storage.createCourse(courseData);
+      
+      // Send notification to admins about new course pending approval
+      sendAdminNotification({
+        type: 'course_pending',
+        title: '새로운 강의 승인 요청',
+        message: `"${course.title}" 강의가 승인을 기다리고 있습니다.`,
+        data: { courseId: course.id, courseName: course.title }
+      });
+      
+      res.status(201).json(course);
     } catch (error) {
-      res.status(400).json({ message: "Invalid course data" });
+      console.error("Error creating course:", error);
+      res.status(500).json({ message: "Error creating course" });
     }
   });
 
+  // Update course
   app.put("/api/courses/:id", async (req, res) => {
-    if (!req.isAuthenticated() || !req.user?.isAdmin) {
-      return res.status(403).json({ message: "Admin access required" });
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
     }
+
+    const courseId = parseInt(req.params.id);
     
+    // Check if user is admin or course owner
+    const existingCourse = await storage.getCourse(courseId);
+    if (!existingCourse) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    const isOwner = existingCourse.providerId === req.user.id;
+    const isAdmin = req.user.isAdmin;
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
     try {
-      const updatedCourse = await storage.updateCourse(parseInt(req.params.id), req.body);
+      const updatedCourse = await storage.updateCourse(courseId, req.body);
       if (!updatedCourse) {
         return res.status(404).json({ message: "Course not found" });
       }
       res.json(updatedCourse);
     } catch (error) {
+      console.error("Error updating course:", error);
       res.status(500).json({ message: "Error updating course" });
     }
   });
 
+  // Delete course
   app.delete("/api/courses/:id", async (req, res) => {
-    if (!req.isAuthenticated() || !req.user?.isAdmin) {
-      return res.status(403).json({ message: "Admin access required" });
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
     }
+
+    const courseId = parseInt(req.params.id);
     
+    // Check if user is admin or course owner
+    const existingCourse = await storage.getCourse(courseId);
+    if (!existingCourse) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    const isOwner = existingCourse.providerId === req.user.id;
+    const isAdmin = req.user.isAdmin;
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
     try {
-      await storage.deleteCourse(parseInt(req.params.id));
-      res.status(204).send();
+      await storage.deleteCourse(courseId);
+      res.json({ message: "Course deleted successfully" });
     } catch (error) {
+      console.error("Error deleting course:", error);
       res.status(500).json({ message: "Error deleting course" });
     }
   });
@@ -244,6 +295,41 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(newNotice);
     } catch (error) {
       res.status(400).json({ message: "Invalid notice data" });
+    }
+  });
+
+  // Update notice
+  app.put("/api/notices/:id", async (req, res) => {
+    if (!req.isAuthenticated() || !req.user?.isAdmin) {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const noticeId = parseInt(req.params.id);
+      const updatedNotice = await storage.updateNotice(noticeId, req.body);
+      if (!updatedNotice) {
+        return res.status(404).json({ message: "Notice not found" });
+      }
+      res.json(updatedNotice);
+    } catch (error) {
+      console.error("Error updating notice:", error);
+      res.status(500).json({ message: "Error updating notice" });
+    }
+  });
+
+  // Delete notice
+  app.delete("/api/notices/:id", async (req, res) => {
+    if (!req.isAuthenticated() || !req.user?.isAdmin) {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    try {
+      const noticeId = parseInt(req.params.id);
+      await storage.deleteNotice(noticeId);
+      res.json({ message: "Notice deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting notice:", error);
+      res.status(500).json({ message: "Error deleting notice" });
     }
   });
 

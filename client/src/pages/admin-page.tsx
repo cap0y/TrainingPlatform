@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -256,6 +257,127 @@ export default function AdminPage() {
     },
   });
 
+  // Handle course editing
+  const handleEditCourse = (course: any) => {
+    setEditingCourse(course);
+    setCourseForm({
+      title: course.title || "",
+      description: course.description || "",
+      category: course.category || "",
+      type: course.type || "online",
+      level: course.level || "intermediate",
+      credit: course.credit || 1,
+      price: course.price || "",
+      discountPrice: course.discountPrice || "",
+      duration: course.duration || "",
+      maxStudents: course.maxStudents || "",
+      startDate: course.startDate ? course.startDate.split('T')[0] : "",
+      endDate: course.endDate ? course.endDate.split('T')[0] : "",
+      instructorId: course.instructorId || "",
+    });
+    setShowCourseDialog(true);
+  };
+
+  // Handle notice editing
+  const handleEditNotice = (notice: any) => {
+    setEditingNotice(notice);
+    setNoticeForm({
+      title: notice.title || "",
+      content: notice.content || "",
+      category: notice.category || "notice",
+      isImportant: notice.isImportant || false,
+    });
+    setShowNoticeDialog(true);
+  };
+
+  // Save course mutation (create or update)
+  const saveCourse = useMutation({
+    mutationFn: async (courseData: any) => {
+      const url = editingCourse ? `/api/courses/${editingCourse.id}` : "/api/courses";
+      const method = editingCourse ? "PUT" : "POST";
+      const response = await apiRequest(method, url, courseData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/courses"] });
+      setShowCourseDialog(false);
+      resetCourseForm();
+      toast({
+        title: "성공",
+        description: editingCourse ? "과정이 수정되었습니다." : "과정이 추가되었습니다.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "오류",
+        description: "과정 저장 중 오류가 발생했습니다.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Save notice mutation (create or update)
+  const saveNotice = useMutation({
+    mutationFn: async (noticeData: any) => {
+      const url = editingNotice ? `/api/notices/${editingNotice.id}` : "/api/notices";
+      const method = editingNotice ? "PUT" : "POST";
+      const response = await apiRequest(method, url, noticeData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notices"] });
+      setShowNoticeDialog(false);
+      resetNoticeForm();
+      toast({
+        title: "성공",
+        description: editingNotice ? "공지사항이 수정되었습니다." : "공지사항이 추가되었습니다.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "오류",
+        description: "공지사항 저장 중 오류가 발생했습니다.",
+        variant: "destructive",
+      });
+    },
+  });
+
+
+
+  // Delete notice mutation
+  const deleteNotice = useMutation({
+    mutationFn: async (noticeId: number) => {
+      const response = await apiRequest("DELETE", `/api/notices/${noticeId}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notices"] });
+      toast({
+        title: "성공",
+        description: "공지사항이 삭제되었습니다.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "오류",
+        description: "공지사항 삭제 중 오류가 발생했습니다.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Handle course form submission
+  const handleCourseSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveCourse.mutate(courseForm);
+  };
+
+  // Handle notice form submission
+  const handleNoticeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveNotice.mutate(noticeForm);
+  };
+
   const resetCourseForm = () => {
     setCourseForm({
       title: "",
@@ -330,36 +452,7 @@ export default function AdminPage() {
     setShowRefundDialog(true);
   };
 
-  const handleEditCourse = (course) => {
-    setEditingCourse(course);
-    setCourseForm({
-      title: course.title,
-      description: course.description || "",
-      category: course.category,
-      type: course.type,
-      level: course.level,
-      credit: course.credit,
-      price: course.price,
-      discountPrice: course.discountPrice || "",
-      duration: course.duration,
-      maxStudents: course.maxStudents || "",
-      startDate: course.startDate ? new Date(course.startDate).toISOString().split('T')[0] : "",
-      endDate: course.endDate ? new Date(course.endDate).toISOString().split('T')[0] : "",
-      instructorId: course.instructorId || "",
-    });
-    setShowCourseDialog(true);
-  };
 
-  const handleEditNotice = (notice) => {
-    setEditingNotice(notice);
-    setNoticeForm({
-      title: notice.title,
-      content: notice.content || "",
-      category: notice.category,
-      isImportant: notice.isImportant,
-    });
-    setShowNoticeDialog(true);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -624,6 +717,14 @@ export default function AdminPage() {
                                 onClick={() => handleEditNotice(notice)}
                               >
                                 <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => deleteNotice.mutate(notice.id)}
+                                disabled={deleteNotice.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
                           </TableCell>
@@ -1019,255 +1120,252 @@ export default function AdminPage() {
       </div>
 
       {/* Course Dialog */}
-      <Dialog open={showCourseDialog} onOpenChange={setShowCourseDialog}>
+      <Dialog open={showCourseDialog} onOpenChange={(open) => {
+        setShowCourseDialog(open);
+        if (!open) resetCourseForm();
+      }}>
         <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingCourse ? "과정 수정" : "새 과정 추가"}</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="title">과정명</Label>
-                <Input
-                  id="title"
-                  value={courseForm.title}
-                  onChange={(e) => setCourseForm(prev => ({ ...prev, title: e.target.value }))}
-                />
+          <form onSubmit={handleCourseSubmit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="title">과정명</Label>
+                  <Input
+                    id="title"
+                    value={courseForm.title}
+                    onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="category">카테고리</Label>
+                  <Input
+                    id="category"
+                    value={courseForm.category}
+                    onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value })}
+                    required
+                  />
+                </div>
               </div>
               <div>
-                <Label htmlFor="category">카테고리</Label>
-                <Select value={courseForm.category} onValueChange={(value) => setCourseForm(prev => ({ ...prev, category: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="카테고리 선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="교육학">교육학</SelectItem>
-                    <SelectItem value="심리학">심리학</SelectItem>
-                    <SelectItem value="교수법">교수법</SelectItem>
-                    <SelectItem value="교육정책">교육정책</SelectItem>
-                    <SelectItem value="교육평가">교육평가</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="description">과정 설명</Label>
+                <Textarea
+                  id="description"
+                  value={courseForm.description}
+                  onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
+                  rows={3}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="price">가격 (원)</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    value={courseForm.price}
+                    onChange={(e) => setCourseForm({ ...courseForm, price: Number(e.target.value) })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="capacity">수용 인원</Label>
+                  <Input
+                    id="capacity"
+                    type="number"
+                    value={courseForm.capacity}
+                    onChange={(e) => setCourseForm({ ...courseForm, capacity: Number(e.target.value) })}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="duration">기간</Label>
+                  <Input
+                    id="duration"
+                    value={courseForm.duration}
+                    onChange={(e) => setCourseForm({ ...courseForm, duration: e.target.value })}
+                    placeholder="예: 4주, 2개월"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="level">수준</Label>
+                  <Select value={courseForm.level} onValueChange={(value) => setCourseForm({ ...courseForm, level: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="수준 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">초급</SelectItem>
+                      <SelectItem value="intermediate">중급</SelectItem>
+                      <SelectItem value="advanced">고급</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="startDate">시작일</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={courseForm.startDate}
+                    onChange={(e) => setCourseForm({ ...courseForm, startDate: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="endDate">종료일</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={courseForm.endDate}
+                    onChange={(e) => setCourseForm({ ...courseForm, endDate: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="applicationDeadline">신청 마감일</Label>
+                  <Input
+                    id="applicationDeadline"
+                    type="date"
+                    value={courseForm.applicationDeadline}
+                    onChange={(e) => setCourseForm({ ...courseForm, applicationDeadline: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="isActive"
+                  checked={courseForm.isActive}
+                  onCheckedChange={(checked) => setCourseForm({ ...courseForm, isActive: !!checked })}
+                />
+                <Label htmlFor="isActive">활성 상태</Label>
               </div>
             </div>
-
-            <div>
-              <Label htmlFor="description">과정 설명</Label>
-              <Textarea
-                id="description"
-                value={courseForm.description}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, description: e.target.value }))}
-                rows={3}
-              />
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="type">유형</Label>
-                <Select value={courseForm.type} onValueChange={(value) => setCourseForm(prev => ({ ...prev, type: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="online">온라인</SelectItem>
-                    <SelectItem value="offline">오프라인</SelectItem>
-                    <SelectItem value="blended">블렌디드</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="level">수준</Label>
-                <Select value={courseForm.level} onValueChange={(value) => setCourseForm(prev => ({ ...prev, level: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="beginner">초급</SelectItem>
-                    <SelectItem value="intermediate">중급</SelectItem>
-                    <SelectItem value="advanced">고급</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="credit">학점</Label>
-                <Input
-                  id="credit"
-                  type="number"
-                  value={courseForm.credit}
-                  onChange={(e) => setCourseForm(prev => ({ ...prev, credit: parseInt(e.target.value) }))}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="price">가격</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  value={courseForm.price}
-                  onChange={(e) => setCourseForm(prev => ({ ...prev, price: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="discountPrice">할인가</Label>
-                <Input
-                  id="discountPrice"
-                  type="number"
-                  value={courseForm.discountPrice}
-                  onChange={(e) => setCourseForm(prev => ({ ...prev, discountPrice: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="duration">총 시간</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  value={courseForm.duration}
-                  onChange={(e) => setCourseForm(prev => ({ ...prev, duration: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="startDate">시작일</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={courseForm.startDate}
-                  onChange={(e) => setCourseForm(prev => ({ ...prev, startDate: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="endDate">종료일</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={courseForm.endDate}
-                  onChange={(e) => setCourseForm(prev => ({ ...prev, endDate: e.target.value }))}
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => { setShowCourseDialog(false); resetCourseForm(); }}>
-              취소
-            </Button>
-            <Button 
-              onClick={() => courseMutation.mutate(courseForm)}
-              disabled={courseMutation.isPending}
-            >
-              {courseMutation.isPending ? "처리 중..." : editingCourse ? "수정" : "추가"}
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowCourseDialog(false)}>
+                취소
+              </Button>
+              <Button type="submit" disabled={saveCourse.isPending}>
+                {saveCourse.isPending ? "저장 중..." : editingCourse ? "수정" : "추가"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 
       {/* Notice Dialog */}
-      <Dialog open={showNoticeDialog} onOpenChange={setShowNoticeDialog}>
-        <DialogContent className="sm:max-w-[600px]">
+      <Dialog open={showNoticeDialog} onOpenChange={(open) => {
+        setShowNoticeDialog(open);
+        if (!open) resetNoticeForm();
+      }}>
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingNotice ? "공지 수정" : "새 공지 작성"}</DialogTitle>
+            <DialogTitle>{editingNotice ? "공지사항 수정" : "새 공지사항 작성"}</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div>
-              <Label htmlFor="noticeTitle">제목</Label>
-              <Input
-                id="noticeTitle"
-                value={noticeForm.title}
-                onChange={(e) => setNoticeForm(prev => ({ ...prev, title: e.target.value }))}
-              />
+          <form onSubmit={handleNoticeSubmit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="noticeTitle">제목</Label>
+                  <Input
+                    id="noticeTitle"
+                    value={noticeForm.title}
+                    onChange={(e) => setNoticeForm({ ...noticeForm, title: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="noticeCategory">카테고리</Label>
+                  <Select value={noticeForm.category} onValueChange={(value) => setNoticeForm({ ...noticeForm, category: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="카테고리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">일반</SelectItem>
+                      <SelectItem value="course">과정</SelectItem>
+                      <SelectItem value="system">시스템</SelectItem>
+                      <SelectItem value="event">이벤트</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="noticeContent">내용</Label>
+                <Textarea
+                  id="noticeContent"
+                  value={noticeForm.content}
+                  onChange={(e) => setNoticeForm({ ...noticeForm, content: e.target.value })}
+                  rows={6}
+                  required
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="isImportant"
+                    checked={noticeForm.isImportant}
+                    onCheckedChange={(checked) => setNoticeForm({ ...noticeForm, isImportant: !!checked })}
+                  />
+                  <Label htmlFor="isImportant">중요 공지</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="noticeIsActive"
+                    checked={noticeForm.isActive}
+                    onCheckedChange={(checked) => setNoticeForm({ ...noticeForm, isActive: !!checked })}
+                  />
+                  <Label htmlFor="noticeIsActive">활성 상태</Label>
+                </div>
+              </div>
             </div>
-
-            <div>
-              <Label htmlFor="noticeCategory">카테고리</Label>
-              <Select value={noticeForm.category} onValueChange={(value) => setNoticeForm(prev => ({ ...prev, category: value }))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="notice">공지</SelectItem>
-                  <SelectItem value="news">소식</SelectItem>
-                  <SelectItem value="announcement">안내</SelectItem>
-                  <SelectItem value="event">이벤트</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="noticeContent">내용</Label>
-              <Textarea
-                id="noticeContent"
-                value={noticeForm.content}
-                onChange={(e) => setNoticeForm(prev => ({ ...prev, content: e.target.value }))}
-                rows={6}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => { setShowNoticeDialog(false); resetNoticeForm(); }}>
-              취소
-            </Button>
-            <Button 
-              onClick={() => noticeMutation.mutate(noticeForm)}
-              disabled={noticeMutation.isPending}
-            >
-              {noticeMutation.isPending ? "처리 중..." : editingNotice ? "수정" : "작성"}
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowNoticeDialog(false)}>
+                취소
+              </Button>
+              <Button type="submit" disabled={saveNotice.isPending}>
+                {saveNotice.isPending ? "저장 중..." : editingNotice ? "수정" : "작성"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 
       {/* Refund Dialog */}
       <Dialog open={showRefundDialog} onOpenChange={setShowRefundDialog}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>환불 처리</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            {selectedPayment && (
-              <div className="space-y-2">
-                <p><strong>결제 ID:</strong> #{selectedPayment.id}</p>
-                <p><strong>사용자:</strong> {selectedPayment.user?.name}</p>
-                <p><strong>과정:</strong> {selectedPayment.course?.title}</p>
-                <p><strong>금액:</strong> {Number(selectedPayment.amount).toLocaleString()}원</p>
-              </div>
-            )}
-            
-            <div>
-              <Label htmlFor="refundReason">환불 사유</Label>
-              <Textarea
-                id="refundReason"
-                value={refundReason}
-                onChange={(e) => setRefundReason(e.target.value)}
-                placeholder="환불 사유를 입력해주세요..."
-                rows={3}
-              />
-            </div>
+          <div className="py-4">
+            <Label htmlFor="refundReason">환불 사유</Label>
+            <Textarea
+              id="refundReason"
+              value={refundReason}
+              onChange={(e) => setRefundReason(e.target.value)}
+              placeholder="환불 사유를 입력하세요"
+              required
+            />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setShowRefundDialog(false);
-              setSelectedPayment(null);
-              setRefundReason("");
-            }}>
+            <Button variant="outline" onClick={() => setShowRefundDialog(false)}>
               취소
             </Button>
             <Button 
-              onClick={() => selectedPayment && processRefund.mutate({
-                paymentId: selectedPayment.id,
-                reason: refundReason
+              onClick={() => processRefund.mutate({ 
+                paymentId: selectedPayment?.id, 
+                reason: refundReason 
               })}
               disabled={processRefund.isPending || !refundReason.trim()}
             >
-              {processRefund.isPending ? "처리 중..." : "환불 처리"}
+              환불 처리
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <Footer />
     </div>
   );
 }
