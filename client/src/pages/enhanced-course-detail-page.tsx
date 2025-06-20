@@ -42,6 +42,8 @@ import {
   Pause
 } from "lucide-react";
 import MultimediaLesson from "@/components/ui/multimedia-lesson";
+import LearningProgressTracker from "@/components/ui/learning-progress-tracker";
+import CourseProgressWidget from "@/components/ui/course-progress-widget";
 
 export default function EnhancedCourseDetailPage() {
   const { id } = useParams();
@@ -55,6 +57,45 @@ export default function EnhancedCourseDetailPage() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<Record<string, string>>({});
   const [quizResults, setQuizResults] = useState<Record<string, boolean>>({});
+  const [lessonProgress, setLessonProgress] = useState([
+    {
+      id: "lesson-1",
+      title: "교육과정 개정의 배경과 필요성",
+      type: "video" as const,
+      duration: 30,
+      completed: true,
+      progress: 100,
+      score: 95,
+      timeSpent: 28
+    },
+    {
+      id: "lesson-2", 
+      title: "주요 변경 사항 분석",
+      type: "reading" as const,
+      duration: 20,
+      completed: false,
+      progress: 65,
+      timeSpent: 13
+    },
+    {
+      id: "lesson-3",
+      title: "실습: 교육과정 설계",
+      type: "assignment" as const,
+      duration: 45,
+      completed: false,
+      progress: 0,
+      timeSpent: 0
+    },
+    {
+      id: "lesson-4",
+      title: "이해도 평가 퀴즈",
+      type: "quiz" as const,
+      duration: 15,
+      completed: false,
+      progress: 0,
+      timeSpent: 0
+    }
+  ]);
 
   // Fetch course data
   const { data: course, isLoading } = useQuery({
