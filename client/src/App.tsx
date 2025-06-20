@@ -23,6 +23,7 @@ import NoticesPage from "@/pages/notices-page";
 import AllAnnouncementsPage from "@/pages/all-announcements-page";
 import HelpCenterPage from "@/pages/help-center-page";
 import StudyAbroadPage from "@/pages/study-abroad-page";
+import StudyAbroadListPage from "@/pages/study-abroad-list-page";
 import TrainingApplicationPage from "@/pages/training-application-page";
 import AdminPage from "@/pages/admin-page";
 import MyPage from "@/pages/my-page";
@@ -53,7 +54,8 @@ function Router() {
       <ProtectedRoute path="/notices" component={NoticesPage} />
       <ProtectedRoute path="/announcements" component={AllAnnouncementsPage} />
       <ProtectedRoute path="/help" component={HelpCenterPage} />
-      <ProtectedRoute path="/study-abroad" component={StudyAbroadPage} />
+      <ProtectedRoute path="/study-abroad" component={StudyAbroadListPage} />
+      <ProtectedRoute path="/study-abroad/:id" component={StudyAbroadPage} />
       <ProtectedRoute path="/training-application" component={TrainingApplicationPage} />
       <ProtectedRoute path="/all-training-programs" component={AllTrainingProgramsPage} />
       <ProtectedRoute path="/admin" component={AdminPage} />
