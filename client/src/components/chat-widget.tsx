@@ -134,7 +134,7 @@ export default function ChatWidget() {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <Card className="w-80 h-96 shadow-xl mt-[82px] mb-[82px]">
+        <Card className="w-80 h-96 shadow-xl">
           <div className="flex items-center justify-between p-4 border-b bg-blue-600 text-white rounded-t-lg">
             <div className="flex items-center space-x-2">
               <Bot className="h-5 w-5" />
