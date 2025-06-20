@@ -67,7 +67,6 @@ export default function Header({ onNotificationClick }: HeaderProps) {
           </div>
         </div>
       </div>
-
       {/* Main Header */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
@@ -77,7 +76,7 @@ export default function Header({ onNotificationClick }: HeaderProps) {
               <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center mr-3">
                 <Award className="h-6 w-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-primary">한국연수교육플랫폼</span>
+              <span className="text-2xl font-bold text-primary">연수플랫폼</span>
             </Link>
 
             {/* Desktop Navigation */}
