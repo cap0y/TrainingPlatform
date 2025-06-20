@@ -101,6 +101,9 @@ export function registerRoutes(app: Express): Server {
       return res.status(401).json({ message: "Authentication required" });
     }
 
+    console.log('Update course - User:', req.user);
+    console.log('Update course - Is Admin:', req.user?.isAdmin);
+
     const courseId = parseInt(req.params.id);
     
     // Check if user is admin or course owner
@@ -110,10 +113,15 @@ export function registerRoutes(app: Express): Server {
     }
 
     const isOwner = existingCourse.providerId === req.user.id;
-    const isAdmin = req.user.isAdmin;
+    const isAdmin = req.user?.isAdmin === true;
+
+    console.log('Course owner ID:', existingCourse.providerId);
+    console.log('Current user ID:', req.user.id);
+    console.log('Is owner:', isOwner);
+    console.log('Is admin:', isAdmin);
 
     if (!isOwner && !isAdmin) {
-      return res.status(403).json({ message: "Access denied" });
+      return res.status(403).json({ message: "Access denied - not owner or admin" });
     }
 
     try {
@@ -300,7 +308,14 @@ export function registerRoutes(app: Express): Server {
 
   // Update notice
   app.put("/api/notices/:id", async (req, res) => {
-    if (!req.isAuthenticated() || !req.user?.isAdmin) {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    console.log('Update notice - User:', req.user);
+    console.log('Update notice - Is Admin:', req.user?.isAdmin);
+
+    if (!req.user?.isAdmin) {
       return res.status(403).json({ message: "Admin access required" });
     }
 
