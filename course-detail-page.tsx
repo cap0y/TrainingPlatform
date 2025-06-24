@@ -931,6 +931,17 @@ const CourseDetailPage: React.FC = () => {
         const data = await response.json();
         setCompletedVideos(new Set(data.completedVideos || []));
         setCompletedQuizzes(new Set(data.completedQuizzes || []));
+        
+        // 개별 항목 진도율 저장
+        if (data.itemProgress) {
+          // 기존 진도율 데이터와 병합
+          setVideoProgress(prevProgress => ({
+            ...prevProgress,
+            ...data.itemProgress
+          }));
+          
+          console.log('불러온 진도율 데이터:', data.itemProgress);
+        }
       } else {
         console.error('진도율 조회 실패:', response.status);
       }
