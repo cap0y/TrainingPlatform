@@ -4,7 +4,11 @@ import {
   useMutation,
   UseMutationResult,
 } from "@tanstack/react-query";
-import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
+import {
+  insertUserSchema,
+  User as SelectUser,
+  InsertUser,
+} from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,6 +19,8 @@ type AuthContextType = {
   loginMutation: UseMutationResult<SelectUser, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
+  kakaoLoginMutation: UseMutationResult<void, Error, void>;
+  googleLoginMutation: UseMutationResult<void, Error, void>;
 };
 
 type LoginData = Pick<InsertUser, "username" | "password">;
@@ -81,6 +87,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const kakaoLoginMutation = useMutation({
+    mutationFn: async () => {
+      // Redirect to Kakao OAuth endpoint
+      window.location.href = "/api/auth/kakao";
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "카카오 로그인 실패",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const googleLoginMutation = useMutation({
+    mutationFn: async () => {
+      // Redirect to Google OAuth endpoint
+      window.location.href = "/api/auth/google";
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "구글 로그인 실패",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   return (
     <AuthContext.Provider
       value={{
@@ -90,6 +124,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginMutation,
         logoutMutation,
         registerMutation,
+        kakaoLoginMutation,
+        googleLoginMutation,
       }}
     >
       {children}

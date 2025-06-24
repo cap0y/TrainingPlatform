@@ -1,10 +1,13 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as KakaoStrategy } from "passport-kakao";
 import { Express } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
+import { sendAdminNotification } from "./websocket";
 import { User as SelectUser } from "@shared/schema";
 
 declare global {
@@ -22,7 +25,7 @@ async function hashPassword(password: string) {
 }
 
 async function comparePasswords(supplied: string, stored: string) {
-  if (!stored || !stored.includes('.')) {
+  if (!stored || !stored.includes(".")) {
     return false;
   }
   const [hashed, salt] = stored.split(".");
@@ -32,7 +35,10 @@ async function comparePasswords(supplied: string, stored: string) {
   try {
     const hashedBuf = Buffer.from(hashed, "hex");
     const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-    return hashedBuf.length === suppliedBuf.length && timingSafeEqual(hashedBuf, suppliedBuf);
+    return (
+      hashedBuf.length === suppliedBuf.length &&
+      timingSafeEqual(hashedBuf, suppliedBuf)
+    );
   } catch (error) {
     console.error("Password comparison error:", error);
     return false;
@@ -41,7 +47,7 @@ async function comparePasswords(supplied: string, stored: string) {
 
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || 'default-secret-key-for-development',
+    secret: process.env.SESSION_SECRET || "default-secret-key-for-development",
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
@@ -49,11 +55,11 @@ export function setupAuth(app: Express) {
       secure: false,
       httpOnly: false,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'lax',
-      domain: undefined
+      sameSite: "lax",
+      domain: undefined,
     },
-    name: 'connect.sid',
-    rolling: true
+    name: "connect.sid",
+    rolling: true,
   };
 
   app.use(session(sessionSettings));
@@ -67,7 +73,7 @@ export function setupAuth(app: Express) {
       if (!user) {
         user = await storage.getUserByEmail(username);
       }
-      
+
       if (!user || !(await comparePasswords(password, user.password))) {
         return done(null, false);
       } else {
@@ -76,24 +82,106 @@ export function setupAuth(app: Express) {
     }),
   );
 
+  // Google OAuth Strategy
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          callbackURL: "/api/auth/google/callback",
+        },
+        async (accessToken, refreshToken, profile, done) => {
+          try {
+            const email = profile.emails?.[0]?.value;
+            if (!email) {
+              return done(new Error("No email found in Google profile"));
+            }
+
+            // Check if user already exists
+            let user = await storage.getUserByEmail(email);
+
+            if (!user) {
+              // Create new user
+              user = await storage.createUser({
+                username: email,
+                email: email,
+                name:
+                  profile.displayName ||
+                  profile.name?.givenName ||
+                  "Google User",
+                userType: "individual",
+                password: await hashPassword(randomBytes(32).toString("hex")), // Random password for OAuth users
+              });
+            }
+
+            return done(null, user);
+          } catch (error) {
+            return done(error);
+          }
+        },
+      ),
+    );
+  }
+
+  // Kakao OAuth Strategy
+  if (process.env.KAKAO_CLIENT_ID) {
+    passport.use(
+      new KakaoStrategy(
+        {
+          clientID: process.env.KAKAO_CLIENT_ID,
+          callbackURL: "/api/auth/kakao/callback",
+        },
+        async (accessToken, refreshToken, profile, done) => {
+          try {
+            const email = profile._json?.kakao_account?.email;
+            const nickname = profile._json?.properties?.nickname;
+
+            if (!email) {
+              return done(new Error("No email found in Kakao profile"));
+            }
+
+            // Check if user already exists
+            let user = await storage.getUserByEmail(email);
+
+            if (!user) {
+              // Create new user
+              user = await storage.createUser({
+                username: email,
+                email: email,
+                name: nickname || "Kakao User",
+                userType: "individual",
+                password: await hashPassword(randomBytes(32).toString("hex")), // Random password for OAuth users
+              });
+            }
+
+            return done(null, user);
+          } catch (error) {
+            return done(error);
+          }
+        },
+      ),
+    );
+  }
+
   passport.serializeUser((user: any, done) => {
-    console.log('Serializing user:', user);
+    console.log("Serializing user:", user);
     done(null, user.id);
   });
 
   passport.deserializeUser(async (id: number, done) => {
     try {
-      console.log('Deserializing user ID:', id);
+      console.log("Deserializing user ID:", id);
       const user = await storage.getUser(id);
-      console.log('Deserialized user:', user ? 'User found' : 'User not found');
+      console.log("Deserialized user:", user ? "User found" : "User not found");
       if (user) {
         done(null, user);
       } else {
-        console.log('User not found during deserialization');
+        console.log("User not found during deserialization");
         done(null, false);
       }
     } catch (error) {
-      console.error('Error deserializing user:', error);
+      console.error("Error deserializing user:", error);
       done(error, null);
     }
   });
@@ -110,12 +198,12 @@ export function setupAuth(app: Express) {
     });
 
     // Send notification to admins if it's a business registration
-    if (req.body.userType === 'business') {
+    if (req.body.userType === "business") {
       sendAdminNotification({
-        type: 'business_pending',
-        title: '새로운 기관 승인 요청',
+        type: "business_pending",
+        title: "새로운 기관 승인 요청",
         message: `"${req.body.organizationName || req.body.name}" 기관이 승인을 기다리고 있습니다.`,
-        data: { userId: user.id, organizationName: req.body.organizationName }
+        data: { userId: user.id, organizationName: req.body.organizationName },
       });
     }
 
@@ -128,20 +216,20 @@ export function setupAuth(app: Express) {
   app.post("/api/login", (req, res, next) => {
     passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) {
-        console.error('Login error:', err);
+        console.error("Login error:", err);
         return res.status(500).json({ message: "Login error" });
       }
       if (!user) {
-        console.log('Authentication failed - no user');
+        console.log("Authentication failed - no user");
         return res.status(400).json({ message: "Invalid credentials" });
       }
       req.logIn(user, (err) => {
         if (err) {
-          console.error('Session login error:', err);
+          console.error("Session login error:", err);
           return res.status(500).json({ message: "Login error" });
         }
-        console.log('User logged in successfully:', user);
-        console.log('Session after login:', req.session);
+        console.log("User logged in successfully:", user);
+        console.log("Session after login:", req.session);
         res.json(user);
       });
     })(req, res, next);
@@ -155,15 +243,48 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
-    console.log('User info - Session ID:', req.sessionID);
-    console.log('User info - isAuthenticated:', req.isAuthenticated());
-    console.log('User info - user:', req.user);
-    console.log('User info - session:', req.session);
-    
+    console.log("User info - Session ID:", req.sessionID);
+    console.log("User info - isAuthenticated:", req.isAuthenticated());
+    console.log("User info - user:", req.user);
+    console.log("User info - session:", req.session);
+
     if (!req.isAuthenticated()) {
-      console.log('User not authenticated');
+      console.log("User not authenticated");
       return res.sendStatus(401);
     }
     res.json(req.user);
   });
+
+  // OAuth Routes
+
+  // Google OAuth
+  app.get(
+    "/api/auth/google",
+    passport.authenticate("google", { scope: ["profile", "email"] }),
+  );
+
+  app.get(
+    "/api/auth/google/callback",
+    passport.authenticate("google", {
+      failureRedirect: "/auth?error=google_login_failed",
+    }),
+    (req, res) => {
+      // Successful authentication, redirect to home page
+      res.redirect("/");
+    },
+  );
+
+  // Kakao OAuth
+  app.get("/api/auth/kakao", passport.authenticate("kakao"));
+
+  app.get(
+    "/api/auth/kakao/callback",
+    passport.authenticate("kakao", {
+      failureRedirect: "/auth?error=kakao_login_failed",
+    }),
+    (req, res) => {
+      // Successful authentication, redirect to home page
+      res.redirect("/");
+    },
+  );
 }
