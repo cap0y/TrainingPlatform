@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Course, type InsertCourse, type Instructor, type InsertInstructor, type Enrollment, type InsertEnrollment, type Seminar, type InsertSeminar, type Notice, type InsertNotice, type Review, type InsertReview, type ChatMessage, type InsertChatMessage, type Payment, type InsertPayment } from "@shared/schema";
+import { type User, type InsertUser, type Course, type InsertCourse, type Instructor, type InsertInstructor, type Enrollment, type InsertEnrollment, type Seminar, type InsertSeminar, type Notice, type InsertNotice, type Review, type InsertReview, type ChatMessage, type InsertChatMessage, type Payment, type InsertPayment } from "../shared/schema.js";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { DbStorage } from "./db-storage";

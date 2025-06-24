@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { setupWebSocket, sendAdminNotification } from "./websocket";
 import { registerAdminRoutes } from "./routes/admin";
-import { insertCourseSchema, insertInstructorSchema, insertEnrollmentSchema, insertSeminarSchema, insertNoticeSchema, insertReviewSchema, insertPaymentSchema } from "@shared/schema";
+import { insertCourseSchema, insertInstructorSchema, insertEnrollmentSchema, insertSeminarSchema, insertNoticeSchema, insertReviewSchema, insertPaymentSchema } from "../shared/schema.js";
 import multer from "multer";
 import path from "path";
 

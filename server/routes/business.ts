@@ -1,6 +1,6 @@
 import { Express } from "express";
 import { storage } from "../storage";
-import { insertCourseSchema } from "@shared/schema";
+import { insertCourseSchema } from "../../shared/schema.js";
 
 export function registerBusinessRoutes(app: Express) {
   // 기관의 강의 목록 조회

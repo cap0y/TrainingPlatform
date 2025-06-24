@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { users, courses, instructors, notices } from "@shared/schema";
+import { users, courses, instructors, notices } from "../shared/schema.js";
 import { hash } from "bcrypt";
 
 export async function seedDatabase() {

@@ -1,7 +1,7 @@
 import { db } from "./db";
-import { users, courses, instructors, enrollments, seminars, notices, reviews, chatMessages, payments, seminarRegistrations } from "@shared/schema";
+import { users, courses, instructors, enrollments, seminars, notices, reviews, chatMessages, payments, seminarRegistrations } from "../shared/schema.js";
 import { eq, like, desc, and, sql } from "drizzle-orm";
-import type { User, InsertUser, Course, InsertCourse, Instructor, InsertInstructor, Enrollment, InsertEnrollment, Seminar, InsertSeminar, Notice, InsertNotice, Review, InsertReview, ChatMessage, InsertChatMessage, Payment, InsertPayment } from "@shared/schema";
+import type { User, InsertUser, Course, InsertCourse, Instructor, InsertInstructor, Enrollment, InsertEnrollment, Seminar, InsertSeminar, Notice, InsertNotice, Review, InsertReview, ChatMessage, InsertChatMessage, Payment, InsertPayment } from "../shared/schema.js";
 import type { IStorage } from "./storage";
 import session from "express-session";
 import ConnectPgSimple from "connect-pg-simple";
