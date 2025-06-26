@@ -5,7 +5,7 @@ import { createServer as createViteServer } from "vite";
 import { type Server } from "http";
 
 export async function setupProductionVite(app: Express, server: Server) {
-  // Create Vite server that allows all hosts for production deployment
+  // Create Vite server that bypasses host restrictions for production deployment
   const vite = await createViteServer({
     configFile: false,
     mode: "development",
@@ -13,6 +13,7 @@ export async function setupProductionVite(app: Express, server: Server) {
       middlewareMode: true,
       hmr: false,
       host: "0.0.0.0",
+      origin: "http://localhost:5000",
     },
     resolve: {
       alias: {
@@ -25,8 +26,9 @@ export async function setupProductionVite(app: Express, server: Server) {
     appType: "custom",
     logLevel: "warn",
     define: {
-      // Override host checks
+      // Override host checks and ensure development mode for proper HMR bypass
       'process.env.NODE_ENV': '"development"',
+      global: 'globalThis',
     },
   });
 
