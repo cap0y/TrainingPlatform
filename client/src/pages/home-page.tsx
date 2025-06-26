@@ -658,7 +658,7 @@ export default function HomePage() {
                   ) : popularCourses.length === 0 ? (
                     <div className="w-full text-center py-8 text-gray-500">
                       <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                      <p>등록된 연수과정이 없습 ��다.</p>
+                      <p>등록된 연수과정이 없습니다.</p>
                     </div>
                   ) : (
                     // 원본 과정들과 복사본을 연결하여 무한 스크롤 효과

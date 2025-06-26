@@ -191,6 +191,67 @@
   .animate-slide {
     animation: slide 40s infinite;
   }
+
+  /* 왼쪽으로 천천히 움직이는 무한 스크롤 애니메이션 */
+  @keyframes scrollLeft {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll-left {
+    animation: scrollLeft 80s linear infinite;
+  }
+
+  /* 호버 시 애니메이션 일시정지 */
+  .animate-scroll-left:hover {
+    animation-play-state: paused;
+  }
+
+  /* 텍스트 줄 제한 유틸리티 */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 커스텀 스크롤바 스타일 */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-blue-500::-webkit-scrollbar-thumb {
+    background-color: hsl(239, 84%, 67%);
+    border-radius: 4px;
+  }
+
+  .scrollbar-track-gray-200::-webkit-scrollbar-track {
+    background-color: hsl(210, 20%, 98%);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* 호버 시 애니메이션 정지 */
+  .hover\:animate-none:hover {
+    animation: none !important;
+  }
 }
 
 @keyframes fadeIn {

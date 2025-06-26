@@ -1,4 +1,33 @@
-import { type User, type InsertUser, type Course, type InsertCourse, type Instructor, type InsertInstructor, type Enrollment, type InsertEnrollment, type Seminar, type InsertSeminar, type Notice, type InsertNotice, type Review, type InsertReview, type ChatMessage, type InsertChatMessage, type Payment, type InsertPayment } from "../shared/schema.js";
+import {
+  type User,
+  type InsertUser,
+  type Course,
+  type InsertCourse,
+  type Instructor,
+  type InsertInstructor,
+  type Enrollment,
+  type InsertEnrollment,
+  type Seminar,
+  type InsertSeminar,
+  type Notice,
+  type InsertNotice,
+  type Review,
+  type InsertReview,
+  type ChatMessage,
+  type InsertChatMessage,
+  type Payment,
+  type InsertPayment,
+  type SeminarRegistration,
+  type SeminarWishlist,
+  type OverseasProgram,
+  type InsertOverseasProgram,
+  type OverseasRegistration,
+  type InsertOverseasRegistration,
+  type Certificate,
+  type InsertCertificate,
+  type PrivateMessage,
+  type InsertPrivateMessage,
+} from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { DbStorage } from "./db-storage";
@@ -10,71 +39,169 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByBusinessNumber(businessNumber: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: number): Promise<void>;
   getAllUsers(): Promise<User[]>;
   getPendingBusinesses(): Promise<User[]>;
-  updateBusinessApproval(businessId: number, action: string, reason?: string): Promise<User | undefined>;
-  
+  updateBusinessApproval(
+    businessId: number,
+    action: string,
+    reason?: string,
+  ): Promise<User | undefined>;
+
   // Course management
   getCourses(filters?: {
     category?: string;
     type?: string;
     level?: string;
     search?: string;
+    subcategory?: string;
     page?: number;
     limit?: number;
   }): Promise<{ courses: Course[]; total: number }>;
   getCourse(id: number): Promise<Course | undefined>;
   createCourse(course: InsertCourse): Promise<Course>;
-  updateCourse(id: number, course: Partial<InsertCourse>): Promise<Course | undefined>;
+  updateCourse(
+    id: number,
+    course: Partial<InsertCourse>,
+  ): Promise<Course | undefined>;
   deleteCourse(id: number): Promise<void>;
   getCoursesByProvider(providerId: number): Promise<Course[]>;
   getPendingCourses(): Promise<Course[]>;
-  updateCourseApproval(courseId: number, action: string, reason?: string): Promise<Course | undefined>;
-  
+  updateCourseApproval(
+    courseId: number,
+    action: string,
+    reason?: string,
+  ): Promise<Course | undefined>;
+
   // Instructor management
   getInstructors(): Promise<Instructor[]>;
   getInstructor(id: number): Promise<Instructor | undefined>;
   createInstructor(instructor: InsertInstructor): Promise<Instructor>;
-  updateInstructor(id: number, instructor: Partial<InsertInstructor>): Promise<Instructor | undefined>;
-  
+  updateInstructor(
+    id: number,
+    instructor: Partial<InsertInstructor>,
+  ): Promise<Instructor | undefined>;
+
   // Enrollment management
   getEnrollments(userId?: number, courseId?: number): Promise<Enrollment[]>;
   createEnrollment(enrollment: InsertEnrollment): Promise<Enrollment>;
-  updateEnrollment(id: number, enrollment: Partial<InsertEnrollment>): Promise<Enrollment | undefined>;
-  
+  updateEnrollment(
+    id: number,
+    enrollment: Partial<InsertEnrollment>,
+  ): Promise<Enrollment | undefined>;
+  getEnrollment(enrollmentId: number): Promise<any>;
+
   // Seminar management
   getSeminars(): Promise<Seminar[]>;
   getSeminar(id: number): Promise<Seminar | undefined>;
   createSeminar(seminar: InsertSeminar): Promise<Seminar>;
+  updateSeminar(
+    id: number,
+    seminar: Partial<InsertSeminar>,
+  ): Promise<Seminar | undefined>;
+  getSeminarsByProvider(providerId: number): Promise<Seminar[]>;
   registerForSeminar(userId: number, seminarId: number): Promise<void>;
-  
+  getSeminarRegistrations(
+    seminarId?: number,
+    userId?: number,
+  ): Promise<SeminarRegistration[]>;
+  isSeminarRegistered(userId: number, seminarId: number): Promise<boolean>;
+  updateSeminarParticipantCount(seminarId: number): Promise<void>;
+  addSeminarToWishlist(userId: number, seminarId: number): Promise<void>;
+  removeSeminarFromWishlist(userId: number, seminarId: number): Promise<void>;
+  isSeminarInWishlist(userId: number, seminarId: number): Promise<boolean>;
+
+  // Overseas Programs management
+  getOverseasPrograms(): Promise<OverseasProgram[]>;
+  getOverseasProgram(id: number): Promise<OverseasProgram | undefined>;
+  createOverseasProgram(
+    program: InsertOverseasProgram,
+  ): Promise<OverseasProgram>;
+  updateOverseasProgram(
+    id: number,
+    program: Partial<InsertOverseasProgram>,
+  ): Promise<OverseasProgram | undefined>;
+  deleteOverseasProgram(id: number): Promise<void>;
+  getOverseasProgramsByProvider(providerId: number): Promise<OverseasProgram[]>;
+  registerForOverseasProgram(userId: number, overseasId: number): Promise<void>;
+  getOverseasRegistrations(
+    overseasId?: number,
+    userId?: number,
+  ): Promise<OverseasRegistration[]>;
+  isOverseasRegistered(userId: number, overseasId: number): Promise<boolean>;
+  updateOverseasParticipantCount(overseasId: number): Promise<void>;
+
   // Notice management
-  getNotices(category?: string, page?: number, limit?: number): Promise<{ notices: Notice[]; total: number }>;
+  getNotices(
+    category?: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ notices: Notice[]; total: number }>;
   getNotice(id: number): Promise<Notice | undefined>;
   createNotice(notice: InsertNotice): Promise<Notice>;
-  updateNotice(id: number, notice: Partial<InsertNotice>): Promise<Notice | undefined>;
+  updateNotice(
+    id: number,
+    notice: Partial<InsertNotice>,
+  ): Promise<Notice | undefined>;
   deleteNotice(id: number): Promise<void>;
-  
+  incrementNoticeViews(id: number): Promise<void>;
+
   // Review management
   getReviews(courseId: number): Promise<Review[]>;
   createReview(review: InsertReview): Promise<Review>;
-  
+
   // Chat management
   getChatMessages(limit?: number): Promise<ChatMessage[]>;
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
-  
+
+  // Private Message management (쪽지 시스템)
+  getPrivateMessages(
+    userId: number,
+    type: "received" | "sent",
+  ): Promise<PrivateMessage[]>;
+  getPrivateMessage(
+    messageId: number,
+    userId: number,
+  ): Promise<PrivateMessage | undefined>;
+  createPrivateMessage(message: InsertPrivateMessage): Promise<PrivateMessage>;
+  markMessageAsRead(messageId: number, userId: number): Promise<void>;
+  deleteMessage(
+    messageId: number,
+    userId: number,
+    type: "sender" | "receiver",
+  ): Promise<void>;
+  getUnreadMessageCount(userId: number): Promise<number>;
+
   // Payment management
   getPayments(userId?: number): Promise<Payment[]>;
   createPayment(payment: InsertPayment): Promise<Payment>;
-  updatePayment(id: number, payment: Partial<InsertPayment>): Promise<Payment | undefined>;
-  
+  updatePayment(
+    id: number,
+    payment: Partial<InsertPayment>,
+  ): Promise<Payment | undefined>;
+
   // Admin management
   getDashboardStats(): Promise<any>;
-  
+
   // Session store
   sessionStore: any;
+
+  // Raw query execution
+  query(sql: string, params?: any[]): Promise<{ rows: any[] }>;
+
+  // Certificate management
+  createCertificate(certificate: InsertCertificate): Promise<Certificate>;
+  getCertificate(enrollmentId: number): Promise<Certificate | null>;
+
+  // Cart management
+  getCartItems(userId: number): Promise<any[]>;
+  addToCart(userId: number, courseId: number, type?: string): Promise<void>;
+  removeFromCart(userId: number, itemId: number): Promise<void>;
+  clearCart(userId: number): Promise<void>;
+  isInCart(userId: number, courseId: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -88,144 +215,20 @@ export class MemStorage implements IStorage {
   private reviews: Map<number, Review> = new Map();
   private chatMessages: Map<number, ChatMessage> = new Map();
   private payments: Map<number, Payment> = new Map();
+  private certificates: Map<number, Certificate> = new Map();
   private nextId = 1;
 
   constructor() {
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000, // 24 hours
     });
-    this.seedData();
+    // PostgreSQL을 사용하므로 메모리 기반 더미 데이터는 제거
+    // 이 클래스는 호환성을 위해서만 유지됨
   }
 
   private seedData() {
-    // Seed admin user
-    const adminUser: User = {
-      id: 1,
-      username: "admin",
-      email: "admin@example.com",
-      password: "$2b$10$abcdefghijklmnopqrstuvwxyz",
-      name: "관리자",
-      phone: "010-1234-5678",
-      userType: "individual",
-      businessName: null,
-      businessNumber: null,
-      isAdmin: true,
-      isApproved: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.users.set(1, adminUser);
-
-    // Seed sample courses
-    const sampleCourses: Course[] = [
-      {
-        id: 1,
-        title: "2025 교육과정 개정안 이해와 적용",
-        description: "새로운 교육과정의 주요 변화사항과 현장 적용 방안을 학습합니다.",
-        category: "교육과정",
-        type: "온라인",
-        level: "초급",
-        credit: 15,
-        price: "50000",
-        discountPrice: "40000",
-        duration: 30,
-        maxStudents: 100,
-        enrolledCount: 45,
-        imageUrl: null,
-        status: "active",
-        instructorId: 1,
-        tags: ["교육과정", "개정", "적용방안"],
-        requirements: ["교육 관련 업무 경험"],
-        objectives: ["교육과정 이해", "현장 적용 능력 향상"],
-        outline: "1. 개정 배경\n2. 주요 변화사항\n3. 적용 방안",
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: 2,
-        title: "디지털 교육 도구 활용 워크숍",
-        description: "최신 디지털 교육 도구를 활용한 효과적인 수업 방법을 익힙니다.",
-        category: "디지털교육",
-        type: "블렌디드",
-        level: "중급",
-        credit: 10,
-        price: "30000",
-        discountPrice: null,
-        duration: 20,
-        maxStudents: 50,
-        enrolledCount: 32,
-        imageUrl: null,
-        status: "active",
-        instructorId: 2,
-        tags: ["디지털", "도구", "워크숍"],
-        requirements: ["기본적인 컴퓨터 활용 능력"],
-        objectives: ["디지털 도구 활용", "수업 효과성 향상"],
-        outline: "1. 디지털 도구 소개\n2. 실습\n3. 적용 사례",
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-    ];
-
-    sampleCourses.forEach(course => this.courses.set(course.id, course));
-
-    // Seed instructors
-    const sampleInstructors: Instructor[] = [
-      {
-        id: 1,
-        name: "김교수",
-        position: "교육학과 교수",
-        expertise: "교육과정 전문가",
-        profile: "20년 이상의 교육과정 연구 경험",
-        imageUrl: null,
-        isActive: true,
-        createdAt: new Date(),
-      },
-      {
-        id: 2,
-        name: "이박사",
-        position: "디지털교육 연구원",
-        expertise: "교육공학 전문가",
-        profile: "디지털 교육 도구 개발 및 연구",
-        imageUrl: null,
-        isActive: true,
-        createdAt: new Date(),
-      }
-    ];
-
-    sampleInstructors.forEach(instructor => this.instructors.set(instructor.id, instructor));
-
-    // Seed notices
-    const sampleNotices: Notice[] = [
-      {
-        id: 1,
-        title: "2025년 상반기 연수 일정 공지",
-        content: "2025년 상반기 연수 일정이 확정되었습니다. 자세한 내용은 첨부파일을 확인해주세요.",
-        category: "일반공지",
-        authorId: 1,
-        isImportant: true,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: 2,
-        title: "온라인 연수 시스템 점검 안내",
-        content: "시스템 안정성 향상을 위한 정기 점검을 실시합니다.",
-        category: "시스템",
-        authorId: 1,
-        isImportant: false,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-    ];
-
-    sampleNotices.forEach(notice => this.notices.set(notice.id, notice));
-
-    this.nextId = 100; // Start IDs from 100 to avoid conflicts
+    // PostgreSQL 데이터베이스를 사용하므로 메모리 기반 더미 데이터는 더 이상 필요하지 않음
+    // 모든 데이터는 데이터베이스에서 관리됨
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -246,6 +249,15 @@ export class MemStorage implements IStorage {
     return undefined;
   }
 
+  async getUserByBusinessNumber(
+    businessNumber: string,
+  ): Promise<User | undefined> {
+    for (const user of Array.from(this.users.values())) {
+      if (user.businessNumber === businessNumber) return user;
+    }
+    return undefined;
+  }
+
   async createUser(userData: InsertUser): Promise<User> {
     const id = this.nextId++;
     const user: User = {
@@ -256,9 +268,13 @@ export class MemStorage implements IStorage {
       name: userData.name,
       phone: userData.phone || null,
       userType: userData.userType || "individual",
-      businessName: userData.businessName || null,
+      role: userData.role || null,
+      organizationName: userData.organizationName || null,
       businessNumber: userData.businessNumber || null,
+      representativeName: userData.representativeName || null,
+      address: userData.address || null,
       isAdmin: userData.isAdmin || false,
+      isApproved: userData.isApproved || false,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -267,10 +283,13 @@ export class MemStorage implements IStorage {
     return user;
   }
 
-  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
+  async updateUser(
+    id: number,
+    userData: Partial<InsertUser>,
+  ): Promise<User | undefined> {
     const existingUser = this.users.get(id);
     if (!existingUser) return undefined;
-    
+
     const updatedUser: User = {
       ...existingUser,
       ...userData,
@@ -280,41 +299,92 @@ export class MemStorage implements IStorage {
     return updatedUser;
   }
 
+  async deleteUser(id: number): Promise<void> {
+    this.users.delete(id);
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return Array.from(this.users.values()).sort(
+      (a, b) =>
+        new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+    );
+  }
+
+  async getPendingBusinesses(): Promise<User[]> {
+    return Array.from(this.users.values()).filter(
+      (user) => user.userType === "business" && !user.isApproved,
+    );
+  }
+
+  async updateBusinessApproval(
+    businessId: number,
+    action: string,
+    reason?: string,
+  ): Promise<User | undefined> {
+    const existingUser = this.users.get(businessId);
+    if (!existingUser) return undefined;
+
+    const updatedUser: User = {
+      ...existingUser,
+      isApproved: action === "approve",
+      updatedAt: new Date(),
+    };
+    this.users.set(businessId, updatedUser);
+    return updatedUser;
+  }
+
   // Course methods
   async getCourses(filters?: {
     category?: string;
     type?: string;
     level?: string;
     search?: string;
+    subcategory?: string;
     page?: number;
     limit?: number;
   }): Promise<{ courses: Course[]; total: number }> {
-    let filteredCourses = Array.from(this.courses.values()).filter(course => course.isActive);
-    
+    let filteredCourses = Array.from(this.courses.values()).filter(
+      (course) => course.isActive,
+    );
+
     if (filters?.category) {
-      filteredCourses = filteredCourses.filter(course => course.category === filters.category);
-    }
-    if (filters?.type) {
-      filteredCourses = filteredCourses.filter(course => course.type === filters.type);
-    }
-    if (filters?.level) {
-      filteredCourses = filteredCourses.filter(course => course.level === filters.level);
-    }
-    if (filters?.search) {
-      filteredCourses = filteredCourses.filter(course => 
-        course.title.toLowerCase().includes(filters.search!.toLowerCase())
+      filteredCourses = filteredCourses.filter(
+        (course) => course.category === filters.category,
       );
     }
-    
+    if (filters?.subcategory) {
+      filteredCourses = filteredCourses.filter(
+        (course) => course.subcategory === filters.subcategory,
+      );
+    }
+    if (filters?.type) {
+      filteredCourses = filteredCourses.filter(
+        (course) => course.type === filters.type,
+      );
+    }
+    if (filters?.level) {
+      filteredCourses = filteredCourses.filter(
+        (course) => course.level === filters.level,
+      );
+    }
+    if (filters?.search) {
+      filteredCourses = filteredCourses.filter((course) =>
+        course.title.toLowerCase().includes(filters.search!.toLowerCase()),
+      );
+    }
+
     const total = filteredCourses.length;
     const page = filters?.page || 1;
     const limit = filters?.limit || 10;
     const offset = (page - 1) * limit;
-    
+
     const courses = filteredCourses
-      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+      )
       .slice(offset, offset + limit);
-    
+
     return { courses, total };
   }
 
@@ -326,11 +396,29 @@ export class MemStorage implements IStorage {
     const id = this.nextId++;
     const course: Course = {
       id,
-      ...courseData,
+      title: courseData.title,
+      description: courseData.description || null,
+      category: courseData.category,
+      subcategory: courseData.subcategory || null,
+      type: courseData.type,
+      level: courseData.level,
+      credit: courseData.credit || 1,
+      price: courseData.price || 0,
+      discountPrice: courseData.discountPrice || null,
+      duration: courseData.duration,
+      location: courseData.location || null,
+      startDate: courseData.startDate || null,
+      endDate: courseData.endDate || null,
+      maxStudents: courseData.maxStudents || null,
       enrolledCount: 0,
-      status: courseData.providerId ? "pending" : "active",
-      approvalStatus: courseData.providerId ? "pending" : "approved",
-      // 기본값 설정 - 새로 추가된 필드들
+      imageUrl: courseData.imageUrl || null,
+      status:
+        courseData.status || (courseData.providerId ? "pending" : "active"),
+      approvalStatus:
+        courseData.approvalStatus ||
+        (courseData.providerId ? "pending" : "approved"),
+      instructorId: courseData.instructorId || null,
+      providerId: courseData.providerId || null,
       curriculum: courseData.curriculum || null,
       objectives: courseData.objectives || null,
       requirements: courseData.requirements || null,
@@ -343,7 +431,6 @@ export class MemStorage implements IStorage {
       targetAudience: courseData.targetAudience || null,
       difficulty: courseData.difficulty || null,
       language: courseData.language || "ko",
-      location: courseData.location || null,
       tags: courseData.tags || null,
       features: courseData.features || null,
       recommendations: courseData.recommendations || null,
@@ -352,6 +439,11 @@ export class MemStorage implements IStorage {
       completionDeadline: courseData.completionDeadline || null,
       prerequisites: courseData.prerequisites || null,
       learningMethod: courseData.learningMethod || null,
+      videoThumbnails: courseData.videoThumbnails || null,
+      quizData: courseData.quizData || null,
+      interactiveElements: courseData.interactiveElements || null,
+      curriculumItems: courseData.curriculumItems || null,
+      learningMaterials: courseData.learningMaterials || null,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -360,18 +452,33 @@ export class MemStorage implements IStorage {
     return course;
   }
 
-  async updateCourse(id: number, courseData: Partial<InsertCourse>): Promise<Course | undefined> {
+  async updateCourse(
+    id: number,
+    courseData: Partial<InsertCourse>,
+  ): Promise<Course | undefined> {
     const existingCourse = this.courses.get(id);
     if (!existingCourse) return undefined;
-    
+
     const updatedCourse: Course = {
       ...existingCourse,
       ...courseData,
       // 숫자 필드들을 올바르게 처리
-      credit: courseData.credit !== undefined ? courseData.credit : existingCourse.credit,
-      price: courseData.price !== undefined ? courseData.price : existingCourse.price,
-      discountPrice: courseData.discountPrice !== undefined ? courseData.discountPrice : existingCourse.discountPrice,
-      maxStudents: courseData.maxStudents !== undefined ? courseData.maxStudents : existingCourse.maxStudents,
+      credit:
+        courseData.credit !== undefined
+          ? courseData.credit
+          : existingCourse.credit,
+      price:
+        courseData.price !== undefined
+          ? courseData.price
+          : existingCourse.price,
+      discountPrice:
+        courseData.discountPrice !== undefined
+          ? courseData.discountPrice
+          : existingCourse.discountPrice,
+      maxStudents:
+        courseData.maxStudents !== undefined
+          ? courseData.maxStudents
+          : existingCourse.maxStudents,
       updatedAt: new Date(),
     };
     this.courses.set(id, updatedCourse);
@@ -382,16 +489,58 @@ export class MemStorage implements IStorage {
     this.courses.delete(id);
   }
 
+  async getCoursesByProvider(providerId: number): Promise<Course[]> {
+    return Array.from(this.courses.values())
+      .filter((course) => course.providerId === providerId)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+      );
+  }
+
+  async getPendingCourses(): Promise<Course[]> {
+    return Array.from(this.courses.values())
+      .filter(
+        (course) => course.approvalStatus === "pending" && course.isActive,
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+      );
+  }
+
+  async updateCourseApproval(
+    courseId: number,
+    action: string,
+    reason?: string,
+  ): Promise<Course | undefined> {
+    const existingCourse = this.courses.get(courseId);
+    if (!existingCourse) return undefined;
+
+    const updatedCourse: Course = {
+      ...existingCourse,
+      approvalStatus: action === "approve" ? "approved" : "rejected",
+      status: action === "approve" ? "active" : "inactive",
+      updatedAt: new Date(),
+    };
+    this.courses.set(courseId, updatedCourse);
+    return updatedCourse;
+  }
+
   // Instructor methods
   async getInstructors(): Promise<Instructor[]> {
-    return Array.from(this.instructors.values()).filter(instructor => instructor.isActive);
+    return Array.from(this.instructors.values()).filter(
+      (instructor) => instructor.isActive,
+    );
   }
 
   async getInstructor(id: number): Promise<Instructor | undefined> {
     return this.instructors.get(id);
   }
 
-  async createInstructor(instructorData: InsertInstructor): Promise<Instructor> {
+  async createInstructor(
+    instructorData: InsertInstructor,
+  ): Promise<Instructor> {
     const id = this.nextId++;
     const instructor: Instructor = {
       id,
@@ -407,10 +556,13 @@ export class MemStorage implements IStorage {
     return instructor;
   }
 
-  async updateInstructor(id: number, instructorData: Partial<InsertInstructor>): Promise<Instructor | undefined> {
+  async updateInstructor(
+    id: number,
+    instructorData: Partial<InsertInstructor>,
+  ): Promise<Instructor | undefined> {
     const existingInstructor = this.instructors.get(id);
     if (!existingInstructor) return undefined;
-    
+
     const updatedInstructor: Instructor = {
       ...existingInstructor,
       ...instructorData,
@@ -420,20 +572,29 @@ export class MemStorage implements IStorage {
   }
 
   // Enrollment methods
-  async getEnrollments(userId?: number, courseId?: number): Promise<Enrollment[]> {
+  async getEnrollments(
+    userId?: number,
+    courseId?: number,
+  ): Promise<Enrollment[]> {
     let enrollments = Array.from(this.enrollments.values());
-    
+
     if (userId) {
-      enrollments = enrollments.filter(enrollment => enrollment.userId === userId);
+      enrollments = enrollments.filter(
+        (enrollment) => enrollment.userId === userId,
+      );
     }
     if (courseId) {
-      enrollments = enrollments.filter(enrollment => enrollment.courseId === courseId);
+      enrollments = enrollments.filter(
+        (enrollment) => enrollment.courseId === courseId,
+      );
     }
-    
+
     return enrollments;
   }
 
-  async createEnrollment(enrollmentData: InsertEnrollment): Promise<Enrollment> {
+  async createEnrollment(
+    enrollmentData: InsertEnrollment,
+  ): Promise<Enrollment> {
     const id = this.nextId++;
     const enrollment: Enrollment = {
       id,
@@ -443,15 +604,19 @@ export class MemStorage implements IStorage {
       grade: null,
       enrolledAt: new Date(),
       completedAt: null,
+      subtype: null,
     };
     this.enrollments.set(id, enrollment);
     return enrollment;
   }
 
-  async updateEnrollment(id: number, enrollmentData: Partial<InsertEnrollment>): Promise<Enrollment | undefined> {
+  async updateEnrollment(
+    id: number,
+    enrollmentData: Partial<InsertEnrollment>,
+  ): Promise<Enrollment | undefined> {
     const existingEnrollment = this.enrollments.get(id);
     if (!existingEnrollment) return undefined;
-    
+
     const updatedEnrollment: Enrollment = {
       ...existingEnrollment,
       ...enrollmentData,
@@ -460,10 +625,28 @@ export class MemStorage implements IStorage {
     return updatedEnrollment;
   }
 
+  async getEnrollment(enrollmentId: number): Promise<any> {
+    const enrollment = Array.from(this.enrollments.values()).find(
+      (e) => e.id === enrollmentId,
+    );
+    if (!enrollment) return null;
+
+    // 관련된 certificate 정보 조회 (새로운 스키마에 맞게 수정)
+    const certificate = Array.from(this.certificates.values()).find(
+      (c) =>
+        c.userId === enrollment.userId && c.courseId === enrollment.courseId,
+    );
+
+    return {
+      ...enrollment,
+      certificateNumber: certificate ? certificate.certificateNumber : null,
+    };
+  }
+
   // Seminar methods
   async getSeminars(): Promise<Seminar[]> {
     return Array.from(this.seminars.values())
-      .filter(seminar => seminar.isActive)
+      .filter((seminar) => seminar.isActive)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
 
@@ -482,6 +665,16 @@ export class MemStorage implements IStorage {
       location: seminarData.location || null,
       maxParticipants: seminarData.maxParticipants || null,
       imageUrl: seminarData.imageUrl || null,
+      price: seminarData.price || 0,
+      benefits: seminarData.benefits || null,
+      requirements: seminarData.requirements || null,
+      tags: seminarData.tags || null,
+      duration: seminarData.duration || null,
+      organizer: seminarData.organizer || null,
+      contactPhone: seminarData.contactPhone || null,
+      contactEmail: seminarData.contactEmail || null,
+      programSchedule: seminarData.programSchedule || null,
+      providerId: seminarData.providerId || null,
       currentParticipants: 0,
       isActive: true,
       createdAt: new Date(),
@@ -490,28 +683,106 @@ export class MemStorage implements IStorage {
     return seminar;
   }
 
+  async updateSeminar(
+    id: number,
+    seminarData: Partial<InsertSeminar>,
+  ): Promise<Seminar | undefined> {
+    const existingSeminar = this.seminars.get(id);
+    if (!existingSeminar) return undefined;
+
+    const updatedSeminar: Seminar = {
+      ...existingSeminar,
+      ...seminarData,
+    };
+    this.seminars.set(id, updatedSeminar);
+    return updatedSeminar;
+  }
+
+  async getSeminarsByProvider(providerId: number): Promise<Seminar[]> {
+    return Array.from(this.seminars.values())
+      .filter(
+        (seminar) => seminar.providerId === providerId && seminar.isActive,
+      )
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
   async registerForSeminar(userId: number, seminarId: number): Promise<void> {
     // Implementation for seminar registration
     // This would typically involve creating a seminar registration record
   }
 
+  async getSeminarRegistrations(
+    seminarId?: number,
+    userId?: number,
+  ): Promise<SeminarRegistration[]> {
+    // Implementation for getting seminar registrations
+    // This would typically involve querying the database for seminar registrations
+    return [];
+  }
+
+  async isSeminarRegistered(
+    userId: number,
+    seminarId: number,
+  ): Promise<boolean> {
+    // Implementation for checking if a user is registered for a seminar
+    // This would typically involve querying the database for registration status
+    return false;
+  }
+
+  async updateSeminarParticipantCount(seminarId: number): Promise<void> {
+    // Implementation for updating seminar participant count
+    // This would typically involve querying the database for seminar and updating its participant count
+  }
+
+  async addSeminarToWishlist(userId: number, seminarId: number): Promise<void> {
+    // Implementation for adding a seminar to a user's wishlist
+    // This would typically involve querying the database for wishlist and adding the seminar
+  }
+
+  async removeSeminarFromWishlist(
+    userId: number,
+    seminarId: number,
+  ): Promise<void> {
+    // Implementation for removing a seminar from a user's wishlist
+    // This would typically involve querying the database for wishlist and removing the seminar
+  }
+
+  async isSeminarInWishlist(
+    userId: number,
+    seminarId: number,
+  ): Promise<boolean> {
+    // 메모리 기반 구현은 생략 (DB 기반으로 사용)
+    return false;
+  }
+
   // Notice methods
-  async getNotices(category?: string, page?: number, limit?: number): Promise<{ notices: Notice[]; total: number }> {
-    let filteredNotices = Array.from(this.notices.values()).filter(notice => notice.isActive);
-    
+  async getNotices(
+    category?: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ notices: Notice[]; total: number }> {
+    let filteredNotices = Array.from(this.notices.values()).filter(
+      (notice) => notice.isActive,
+    );
+
     if (category) {
-      filteredNotices = filteredNotices.filter(notice => notice.category === category);
+      filteredNotices = filteredNotices.filter(
+        (notice) => notice.category === category,
+      );
     }
-    
+
     const total = filteredNotices.length;
     const actualPage = page || 1;
     const actualLimit = limit || 10;
     const offset = (actualPage - 1) * actualLimit;
-    
+
     const notices = filteredNotices
-      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+      )
       .slice(offset, offset + actualLimit);
-    
+
     return { notices, total };
   }
 
@@ -529,6 +800,7 @@ export class MemStorage implements IStorage {
       authorId: noticeData.authorId || null,
       isImportant: noticeData.isImportant || false,
       isActive: true,
+      views: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -536,10 +808,13 @@ export class MemStorage implements IStorage {
     return notice;
   }
 
-  async updateNotice(id: number, noticeData: Partial<InsertNotice>): Promise<Notice | undefined> {
+  async updateNotice(
+    id: number,
+    noticeData: Partial<InsertNotice>,
+  ): Promise<Notice | undefined> {
     const existingNotice = this.notices.get(id);
     if (!existingNotice) return undefined;
-    
+
     const updatedNotice: Notice = {
       ...existingNotice,
       ...noticeData,
@@ -553,11 +828,26 @@ export class MemStorage implements IStorage {
     this.notices.delete(id);
   }
 
+  async incrementNoticeViews(id: number): Promise<void> {
+    const notice = this.notices.get(id);
+    if (notice) {
+      const updatedNotice: Notice = {
+        ...notice,
+        views: (notice.views || 0) + 1,
+        updatedAt: new Date(),
+      };
+      this.notices.set(id, updatedNotice);
+    }
+  }
+
   // Review methods
   async getReviews(courseId: number): Promise<Review[]> {
     return Array.from(this.reviews.values())
-      .filter(review => review.courseId === courseId && review.isActive)
-      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
+      .filter((review) => review.courseId === courseId && review.isActive)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+      );
   }
 
   async createReview(reviewData: InsertReview): Promise<Review> {
@@ -579,11 +869,16 @@ export class MemStorage implements IStorage {
   async getChatMessages(limit?: number): Promise<ChatMessage[]> {
     const actualLimit = limit || 50;
     return Array.from(this.chatMessages.values())
-      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+      )
       .slice(0, actualLimit);
   }
 
-  async createChatMessage(messageData: InsertChatMessage): Promise<ChatMessage> {
+  async createChatMessage(
+    messageData: InsertChatMessage,
+  ): Promise<ChatMessage> {
     const id = this.nextId++;
     const message: ChatMessage = {
       id,
@@ -596,15 +891,59 @@ export class MemStorage implements IStorage {
     return message;
   }
 
+  // Private Message management (쪽지 시스템)
+  async getPrivateMessages(
+    userId: number,
+    type: "received" | "sent",
+  ): Promise<PrivateMessage[]> {
+    // 메모리 기반 구현은 생략 (DB 기반으로 사용)
+    return [];
+  }
+
+  async getPrivateMessage(
+    messageId: number,
+    userId: number,
+  ): Promise<PrivateMessage | undefined> {
+    // 메모리 기반 구현은 생략 (DB 기반으로 사용)
+    return undefined;
+  }
+
+  async createPrivateMessage(
+    message: InsertPrivateMessage,
+  ): Promise<PrivateMessage> {
+    // 메모리 기반 구현은 생략 (DB 기반으로 사용)
+    throw new Error("메모리 기반 쪽지 생성은 지원되지 않습니다.");
+  }
+
+  async markMessageAsRead(messageId: number, userId: number): Promise<void> {
+    // 메모리 기반 구현은 생략 (DB 기반으로 사용)
+  }
+
+  async deleteMessage(
+    messageId: number,
+    userId: number,
+    type: "sender" | "receiver",
+  ): Promise<void> {
+    // 메모리 기반 구현은 생략 (DB 기반으로 사용)
+  }
+
+  async getUnreadMessageCount(userId: number): Promise<number> {
+    // 메모리 기반 구현은 생략 (DB 기반으로 사용)
+    return 0;
+  }
+
   // Payment methods
   async getPayments(userId?: number): Promise<Payment[]> {
     let payments = Array.from(this.payments.values());
-    
+
     if (userId) {
-      payments = payments.filter(payment => payment.userId === userId);
+      payments = payments.filter((payment) => payment.userId === userId);
     }
-    
-    return payments.sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
+
+    return payments.sort(
+      (a, b) =>
+        new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+    );
   }
 
   async createPayment(paymentData: InsertPayment): Promise<Payment> {
@@ -617,22 +956,166 @@ export class MemStorage implements IStorage {
       status: paymentData.status || "pending",
       paymentMethod: paymentData.paymentMethod || null,
       transactionId: paymentData.transactionId || null,
+      refundReason: paymentData.refundReason || null,
       createdAt: new Date(),
     };
     this.payments.set(id, payment);
     return payment;
   }
 
-  async updatePayment(id: number, paymentData: Partial<InsertPayment>): Promise<Payment | undefined> {
+  async updatePayment(
+    id: number,
+    paymentData: Partial<InsertPayment>,
+  ): Promise<Payment | undefined> {
     const existingPayment = this.payments.get(id);
     if (!existingPayment) return undefined;
-    
+
     const updatedPayment: Payment = {
       ...existingPayment,
       ...paymentData,
     };
     this.payments.set(id, updatedPayment);
     return updatedPayment;
+  }
+
+  async getDashboardStats(): Promise<any> {
+    const totalUsers = this.users.size;
+    const totalCourses = Array.from(this.courses.values()).filter(
+      (c) => c.isActive,
+    ).length;
+    const totalEnrollments = this.enrollments.size;
+    const pendingBusinesses = Array.from(this.users.values()).filter(
+      (u) => u.userType === "business" && !u.isApproved,
+    ).length;
+
+    return {
+      totalUsers,
+      totalCourses,
+      totalEnrollments,
+      pendingBusinesses,
+    };
+  }
+
+  // Overseas Programs management (메모리 기반 구현은 생략)
+  async getOverseasPrograms(): Promise<OverseasProgram[]> {
+    return [];
+  }
+
+  async getOverseasProgram(id: number): Promise<OverseasProgram | undefined> {
+    return undefined;
+  }
+
+  async createOverseasProgram(
+    programData: InsertOverseasProgram,
+  ): Promise<OverseasProgram> {
+    throw new Error("메모리 기반 해외연수 생성은 지원되지 않습니다.");
+  }
+
+  async updateOverseasProgram(
+    id: number,
+    programData: Partial<InsertOverseasProgram>,
+  ): Promise<OverseasProgram | undefined> {
+    return undefined;
+  }
+
+  async deleteOverseasProgram(id: number): Promise<void> {
+    // 메모리 기반 구현은 생략
+  }
+
+  async getOverseasProgramsByProvider(
+    providerId: number,
+  ): Promise<OverseasProgram[]> {
+    return [];
+  }
+
+  async registerForOverseasProgram(
+    userId: number,
+    overseasId: number,
+  ): Promise<void> {
+    // 메모리 기반 구현은 생략
+  }
+
+  async getOverseasRegistrations(
+    overseasId?: number,
+    userId?: number,
+  ): Promise<OverseasRegistration[]> {
+    return [];
+  }
+
+  async isOverseasRegistered(
+    userId: number,
+    overseasId: number,
+  ): Promise<boolean> {
+    return false;
+  }
+
+  async updateOverseasParticipantCount(overseasId: number): Promise<void> {
+    // 메모리 기반 구현은 생략
+  }
+
+  // Raw query execution
+  async query(sql: string, params?: any[]): Promise<{ rows: any[] }> {
+    return { rows: [] };
+  }
+
+  // Certificate management
+  async createCertificate(
+    certificateData: InsertCertificate,
+  ): Promise<Certificate> {
+    const id = this.nextId++;
+    const certificate: Certificate = {
+      id,
+      userId: certificateData.userId,
+      courseId: certificateData.courseId,
+      enrollmentId: certificateData.enrollmentId,
+      issuedBy: certificateData.issuedBy,
+      certificateNumber: certificateData.certificateNumber,
+      issuedAt: certificateData.issuedAt || new Date(),
+      expiresAt: certificateData.expiresAt || null,
+      status: certificateData.status || "active",
+    };
+    this.certificates.set(id, certificate);
+    return certificate;
+  }
+
+  async getCertificate(enrollmentId: number): Promise<Certificate | null> {
+    // enrollmentId로 enrollment를 먼저 찾고, 해당 userId와 courseId로 certificate 조회
+    const enrollment = this.enrollments.get(enrollmentId);
+    if (!enrollment) return null;
+
+    const certificate = Array.from(this.certificates.values()).find(
+      (cert) =>
+        cert.userId === enrollment.userId &&
+        cert.courseId === enrollment.courseId,
+    );
+    return certificate || null;
+  }
+
+  // Cart management
+  async getCartItems(userId: number): Promise<any[]> {
+    // Implementation for getting cart items
+    return [];
+  }
+
+  async addToCart(
+    userId: number,
+    courseId: number,
+    type?: string,
+  ): Promise<void> {
+    // Implementation for adding to cart
+  }
+
+  async removeFromCart(userId: number, itemId: number): Promise<void> {
+    // Implementation for removing from cart
+  }
+
+  async clearCart(userId: number): Promise<void> {
+    // Implementation for clearing cart
+  }
+
+  async isInCart(userId: number, courseId: number): Promise<boolean> {
+    // Implementation for checking if a course is in the cart
+    return false;
   }
 }
 

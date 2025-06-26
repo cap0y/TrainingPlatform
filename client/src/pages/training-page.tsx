@@ -181,7 +181,7 @@ const TrainingPage: React.FC = () => {
                   세미나
                 </a>
                 <a
-                  href="/notices"
+                  href="/announcements"
                   className="text-gray-600 hover:text-blue-600"
                 >
                   공지사항
@@ -413,7 +413,7 @@ const TrainingPage: React.FC = () => {
                   </a>
                 </li>
                 <li>
-                  <a href="/notices" className="hover:text-white">
+                  <a href="/announcements" className="hover:text-white">
                     공지사항
                   </a>
                 </li>
@@ -422,8 +422,8 @@ const TrainingPage: React.FC = () => {
             <div>
               <h4 className="font-semibold mb-4">고객지원</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>전화: 02-1234-5678</li>
-                <li>이메일: support@eduplatform.kr</li>
+                <li>전화: 055-772-2226</li>
+                <li>이메일: bkim@jinuchem.co.kr</li>
                 <li>운영시간: 평일 09:00-18:00</li>
               </ul>
             </div>

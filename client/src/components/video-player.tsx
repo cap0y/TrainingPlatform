@@ -4,15 +4,18 @@ interface VideoPlayerProps {
   src: string;
   title: string;
   onProgress: (progress: number) => void;
+  initialProgress?: number;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
   src,
   title,
   onProgress,
+  initialProgress = 0,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(initialProgress);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -24,12 +27,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       onProgress(currentProgress);
     };
 
+    const handleLoadedMetadata = () => {
+      if (initialProgress > 0 && !isInitialized) {
+        const startTime = (initialProgress / 100) * video.duration;
+        video.currentTime = startTime;
+        setIsInitialized(true);
+        console.log(
+          `비디오 시작 위치 설정: ${startTime.toFixed(2)}초 (${initialProgress}%)`,
+        );
+      }
+    };
+
     video.addEventListener("timeupdate", handleTimeUpdate);
+    video.addEventListener("loadedmetadata", handleLoadedMetadata);
 
     return () => {
       video.removeEventListener("timeupdate", handleTimeUpdate);
+      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
     };
-  }, [onProgress]);
+  }, [onProgress, initialProgress, isInitialized]);
 
   return (
     <div className="relative w-full">
@@ -51,6 +67,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             style={{ width: `${progress}%` }}
           ></div>
         </div>
+        {initialProgress > 0 && !isInitialized && (
+          <div className="text-xs text-gray-500 mt-1">
+            이전에 {initialProgress.toFixed(0)}% 시청했습니다. 이어서
+            시청합니다.
+          </div>
+        )}
       </div>
     </div>
   );

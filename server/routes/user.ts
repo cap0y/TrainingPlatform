@@ -192,7 +192,7 @@ export function registerUserRoutes(app: Express) {
             <title>수료증</title>
             <style>
               @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
-              
+
               body {
                 margin: 0;
                 padding: 0;
@@ -203,7 +203,7 @@ export function registerUserRoutes(app: Express) {
                 align-items: center;
                 justify-content: center;
               }
-              
+
               .certificate-container {
                 width: 210mm;
                 height: 267mm;
@@ -215,7 +215,7 @@ export function registerUserRoutes(app: Express) {
                 box-sizing: border-box;
                 box-shadow: 0 0 20px rgba(0,0,0,0.1);
               }
-              
+
               .certificate-content {
                 position: relative;
                 width: 100%;
@@ -227,7 +227,7 @@ export function registerUserRoutes(app: Express) {
                 align-items: center;
                 text-align: center;
               }
-              
+
               .document-number {
                 position: absolute;
                 top: 100px;
@@ -235,23 +235,23 @@ export function registerUserRoutes(app: Express) {
                 font-size: 14px;
                 color: #666;
               }
-              
+
               .certificate-text {
                 margin-top: 500px;
                 font-size: 18px;
                 line-height: 2;
                 margin-bottom: 5px;
               }
-              
+
               .certificate-footer {
                 margin-top: auto;
                 margin-bottom: 10px;
               }
-              
+
               .issue-date {
                 margin-bottom: 10px;
               }
-              
+
               .company-name {
                 font-size: 24px;
                 font-weight: bold;
@@ -259,7 +259,7 @@ export function registerUserRoutes(app: Express) {
                 position: relative;
                 z-index: 2;
               }
-              
+
               .company-seal {
                 position: absolute;
                 width: 80px;
@@ -279,7 +279,7 @@ export function registerUserRoutes(app: Express) {
                   -webkit-print-color-adjust: exact !important;
                   print-color-adjust: exact !important;
                 }
-                
+
                 .certificate-container {
                   margin: 0;
                   box-shadow: none;
@@ -363,6 +363,7 @@ export function registerUserRoutes(app: Express) {
     try {
       progressTableInitializing = true;
 
+      // 파라미터 바인딩 없이 직접 실행하는 쿼리
       const tableExists = await storage.query(`
         SELECT EXISTS (
           SELECT FROM information_schema.tables 
@@ -371,7 +372,7 @@ export function registerUserRoutes(app: Express) {
       `);
 
       if (!tableExists.rows[0].exists) {
-        // 테이블 생성
+        // 테이블 생성 - DDL 쿼리는 파라미터 바인딩을 사용하지 않음
         await storage.query(`
           CREATE TABLE IF NOT EXISTS enrollment_progress (
             id SERIAL PRIMARY KEY,
@@ -387,7 +388,7 @@ export function registerUserRoutes(app: Express) {
           );
         `);
 
-        // 인덱스 생성
+        // 인덱스 생성 - DDL 쿼리는 파라미터 바인딩을 사용하지 않음
         await storage.query(`
           CREATE INDEX IF NOT EXISTS idx_enrollment_progress_enrollment_id ON enrollment_progress(enrollment_id);
         `);
@@ -401,6 +402,7 @@ export function registerUserRoutes(app: Express) {
 
       progressTableInitialized = true;
     } catch (error) {
+      console.error("Error ensuring progress table:", error);
       progressTableInitialized = true; // 에러가 발생해도 더 이상 시도하지 않음
     } finally {
       progressTableInitializing = false;
@@ -414,36 +416,9 @@ export function registerUserRoutes(app: Express) {
     course: any,
   ): Promise<number> {
     try {
-      // 테이블 존재 여부 확인
-      const tableExists = await storage.query(`
-        SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_name = 'enrollment_progress'
-        );
-      `);
-
-      if (!tableExists.rows[0].exists) {
-        // 테이블이 없으면 0 반환
-        return 0;
-      }
-
+      // 커리큘럼이 없는 경우 0 반환
       if (!course.curriculumItems || !Array.isArray(course.curriculumItems)) {
-        // 커리큘럼이 없는 경우 현재 저장된 개별 진도율의 평균 반환
-        try {
-          const avgResult = await storage.query(
-            `
-            SELECT COALESCE(AVG(progress), 0) as avg_progress
-            FROM enrollment_progress
-            WHERE enrollment_id = $1 AND user_id = $2
-          `,
-            [enrollmentId, userId],
-          );
-
-          return Math.round(parseFloat(avgResult.rows[0]?.avg_progress || 0));
-        } catch (error) {
-          console.error("Error calculating average progress:", error);
-          return 0;
-        }
+        return 0;
       }
 
       let totalItems = 0;
@@ -480,6 +455,7 @@ export function registerUserRoutes(app: Express) {
                 completedItems++;
               }
             } catch (error) {
+              // 테이블이 없거나 다른 오류가 발생해도 계속 진행
               console.error("Error checking video progress:", error);
             }
           }
@@ -514,6 +490,7 @@ export function registerUserRoutes(app: Express) {
                 completedItems++;
               }
             } catch (error) {
+              // 테이블이 없거나 다른 오류가 발생해도 계속 진행
               console.error("Error checking quiz progress:", error);
             }
           }
@@ -529,7 +506,7 @@ export function registerUserRoutes(app: Express) {
     }
   }
 
-  // 진도율 업데이트 API
+  // 진도율 업데이트 API (UPSERT 방식)
   app.post(
     "/api/user/enrollments/:enrollmentId/progress",
     isAuthenticated,
@@ -548,46 +525,75 @@ export function registerUserRoutes(app: Express) {
           return res.status(400).json({ message: "잘못된 요청 데이터입니다." });
         }
 
-        // 테이블 생성 (필요시)
-        await ensureProgressTable("simple");
+        console.log(
+          `진도율 업데이트 요청: userId=${userId}, enrollmentId=${enrollmentId}, itemId=${itemId}, progress=${progress}%`,
+        );
 
-        // 더 안전한 방식 - UPDATE 시도 후 INSERT
+        // 수강 정보 검증
+        const enrollment = await storage.getEnrollment(enrollmentId);
+        if (!enrollment || enrollment.userId !== userId) {
+          return res
+            .status(404)
+            .json({ message: "수강 정보를 찾을 수 없습니다." });
+        }
+
         try {
-          const enrollmentIdSafe = parseInt(enrollmentId.toString());
-          const userIdSafe = parseInt(userId.toString());
-          const itemIdSafe = itemId.toString().replace(/'/g, "''"); // SQL injection 방지
-          const itemTypeSafe = itemType.toString().replace(/'/g, "''");
-          const progressSafe = parseInt(progress.toString());
+          // enrollment_progress 테이블 존재 여부 확인 및 생성
+          await ensureProgressTable(`progress-update-${enrollmentId}`);
 
-          // 먼저 기존 레코드 확인
-          const existingRecord = await storage.query(`
-          SELECT id FROM enrollment_progress 
-          WHERE enrollment_id = ${enrollmentIdSafe} 
-          AND user_id = ${userIdSafe} 
-          AND item_id = '${itemIdSafe}'
+          // 기존 진도율 데이터 확인
+          const existingProgress = await storage.query(`
+          SELECT id, progress FROM enrollment_progress
+          WHERE enrollment_id = ${enrollmentId}
+          AND user_id = ${userId}
+          AND item_id = '${itemId}'
+          LIMIT 1
         `);
 
-          if (existingRecord.rows.length > 0) {
-            // 레코드가 있으면 UPDATE
-            await storage.query(`
-            UPDATE enrollment_progress 
-            SET progress = ${progressSafe}, updated_at = CURRENT_TIMESTAMP
-            WHERE enrollment_id = ${enrollmentIdSafe} 
-            AND user_id = ${userIdSafe} 
-            AND item_id = '${itemIdSafe}'
-          `);
-          } else {
-            // 레코드가 없으면 INSERT
-            await storage.query(`
-            INSERT INTO enrollment_progress 
-            (enrollment_id, user_id, item_id, type, progress, created_at, updated_at)
-            VALUES (${enrollmentIdSafe}, ${userIdSafe}, '${itemIdSafe}', '${itemTypeSafe}', ${progressSafe}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-          `);
+          // 쿼리 결과 처리 (PostgreSQL Result 객체 구조 대응)
+          let existingRows: any[] = [];
+          if (existingProgress && existingProgress.rows) {
+            if (
+              Array.isArray(existingProgress.rows) &&
+              existingProgress.rows.length > 0
+            ) {
+              const firstElement = existingProgress.rows[0];
+              if (
+                firstElement &&
+                typeof firstElement === "object" &&
+                firstElement.rows &&
+                Array.isArray(firstElement.rows)
+              ) {
+                existingRows = firstElement.rows;
+              } else {
+                existingRows = existingProgress.rows;
+              }
+            }
           }
 
-          console.log(`Progress saved: ${itemType} ${itemId} = ${progress}%`);
+          let result;
+          if (existingRows.length > 0) {
+            // 기존 데이터가 있으면 UPDATE
+            const existingId = existingRows[0].id;
+            result = await storage.query(`
+            UPDATE enrollment_progress 
+            SET progress = ${progress}, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ${existingId}
+          `);
+            console.log(
+              `✅ 진도율 업데이트 완료: ${itemId} = ${progress}% (기존 데이터 수정)`,
+            );
+          } else {
+            // 기존 데이터가 없으면 INSERT
+            result = await storage.query(`
+            INSERT INTO enrollment_progress (enrollment_id, user_id, item_id, type, progress, created_at, updated_at)
+            VALUES (${enrollmentId}, ${userId}, '${itemId}', '${itemType}', ${progress}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          `);
+            console.log(
+              `✅ 진도율 생성 완료: ${itemId} = ${progress}% (새 데이터 생성)`,
+            );
+          }
 
-          // 간단한 성공 응답
           res.json({
             success: true,
             message: "진도율이 저장되었습니다.",
@@ -600,7 +606,7 @@ export function registerUserRoutes(app: Express) {
             .json({ message: "데이터베이스 오류가 발생했습니다." });
         }
       } catch (error) {
-        console.error("Progress API error:", error);
+        console.error("Progress update API error:", error);
         res
           .status(500)
           .json({ message: "진도율 업데이트 중 오류가 발생했습니다." });
@@ -621,64 +627,158 @@ export function registerUserRoutes(app: Express) {
           return res.status(401).json({ message: "로그인이 필요합니다." });
         }
 
+        console.log(
+          `진도율 조회 요청: enrollmentId=${enrollmentId}, userId=${userId}`,
+        );
+
         // 수강 정보 조회
         const enrollment = await storage.getEnrollment(enrollmentId);
         if (!enrollment || enrollment.userId !== userId) {
+          console.log(
+            `수강 정보 없음 또는 권한 없음: enrollment=${!!enrollment}, userId match=${enrollment?.userId === userId}`,
+          );
           return res
             .status(404)
             .json({ message: "수강 정보를 찾을 수 없습니다." });
         }
 
         try {
-          // 완료된 비디오와 퀴즈 조회
-          const enrollmentIdSafe = parseInt(enrollmentId.toString());
-          const userIdSafe = parseInt(userId.toString());
+          console.log("진도율 데이터 조회 시작 - 직접 데이터 조회 방식");
 
-          // 간단하게 모든 완료된 항목 반환
+          // 직접 진도율 데이터 조회 (테이블 존재 여부 확인 생략)
           const result = await storage.query(`
-          SELECT item_id, type, progress
+          SELECT item_id, type, progress, created_at, updated_at
           FROM enrollment_progress
-          WHERE enrollment_id = ${enrollmentIdSafe}
-          AND user_id = ${userIdSafe}
+          WHERE enrollment_id = ${enrollmentId}
+          AND user_id = ${userId}
+          ORDER BY updated_at DESC
         `);
 
-          console.log("Query result type:", typeof result);
-          console.log("Query result:", result);
-          console.log("Result rows:", result.rows);
+          console.log("Raw query result:", {
+            hasResult: !!result,
+            hasRows: !!result?.rows,
+            rowsType: typeof result?.rows,
+            rowsLength: result?.rows?.length || 0,
+            resultStructure: result ? Object.keys(result) : [],
+            firstRowStructure: result?.rows?.[0]
+              ? Object.keys(result.rows[0])
+              : [],
+          });
+
+          // 다양한 쿼리 결과 구조에 대응
+          let actualRows: any[] = [];
+
+          if (result && result.rows) {
+            // PostgreSQL 드라이버의 경우 result.rows가 Result 객체를 포함한 배열일 수 있음
+            if (Array.isArray(result.rows) && result.rows.length > 0) {
+              const firstElement = result.rows[0];
+
+              // 첫 번째 요소가 Result 객체인 경우 (PostgreSQL 드라이버)
+              if (
+                firstElement &&
+                typeof firstElement === "object" &&
+                firstElement.rows &&
+                Array.isArray(firstElement.rows)
+              ) {
+                actualRows = firstElement.rows;
+                console.log(
+                  "PostgreSQL Result 객체 구조 감지, 실제 데이터 추출:",
+                  actualRows.length,
+                  "개 행",
+                );
+              } else {
+                // 일반적인 배열 구조
+                actualRows = result.rows;
+                console.log("일반 배열 구조 감지:", actualRows.length, "개 행");
+              }
+            } else if (
+              (result.rows as any).rows &&
+              Array.isArray((result.rows as any).rows)
+            ) {
+              // 직접 Result 객체인 경우
+              actualRows = (result.rows as any).rows;
+              console.log(
+                "직접 Result 객체 구조 감지:",
+                actualRows.length,
+                "개 행",
+              );
+            }
+          }
+
+          console.log("Processed actualRows:", {
+            length: actualRows.length,
+            firstRow: actualRows[0] || null,
+            allRows: actualRows,
+          });
 
           const videoIds = [];
           const quizIds = [];
+          const itemProgress: { [key: string]: number } = {};
 
-          // result.rows가 실제 데이터 배열
-          if (result.rows && Array.isArray(result.rows)) {
-            for (const row of result.rows) {
-              console.log("Processing actual row:", row);
-              const itemId = row.item_id;
+          // 결과 데이터 처리
+          if (actualRows && actualRows.length > 0) {
+            for (const row of actualRows) {
+              const itemId = row.item_id || row.itemId;
               const type = row.type;
-              const progress = row.progress;
+              const progress = parseInt(row.progress) || 0;
 
-              if (type === "video" && progress >= 90) {
-                videoIds.push(itemId);
-              } else if (type === "quiz" && progress >= 60) {
-                quizIds.push(itemId);
+              console.log(
+                `Processing row: itemId="${itemId}", type="${type}", progress=${progress}`,
+              );
+
+              if (itemId && type) {
+                // 개별 항목 진도율 저장 (모든 항목)
+                itemProgress[itemId] = progress;
+
+                // 완료된 항목만 completed 배열에 추가
+                if (type === "video" && progress >= 90) {
+                  videoIds.push(itemId);
+                } else if (type === "quiz" && progress >= 60) {
+                  quizIds.push(itemId);
+                }
               }
             }
           }
 
-          console.log("Final video IDs:", videoIds);
-          console.log("Final quiz IDs:", quizIds);
+          console.log("Final processed data:", {
+            itemProgressCount: Object.keys(itemProgress).length,
+            completedVideosCount: videoIds.length,
+            completedQuizzesCount: quizIds.length,
+            sampleItemProgress: Object.keys(itemProgress)
+              .slice(0, 3)
+              .reduce(
+                (obj, key) => {
+                  obj[key] = itemProgress[key];
+                  return obj;
+                },
+                {} as Record<string, number>,
+              ),
+          });
 
-          res.json({
+          const responseData = {
             completedVideos: videoIds,
             completedQuizzes: quizIds,
+            itemProgress: itemProgress,
             totalProgress: enrollment.progress || 0,
+          };
+
+          console.log("응답 데이터 전송:", {
+            completedVideos: responseData.completedVideos.length,
+            completedQuizzes: responseData.completedQuizzes.length,
+            itemProgressKeys: Object.keys(responseData.itemProgress).length,
+            totalProgress: responseData.totalProgress,
           });
-        } catch (error) {
-          // 쿼리 오류 발생 시 빈 데이터 반환
-          console.error("Error fetching progress details:", error);
+
+          res.json(responseData);
+        } catch (queryError) {
+          // 쿼리 오류 발생 시 빈 데이터 반환하되 로그는 남김
+          console.error("Progress query error:", queryError);
+          console.log("쿼리 오류로 인해 빈 진도율 데이터 반환");
+
           res.json({
             completedVideos: [],
             completedQuizzes: [],
+            itemProgress: {},
             totalProgress: enrollment.progress || 0,
           });
         }
@@ -690,4 +790,69 @@ export function registerUserRoutes(app: Express) {
       }
     },
   );
+
+  // 테이블 구조 확인용 임시 API (디버깅용)
+  app.get("/api/debug/progress-table", async (req, res) => {
+    try {
+      // 테이블 존재 여부 확인
+      const tableExists = await storage.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_name = 'enrollment_progress'
+        );
+      `);
+
+      if (!tableExists.rows[0].exists) {
+        return res.json({
+          tableExists: false,
+          message: "테이블이 존재하지 않습니다.",
+        });
+      }
+
+      // 테이블 구조 확인
+      const tableSchema = await storage.query(`
+        SELECT column_name, data_type, is_nullable, column_default
+        FROM information_schema.columns
+        WHERE table_name = 'enrollment_progress'
+        ORDER BY ordinal_position;
+      `);
+
+      // 제약조건 확인
+      const constraints = await storage.query(`
+        SELECT constraint_name, constraint_type
+        FROM information_schema.table_constraints
+        WHERE table_name = 'enrollment_progress';
+      `);
+
+      // 샘플 데이터 확인
+      const sampleData = await storage.query(`
+        SELECT * FROM enrollment_progress ORDER BY updated_at DESC LIMIT 10;
+      `);
+
+      // enrollment_id=5 특별 조회
+      const enrollment5Data = await storage.query(`
+        SELECT * FROM enrollment_progress WHERE enrollment_id = 5;
+      `);
+
+      // 총 데이터 개수
+      const totalCount = await storage.query(`
+        SELECT COUNT(*) as total FROM enrollment_progress;
+      `);
+
+      res.json({
+        tableExists: true,
+        schema: tableSchema.rows,
+        constraints: constraints.rows,
+        sampleData: sampleData.rows,
+        enrollment5Data: enrollment5Data.rows, // enrollment_id=5 데이터 추가
+        totalCount: totalCount.rows[0].total,
+      });
+    } catch (error) {
+      console.error("Debug API error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+    }
+  });
 }

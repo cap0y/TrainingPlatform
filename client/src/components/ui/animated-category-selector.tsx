@@ -31,7 +31,7 @@ export default function AnimatedCategorySelector({
   layout = "grid",
   showCount = true,
   showDescription = false,
-  maxColumns = 6
+  maxColumns = 6,
 }: AnimatedCategorySelectorProps) {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
@@ -41,42 +41,42 @@ export default function AnimatedCategorySelector({
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
+        delayChildren: 0.2,
+      },
+    },
   };
 
   const itemVariants = {
-    hidden: { 
-      opacity: 0, 
+    hidden: {
+      opacity: 0,
       y: 20,
-      scale: 0.9
+      scale: 0.9,
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       scale: 1,
       transition: {
         type: "spring",
         stiffness: 300,
-        damping: 20
-      }
-    }
+        damping: 20,
+      },
+    },
   };
 
   const getGridClasses = () => {
     if (layout === "horizontal") {
       return "flex flex-wrap justify-center gap-4";
     }
-    
+
     const colClasses = {
       2: "grid-cols-2",
       3: "grid-cols-2 md:grid-cols-3",
-      4: "grid-cols-2 md:grid-cols-4", 
+      4: "grid-cols-2 md:grid-cols-4",
       5: "grid-cols-2 md:grid-cols-3 lg:grid-cols-5",
-      6: "grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
+      6: "grid-cols-2 md:grid-cols-3 lg:grid-cols-6",
     };
-    
+
     return `grid ${colClasses[maxColumns] || colClasses[6]} gap-6 md:gap-8`;
   };
 
@@ -94,15 +94,15 @@ export default function AnimatedCategorySelector({
               {categories.map((category, index) => {
                 const isSelected = selectedCategory === category.id;
                 const isHovered = hoveredCategory === category.id;
-                
+
                 return (
                   <motion.div
                     key={category.id}
                     variants={itemVariants}
                     layout
-                    whileHover={{ 
+                    whileHover={{
                       scale: 1.05,
-                      transition: { duration: 0.2 }
+                      transition: { duration: 0.2 },
                     }}
                     whileTap={{ scale: 0.95 }}
                     className={`text-center group cursor-pointer relative ${
@@ -127,34 +127,34 @@ export default function AnimatedCategorySelector({
                     {/* Main Category Circle */}
                     <motion.div
                       className={`relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg transition-all duration-300 z-10 ${
-                        isSelected 
-                          ? 'ring-4 ring-white shadow-2xl' 
-                          : 'group-hover:shadow-xl'
+                        isSelected
+                          ? "ring-4 ring-white shadow-2xl"
+                          : "group-hover:shadow-xl"
                       }`}
                       animate={{
-                        boxShadow: isHovered 
-                          ? "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" 
-                          : "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+                        boxShadow: isHovered
+                          ? "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                          : "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
                       }}
                     >
-                      <motion.img 
+                      <motion.img
                         src={category.image}
                         alt={category.name}
                         className="w-full h-full object-cover"
                         animate={{
-                          scale: isHovered || isSelected ? 1.1 : 1
+                          scale: isHovered || isSelected ? 1.1 : 1,
                         }}
                         transition={{ duration: 0.3 }}
                       />
-                      
+
                       {/* Overlay */}
-                      <motion.div 
+                      <motion.div
                         className={`absolute inset-0 ${category.overlay} transition-opacity duration-300`}
                         animate={{
-                          opacity: isSelected ? 0.3 : isHovered ? 0.1 : 0.2
+                          opacity: isSelected ? 0.3 : isHovered ? 0.1 : 0.2,
                         }}
                       />
-                      
+
                       {/* Selected Check Mark */}
                       <AnimatePresence>
                         {isSelected && (
@@ -173,19 +173,19 @@ export default function AnimatedCategorySelector({
                     </motion.div>
 
                     {/* Category Name */}
-                    <motion.div 
+                    <motion.div
                       className={`font-medium text-sm transition-all duration-300 ${
-                        isSelected 
-                          ? 'text-blue-600 font-semibold' 
-                          : 'text-gray-800 group-hover:text-blue-600'
+                        isSelected
+                          ? "text-blue-600 font-semibold"
+                          : "text-gray-800 group-hover:text-blue-600"
                       }`}
                       animate={{
-                        scale: isSelected ? 1.05 : 1
+                        scale: isSelected ? 1.05 : 1,
                       }}
                     >
                       {category.name}
                     </motion.div>
-                    
+
                     {/* Count Badge */}
                     {showCount && (
                       <motion.div
@@ -194,12 +194,12 @@ export default function AnimatedCategorySelector({
                         transition={{ delay: index * 0.1 + 0.3 }}
                         className="mt-1"
                       >
-                        <Badge 
+                        <Badge
                           variant={isSelected ? "default" : "secondary"}
                           className={`text-xs transition-all duration-300 ${
-                            isSelected 
-                              ? 'bg-blue-600 text-white' 
-                              : 'bg-gray-100 text-gray-600 group-hover:bg-blue-100 group-hover:text-blue-700'
+                            isSelected
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-100 text-gray-600 group-hover:bg-blue-100 group-hover:text-blue-700"
                           }`}
                         >
                           {category.count}개

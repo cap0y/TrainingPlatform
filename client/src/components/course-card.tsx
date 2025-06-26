@@ -22,17 +22,43 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course }: CourseCardProps) {
-  const imageUrl =
-    course.imageUrl ||
-    `https://images.unsplash.com/photo-${1522202176988 + course.id}-66273c2fd55f?w=400&h=250&fit=crop&crop=center`;
+  // 실제 업로드된 이미지가 있으면 사용하고, 없으면 기본 이미지 사용
+  const getImageUrl = () => {
+    // DB에서 실제 이미지 URL이 있고 placeholder가 아닌 경우
+    if (course.imageUrl && course.imageUrl !== "/api/placeholder/400/250") {
+      return course.imageUrl;
+    }
+    // 샘플 이미지 중 랜덤 선택
+    const sampleImages = [
+      "/uploads/images/1.jpg",
+      "/uploads/images/4.jpg",
+      "/uploads/images/5.jpg",
+      "/uploads/images/6.jpg",
+      "/uploads/images/12.jpg",
+    ];
+    return sampleImages[Math.floor(Math.random() * sampleImages.length)];
+  };
 
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div className="relative">
         <img
-          src={imageUrl}
+          src={getImageUrl()}
           alt={course.title}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => {
+            // 이미지 로드 실패 시 다른 샘플 이미지로 대체
+            const fallbackImages = [
+              "/uploads/images/1.jpg",
+              "/uploads/images/4.jpg",
+              "/uploads/images/5.jpg",
+              "/uploads/images/6.jpg",
+              "/uploads/images/12.jpg",
+            ];
+            const randomFallback =
+              fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+            e.currentTarget.src = randomFallback;
+          }}
         />
         {course.category && (
           <div className="absolute top-3 left-3">

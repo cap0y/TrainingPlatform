@@ -23,7 +23,11 @@ export function useWebSocket() {
   const connect = () => {
     try {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      const host = window.location.hostname;
+      const port = window.location.port || "5000";
+      const wsUrl = `${protocol}//${host}:${port}/ws`;
+
+      console.log("Connecting to WebSocket:", wsUrl);
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
@@ -41,18 +45,6 @@ export function useWebSocket() {
             }),
           );
         }
-
-        // Set up ping interval to keep connection alive
-        const pingInterval = setInterval(() => {
-          if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ type: 'ping' }));
-          } else {
-            clearInterval(pingInterval);
-          }
-        }, 25000); // Send ping every 25 seconds
-
-        // Store interval reference for cleanup
-        (ws as any).pingInterval = pingInterval;
       };
 
       ws.onmessage = (event) => {
@@ -86,11 +78,6 @@ export function useWebSocket() {
       ws.onclose = () => {
         console.log("WebSocket disconnected");
         setIsConnected(false);
-
-        // Clean up ping interval
-        if ((ws as any).pingInterval) {
-          clearInterval((ws as any).pingInterval);
-        }
 
         // Attempt to reconnect
         if (reconnectAttempts.current < maxReconnectAttempts) {

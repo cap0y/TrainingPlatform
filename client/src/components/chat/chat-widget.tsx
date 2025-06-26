@@ -30,7 +30,14 @@ export default function ChatWidget() {
   useEffect(() => {
     if (isOpen && user) {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      // 개발 환경에서는 명시적으로 포트 5000 사용
+      const host = window.location.hostname;
+      const port =
+        window.location.port ||
+        (window.location.hostname === "localhost" ? "5000" : "80");
+      const wsUrl = `${protocol}//${host}:${port}/ws`;
+
+      console.log("Chat WebSocket connecting to:", wsUrl);
 
       try {
         const ws = new WebSocket(wsUrl);

@@ -34,16 +34,32 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
+// Notice 타입 정의
+interface Notice {
+  id: string;
+  title: string;
+  content?: string;
+  category: string;
+  date: string;
+  author?: string;
+  isImportant: boolean;
+  attachments?: { name: string }[];
+}
+
+interface NoticesResponse {
+  notices: Notice[];
+}
+
 export default function EnhancedNoticePage() {
   const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedNotice, setSelectedNotice] = useState(null);
+  const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
   const [showNoticeDetail, setShowNoticeDetail] = useState(false);
   const [chatDialogOpen, setChatDialogOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
 
-  const { data: notices, isLoading } = useQuery({
+  const { data: notices, isLoading } = useQuery<NoticesResponse>({
     queryKey: ["/api/notices"],
   });
 
@@ -53,31 +69,34 @@ export default function EnhancedNoticePage() {
       id: "notice",
       name: "공지사항",
       count:
-        notices?.notices?.filter((n) => n.category === "notice").length || 0,
+        notices?.notices?.filter((n: Notice) => n.category === "notice")
+          .length || 0,
     },
     {
       id: "announcement",
       name: "안내",
       count:
-        notices?.notices?.filter((n) => n.category === "announcement").length ||
-        0,
+        notices?.notices?.filter((n: Notice) => n.category === "announcement")
+          .length || 0,
     },
     {
       id: "update",
       name: "업데이트",
       count:
-        notices?.notices?.filter((n) => n.category === "update").length || 0,
+        notices?.notices?.filter((n: Notice) => n.category === "update")
+          .length || 0,
     },
     {
       id: "event",
       name: "이벤트",
       count:
-        notices?.notices?.filter((n) => n.category === "event").length || 0,
+        notices?.notices?.filter((n: Notice) => n.category === "event")
+          .length || 0,
     },
   ];
 
   const filteredNotices =
-    notices?.notices?.filter((notice) => {
+    notices?.notices?.filter((notice: Notice) => {
       const matchesCategory =
         selectedCategory === "all" || notice.category === selectedCategory;
       const matchesSearch =
@@ -87,14 +106,14 @@ export default function EnhancedNoticePage() {
     }) || [];
 
   const importantNotices =
-    notices?.notices?.filter((notice) => notice.isImportant) || [];
+    notices?.notices?.filter((notice: Notice) => notice.isImportant) || [];
 
-  const handleNoticeClick = (notice) => {
+  const handleNoticeClick = (notice: Notice) => {
     setSelectedNotice(notice);
     setShowNoticeDetail(true);
   };
 
-  const getCategoryBadgeColor = (category) => {
+  const getCategoryBadgeColor = (category: string) => {
     switch (category) {
       case "notice":
         return "default";
@@ -109,7 +128,7 @@ export default function EnhancedNoticePage() {
     }
   };
 
-  const getCategoryIcon = (category) => {
+  const getCategoryIcon = (category: string) => {
     switch (category) {
       case "notice":
         return Bell;
@@ -171,7 +190,7 @@ export default function EnhancedNoticePage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {importantNotices.slice(0, 3).map((notice) => (
+                {importantNotices.slice(0, 3).map((notice: Notice) => (
                   <div
                     key={notice.id}
                     className="flex items-center justify-between p-3 bg-white rounded-lg border border-red-200 cursor-pointer hover:bg-red-50"
@@ -305,7 +324,7 @@ export default function EnhancedNoticePage() {
                   </div>
                 ) : (
                   <div className="divide-y">
-                    {filteredNotices.map((notice) => {
+                    {filteredNotices.map((notice: Notice) => {
                       const CategoryIcon = getCategoryIcon(notice.category);
                       return (
                         <div
@@ -414,18 +433,20 @@ export default function EnhancedNoticePage() {
                     <div>
                       <h4 className="font-medium mb-3">첨부파일</h4>
                       <div className="space-y-2">
-                        {selectedNotice.attachments.map((file, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center space-x-2 p-2 border rounded"
-                          >
-                            <FileText className="h-4 w-4" />
-                            <span className="text-sm">{file.name}</span>
-                            <Button variant="outline" size="sm">
-                              다운로드
-                            </Button>
-                          </div>
-                        ))}
+                        {selectedNotice.attachments.map(
+                          (file: { name: string }, index: number) => (
+                            <div
+                              key={index}
+                              className="flex items-center space-x-2 p-2 border rounded"
+                            >
+                              <FileText className="h-4 w-4" />
+                              <span className="text-sm">{file.name}</span>
+                              <Button variant="outline" size="sm">
+                                다운로드
+                              </Button>
+                            </div>
+                          ),
+                        )}
                       </div>
                     </div>
                   </>

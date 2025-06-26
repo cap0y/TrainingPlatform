@@ -16,82 +16,135 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search } from "lucide-react";
+
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  type: string;
+  level: string;
+  credit: number;
+  price: string;
+  discountPrice?: string;
+  duration: number;
+  maxStudents: number;
+  enrolledCount: number;
+  currentStudents: number;
+  startDate?: string;
+  endDate?: string;
+  imageUrl?: string;
+  isActive: boolean;
+  status: string;
+  approvalStatus: string;
+  createdAt: string;
+}
 
 export default function ProfessionalDevelopmentPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedField, setSelectedField] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("");
 
-  // Fetch professional development courses
-  const { data: coursesData, isLoading } = useQuery({
-    queryKey: [
-      "/api/courses",
-      { category: "전문성강화교육", search: searchQuery },
-    ],
+  // Fetch courses with professional development category
+  const { data: coursesData, isLoading } = useQuery<{
+    courses: Course[];
+    total: number;
+  }>({
+    queryKey: ["/api/courses", { category: "전문성강화", search: searchQuery }],
   });
+
+  const courses = coursesData?.courses || [];
 
   const developmentFields = [
     {
-      id: "leadership",
-      name: "리더십",
-      icon: "fas fa-user-tie",
-      count: 12,
-      imageUrl:
-        "https://images.unsplash.com/photo-1552664730-d307ca884978?w=120&h=120&fit=crop&crop=center",
+      id: "교육혁신",
+      name: "교육혁신",
+      count: courses.filter(
+        (c) => c.title.includes("혁신") || c.title.includes("변화"),
+      ).length,
+      imageUrl: "/uploads/photo1.jpg",
       overlay: "bg-blue-600",
       hoverColor: "text-blue-600",
     },
     {
-      id: "communication",
-      name: "커뮤니케이션",
-      icon: "fas fa-comments",
-      count: 8,
-      imageUrl:
-        "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=120&h=120&fit=crop&crop=center",
+      id: "디지털교육",
+      name: "디지털교육",
+      count: courses.filter(
+        (c) =>
+          c.title.includes("디지털") ||
+          c.title.includes("AI") ||
+          c.title.includes("온라인"),
+      ).length,
+      imageUrl: "/uploads/photo2.jpg",
       overlay: "bg-green-600",
       hoverColor: "text-green-600",
     },
     {
-      id: "project",
-      name: "프로젝트 관리",
-      icon: "fas fa-tasks",
-      count: 10,
-      imageUrl:
-        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=120&h=120&fit=crop&crop=center",
+      id: "교수법",
+      name: "교수법",
+      count: courses.filter(
+        (c) => c.title.includes("교수법") || c.title.includes("수업"),
+      ).length,
+      imageUrl: "/uploads/photo3.jpg",
       overlay: "bg-purple-600",
       hoverColor: "text-purple-600",
     },
     {
-      id: "innovation",
-      name: "혁신 역량",
-      icon: "fas fa-lightbulb",
-      count: 6,
-      imageUrl:
-        "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=120&h=120&fit=crop&crop=center",
+      id: "평가방법",
+      name: "평가방법",
+      count: courses.filter(
+        (c) => c.title.includes("평가") || c.title.includes("측정"),
+      ).length,
+      imageUrl: "/uploads/photo4.jpg",
       overlay: "bg-yellow-600",
       hoverColor: "text-yellow-600",
     },
     {
-      id: "digital",
-      name: "디지털 역량",
-      icon: "fas fa-laptop-code",
-      count: 15,
-      imageUrl:
-        "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop&crop=center",
+      id: "학습자중심",
+      name: "학습자중심",
+      count: courses.filter(
+        (c) => c.title.includes("학습자") || c.title.includes("학생"),
+      ).length,
+      imageUrl: "/uploads/photo5.jpg",
       overlay: "bg-indigo-600",
       hoverColor: "text-indigo-600",
     },
     {
-      id: "analysis",
-      name: "데이터 분석",
-      icon: "fas fa-chart-bar",
-      count: 9,
-      imageUrl:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&h=120&fit=crop&crop=center",
+      id: "융합교육",
+      name: "융합교육",
+      count: courses.filter(
+        (c) => c.title.includes("융합") || c.title.includes("통합"),
+      ).length,
+      imageUrl: "/uploads/photo0.jpg",
       overlay: "bg-red-600",
       hoverColor: "text-red-600",
     },
   ];
+
+  // Filter courses based on selected criteria
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch =
+      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesField =
+      selectedField === "" ||
+      selectedField === "all" ||
+      course.title.includes(selectedField) ||
+      course.description.includes(selectedField);
+    const matchesLevel =
+      selectedLevel === "" ||
+      selectedLevel === "all" ||
+      course.level === selectedLevel;
+
+    return (
+      matchesSearch &&
+      matchesField &&
+      matchesLevel &&
+      course.status === "active" &&
+      course.approvalStatus === "approved"
+    );
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -99,7 +152,18 @@ export default function ProfessionalDevelopmentPage() {
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-purple-600 to-purple-800 text-white py-16 overflow-hidden">
-        <div className="relative container mx-auto px-4">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/uploads/images/12.jpg"
+            alt="전문성 강화교육 배경"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative container mx-auto px-4 z-10">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">전문성 강화교육</h1>
             <p className="text-xl text-purple-100 mb-6">
@@ -117,7 +181,7 @@ export default function ProfessionalDevelopmentPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-purple-600"
+                className="border-white text-white bg-white/20 px-6 py-3 text-base font-semibold"
               >
                 맞춤 상담
               </Button>
@@ -127,9 +191,9 @@ export default function ProfessionalDevelopmentPage() {
       </section>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 pb-4">
         {/* Field Navigation with Circular Images */}
-        <section className="mb-12 py-8">
+        <section className="mb-2 py-8">
           <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
             분야별 전문성 강화 과정
           </h2>
@@ -177,7 +241,7 @@ export default function ProfessionalDevelopmentPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
-              <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <Select value={selectedField} onValueChange={setSelectedField}>
@@ -186,10 +250,12 @@ export default function ProfessionalDevelopmentPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="leadership">리더십</SelectItem>
-                <SelectItem value="communication">커뮤니케이션</SelectItem>
-                <SelectItem value="project">프로젝트 관리</SelectItem>
-                <SelectItem value="digital">디지털 역량</SelectItem>
+                <SelectItem value="교육혁신">교육혁신</SelectItem>
+                <SelectItem value="디지털교육">디지털교육</SelectItem>
+                <SelectItem value="교수법">교수법</SelectItem>
+                <SelectItem value="평가방법">평가방법</SelectItem>
+                <SelectItem value="학습자중심">학습자중심</SelectItem>
+                <SelectItem value="융합교육">융합교육</SelectItem>
               </SelectContent>
             </Select>
 
@@ -199,10 +265,10 @@ export default function ProfessionalDevelopmentPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="basic">기초</SelectItem>
-                <SelectItem value="intermediate">중급</SelectItem>
-                <SelectItem value="advanced">고급</SelectItem>
-                <SelectItem value="expert">전문가</SelectItem>
+                <SelectItem value="기초">기초</SelectItem>
+                <SelectItem value="중급">중급</SelectItem>
+                <SelectItem value="고급">고급</SelectItem>
+                <SelectItem value="전문가">전문가</SelectItem>
               </SelectContent>
             </Select>
 
@@ -214,16 +280,16 @@ export default function ProfessionalDevelopmentPage() {
         </div>
 
         {/* Featured Programs */}
-        <section className="mb-12">
+        <section className="mb-2">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
             추천 전문성 강화 프로그램
           </h2>
           <Tabs defaultValue="trending" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="trending">인기 과정</TabsTrigger>
-              <TabsTrigger value="leadership">리더십</TabsTrigger>
-              <TabsTrigger value="digital">디지털</TabsTrigger>
-              <TabsTrigger value="project">프로젝트</TabsTrigger>
+              <TabsTrigger value="교육혁신">교육혁신</TabsTrigger>
+              <TabsTrigger value="디지털교육">디지털교육</TabsTrigger>
+              <TabsTrigger value="교수법">교수법</TabsTrigger>
             </TabsList>
 
             <TabsContent value="trending" className="mt-6">
@@ -245,28 +311,26 @@ export default function ProfessionalDevelopmentPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {coursesData?.courses
-                    ?.slice(0, 6)
-                    .map((course) => (
-                      <CourseCard key={course.id} course={course} />
-                    ))}
+                  {filteredCourses.slice(0, 6).map((course) => (
+                    <CourseCard key={course.id} course={course} />
+                  ))}
                 </div>
               )}
             </TabsContent>
 
-            <TabsContent value="leadership" className="mt-6">
+            <TabsContent value="교육혁신" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="p-6 bg-gradient-to-r from-purple-50 to-pink-50">
                   <CardContent className="p-0">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                       <i className="fas fa-crown mr-2 text-purple-600"></i>
-                      리더십 핵심 과정
+                      교육혁신 핵심 과정
                     </h3>
                     <ul className="space-y-2 text-sm text-gray-600">
-                      <li>• 변화 리더십과 조직 혁신</li>
-                      <li>• 팀 빌딩과 동기 부여</li>
-                      <li>• 갈등 관리와 협상 스킬</li>
-                      <li>• 전략적 사고와 의사결정</li>
+                      <li>• 미래교육과 패러다임 전환</li>
+                      <li>• 교육과정 혁신과 설계</li>
+                      <li>• 창의적 교육방법론</li>
+                      <li>• 교육현장 변화 관리</li>
                     </ul>
                   </CardContent>
                 </Card>
@@ -274,24 +338,24 @@ export default function ProfessionalDevelopmentPage() {
                   <CardContent className="p-0">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                       <i className="fas fa-users mr-2 text-blue-600"></i>
-                      중간관리자 과정
+                      교육리더십 과정
                     </h3>
                     <ul className="space-y-2 text-sm text-gray-600">
-                      <li>• 중간관리자의 역할과 책임</li>
-                      <li>• 상하 커뮤니케이션 스킬</li>
-                      <li>• 성과 관리와 피드백</li>
-                      <li>• 코칭과 멘토링 기법</li>
+                      <li>• 교육리더의 역할과 사명</li>
+                      <li>• 교육조직 변화 관리</li>
+                      <li>• 교육성과 향상 전략</li>
+                      <li>• 교육 커뮤니케이션 스킬</li>
                     </ul>
                   </CardContent>
                 </Card>
               </div>
             </TabsContent>
 
-            <TabsContent value="digital" className="mt-6">
+            <TabsContent value="디지털교육" className="mt-6">
               <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-8">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">
                   <i className="fas fa-robot mr-2 text-blue-600"></i>
-                  디지털 트랜스포메이션 시대 필수 역량
+                  디지털 시대 교육 혁신 필수 역량
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -299,10 +363,10 @@ export default function ProfessionalDevelopmentPage() {
                       기초 과정
                     </h4>
                     <ul className="space-y-2 text-sm text-gray-600">
-                      <li>• 디지털 리터러시 기초</li>
-                      <li>• 클라우드 컴퓨팅 이해</li>
-                      <li>• 데이터 활용 기초</li>
-                      <li>• 디지털 마케팅 입문</li>
+                      <li>• 디지털 교수법 기초</li>
+                      <li>• 온라인 수업 설계</li>
+                      <li>• 에듀테크 도구 활용</li>
+                      <li>• 블렌디드 러닝 구현</li>
                     </ul>
                   </div>
                   <div>
@@ -310,31 +374,31 @@ export default function ProfessionalDevelopmentPage() {
                       심화 과정
                     </h4>
                     <ul className="space-y-2 text-sm text-gray-600">
-                      <li>• AI와 머신러닝 활용</li>
-                      <li>• 빅데이터 분석 실무</li>
-                      <li>• 디지털 전략 수립</li>
-                      <li>• 사이버 보안 관리</li>
+                      <li>• AI 활용 개인화 교육</li>
+                      <li>• 빅데이터 기반 학습분석</li>
+                      <li>• VR/AR 교육 콘텐츠 제작</li>
+                      <li>• 디지털 교육 평가</li>
                     </ul>
                   </div>
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="project" className="mt-6">
+            <TabsContent value="교수법" className="mt-6">
               <div className="space-y-6">
                 <Card className="p-6">
                   <CardContent className="p-0">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                       <i className="fas fa-project-diagram mr-2 text-green-600"></i>
-                      PMP 자격증 준비 과정
+                      현대적 교수법 전문가 과정
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-green-50 p-4 rounded-lg">
                         <h4 className="font-medium text-green-800 mb-2">
-                          1단계: 기초
+                          1단계: 이론
                         </h4>
                         <p className="text-sm text-green-600">
-                          프로젝트 관리 기본 개념과 프로세스 이해
+                          학습자 중심 교수법 이론과 원리 학습
                         </p>
                       </div>
                       <div className="bg-blue-50 p-4 rounded-lg">
@@ -342,15 +406,15 @@ export default function ProfessionalDevelopmentPage() {
                           2단계: 실습
                         </h4>
                         <p className="text-sm text-blue-600">
-                          실제 프로젝트 사례를 통한 실무 적용
+                          다양한 교수기법 실습과 적용
                         </p>
                       </div>
                       <div className="bg-purple-50 p-4 rounded-lg">
                         <h4 className="font-medium text-purple-800 mb-2">
-                          3단계: 시험
+                          3단계: 평가
                         </h4>
                         <p className="text-sm text-purple-600">
-                          PMP 시험 준비와 모의고사
+                          교수법 역량 인증과 피드백
                         </p>
                       </div>
                     </div>
@@ -362,9 +426,9 @@ export default function ProfessionalDevelopmentPage() {
         </section>
 
         {/* Learning Path Section */}
-        <section className="mb-12">
+        <section className="mb-0">
           <div className="bg-purple-50 rounded-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
               학습 로드맵
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

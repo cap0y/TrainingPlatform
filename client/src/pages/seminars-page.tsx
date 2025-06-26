@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -22,7 +22,30 @@ import {
   Clock,
   DollarSign,
   Search,
+  Heart,
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+
+interface Seminar {
+  id: number;
+  title: string;
+  description?: string | null;
+  date: Date | string;
+  location?: string | null;
+  type: string;
+  maxParticipants?: number | null;
+  currentParticipants?: number | null;
+  imageUrl?: string | null;
+  price?: number;
+  duration?: string;
+  status?: string;
+  organizer?: string;
+  tags?: string[];
+  featured?: boolean;
+  isActive?: boolean | null;
+  createdAt?: Date | string | null;
+  updatedAt?: string;
+}
 
 export default function SeminarsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,158 +53,55 @@ export default function SeminarsPage() {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedLocation, setSelectedLocation] = useState("all");
 
-  // Mock seminars data - in real app this would come from API
-  const seminarsData = [
-    {
-      id: 1,
-      title: "2025 한국교육학회 춘계학술대회",
-      description: "교육의 미래를 논하는 국내 최대 규모의 교육학회",
-      date: "2025.07.15-16",
-      location: "서울대학교 교육연구원",
-      type: "학회",
-      category: "교육학회",
-      participants: 500,
-      price: 150000,
-      duration: "2일",
-      image:
-        "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop",
-      featured: true,
-      status: "접수중",
-      organizer: "한국교육학회",
-      tags: ["교육혁신", "미래교육", "정책"],
-    },
-    {
-      id: 2,
-      title: "디지털 교육혁신 국제 컨퍼런스",
-      description: "AI와 빅데이터를 활용한 교육 혁신 사례 공유",
-      date: "2025.08.10",
-      location: "온라인",
-      type: "컨퍼런스",
-      category: "AI 컨퍼런스",
-      participants: 1200,
-      price: 0,
-      duration: "1일",
-      image:
-        "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=250&fit=crop",
-      featured: true,
-      status: "접수중",
-      organizer: "디지털교육협회",
-      tags: ["AI", "빅데이터", "에듀테크"],
-    },
-    {
-      id: 3,
-      title: "AI와 교육의 미래 심포지엄",
-      description: "인공지능 시대의 교육 패러다임 변화 탐구",
-      date: "2025.08.25",
-      location: "COEX 컨벤션센터",
-      type: "심포지엄",
-      category: "AI 컨퍼런스",
-      participants: 300,
-      price: 80000,
-      duration: "1일",
-      image:
-        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=250&fit=crop",
-      featured: false,
-      status: "접수중",
-      organizer: "AI교육연구소",
-      tags: ["AI교육", "미래교육", "기술혁신"],
-    },
-    {
-      id: 4,
-      title: "교사 역량강화 워크샵",
-      description: "현장 교사를 위한 실무 중심 교육 방법론",
-      date: "2025.09.05",
-      location: "부산교육청",
-      type: "워크샵",
-      category: "워크샵",
-      participants: 150,
-      price: 50000,
-      duration: "1일",
-      image:
-        "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&h=250&fit=crop",
-      featured: false,
-      status: "접수예정",
-      organizer: "부산광역시교육청",
-      tags: ["교사교육", "실무교육", "역량강화"],
-    },
-    {
-      id: 5,
-      title: "글로벌 교육리더십 포럼",
-      description: "세계 교육 전문가들과의 국제 교육 네트워킹",
-      date: "2025.10.12-14",
-      location: "제주 ICC",
-      type: "포럼",
-      category: "국제행사",
-      participants: 800,
-      price: 200000,
-      duration: "3일",
-      image:
-        "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=250&fit=crop",
-      featured: true,
-      status: "접수중",
-      organizer: "국제교육협력단",
-      tags: ["글로벌", "리더십", "국제교육"],
-    },
-    {
-      id: 6,
-      title: "온라인 교육 콘텐츠 제작 세미나",
-      description: "효과적인 온라인 학습 콘텐츠 기획과 제작",
-      date: "2025.09.20",
-      location: "온라인",
-      type: "세미나",
-      category: "온라인세미나",
-      participants: 500,
-      price: 30000,
-      duration: "4시간",
-      image:
-        "https://images.unsplash.com/photo-1552581234-26160f608093?w=400&h=250&fit=crop",
-      featured: false,
-      status: "접수중",
-      organizer: "온라인교육개발원",
-      tags: ["온라인교육", "콘텐츠제작", "이러닝"],
-    },
-  ];
+  const { data: seminarsData, isLoading: seminarsLoading } = useQuery<
+    Seminar[]
+  >({
+    queryKey: ["/api/seminars"],
+  });
+
+  const seminars = seminarsData || [];
 
   const categories = [
-    { id: "all", name: "전체", count: seminarsData.length },
+    { id: "all", name: "전체", count: seminars.length },
     {
       id: "교육학회",
       name: "교육학회",
-      count: seminarsData.filter((s) => s.category === "교육학회").length,
+      count: seminars.filter((s) => s.type === "교육학회").length,
     },
     {
       id: "AI 컨퍼런스",
       name: "AI 컨퍼런스",
-      count: seminarsData.filter((s) => s.category === "AI 컨퍼런스").length,
+      count: seminars.filter((s) => s.type === "AI 컨퍼런스").length,
     },
     {
       id: "워크샵",
       name: "워크샵",
-      count: seminarsData.filter((s) => s.category === "워크샵").length,
+      count: seminars.filter((s) => s.type === "워크샵").length,
     },
     {
       id: "심포지엄",
       name: "심포지엄",
-      count: seminarsData.filter((s) => s.category === "심포지엄").length,
+      count: seminars.filter((s) => s.type === "심포지엄").length,
     },
     {
       id: "국제행사",
       name: "국제행사",
-      count: seminarsData.filter((s) => s.category === "국제행사").length,
+      count: seminars.filter((s) => s.type === "국제행사").length,
     },
     {
       id: "온라인세미나",
       name: "온라인세미나",
-      count: seminarsData.filter((s) => s.category === "온라인세미나").length,
+      count: seminars.filter((s) => s.type === "온라인세미나").length,
     },
   ];
 
-  const filteredSeminars = seminarsData.filter((seminar) => {
+  const filteredSeminars = seminars.filter((seminar) => {
     const matchesSearch =
       seminar.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      seminar.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (seminar.description &&
+        seminar.description.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory =
-      selectedCategory === "all" || seminar.category === selectedCategory;
+      selectedCategory === "all" || seminar.type === selectedCategory;
     const matchesType = selectedType === "all" || seminar.type === selectedType;
     const matchesLocation =
       selectedLocation === "all" ||
@@ -191,7 +111,7 @@ export default function SeminarsPage() {
     return matchesSearch && matchesCategory && matchesType && matchesLocation;
   });
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status?: string) => {
     switch (status) {
       case "접수중":
         return "bg-green-500";
@@ -200,8 +120,88 @@ export default function SeminarsPage() {
       case "마감":
         return "bg-red-500";
       default:
-        return "bg-gray-500";
+        return "bg-green-500";
     }
+  };
+
+  const getImageUrl = (seminar: Seminar) => {
+    if (seminar.imageUrl && seminar.imageUrl !== "/api/placeholder/400/250") {
+      return seminar.imageUrl;
+    }
+    return "/uploads/images/course-default.jpg";
+  };
+
+  const getSeminarStatus = (seminar: Seminar) => {
+    const now = new Date();
+    const seminarDate =
+      typeof seminar.date === "string" ? new Date(seminar.date) : seminar.date;
+
+    if (seminarDate < now) {
+      return "마감";
+    } else if (
+      seminar.maxParticipants &&
+      seminar.currentParticipants &&
+      seminar.currentParticipants >= seminar.maxParticipants
+    ) {
+      return "마감";
+    } else {
+      return "접수중";
+    }
+  };
+
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+    });
+  };
+
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  // 관심등록 뮤테이션
+  const wishlistMutation = useMutation({
+    mutationFn: async ({
+      seminarId,
+      action,
+    }: {
+      seminarId: number;
+      action: "add" | "remove";
+    }) => {
+      const response = await fetch(`/api/seminars/${seminarId}/wishlist`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "관심등록 처리 중 오류가 발생했습니다.");
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      alert(data.message);
+      queryClient.invalidateQueries({ queryKey: ["/api/seminars"] });
+    },
+    onError: (error: Error) => {
+      alert(error.message);
+    },
+  });
+
+  // 관심등록 핸들러
+  const handleWishlist = (seminarId: number, event: React.MouseEvent) => {
+    event.preventDefault(); // Link 클릭 방지
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    // 일단 add 액션으로 고정 (실제로는 현재 상태를 확인해야 함)
+    wishlistMutation.mutate({ seminarId, action: "add" });
   };
 
   return (
@@ -209,8 +209,19 @@ export default function SeminarsPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-blue-600 to-purple-800 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section className="relative bg-gradient-to-r from-blue-600 to-purple-800 text-white py-16 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/uploads/images/6.jpg"
+            alt="학회 및 세미나 배경"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Content */}
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">학회 및 세미나</h1>
             <p className="text-xl text-blue-100 mb-6">
@@ -262,20 +273,18 @@ export default function SeminarsPage() {
                     <img
                       src={
                         category.id === "all"
-                          ? "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=120&h=120&fit=crop&crop=center"
-                          : categories.find((c) => c.id === category.id)?.id ===
-                              "교육학회"
-                            ? "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center"
-                            : categories.find((c) => c.id === category.id)
-                                  ?.id === "AI 컨퍼런스"
-                              ? "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=120&h=120&fit=crop&crop=center"
-                              : categories.find((c) => c.id === category.id)
-                                    ?.id === "워크샵"
-                                ? "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop&crop=center"
-                                : categories.find((c) => c.id === category.id)
-                                      ?.id === "국제행사"
-                                  ? "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=120&h=120&fit=crop&crop=center"
-                                  : "https://images.unsplash.com/photo-1552581234-26160f608093?w=120&h=120&fit=crop&crop=center"
+                          ? "/uploads/images/course-default.jpg"
+                          : category.id === "교육학회"
+                            ? "/uploads/photo3.jpg"
+                            : category.id === "AI 컨퍼런스"
+                              ? "/uploads/photo6.jpg"
+                              : category.id === "워크샵"
+                                ? "/uploads/photo7.jpg"
+                                : category.id === "심포지엄"
+                                  ? "/uploads/photo8.jpg"
+                                  : category.id === "국제행사"
+                                    ? "/uploads/photo9.jpg"
+                                    : "/uploads/photo10.jpg"
                       }
                       alt={category.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
@@ -386,122 +395,141 @@ export default function SeminarsPage() {
 
         {/* Seminars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSeminars.map((seminar) => (
-            <Card
-              key={seminar.id}
-              className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${seminar.featured ? "border-2 border-yellow-400" : ""}`}
-            >
-              <div className="relative">
-                <img
-                  src={seminar.image}
-                  alt={seminar.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                {seminar.featured && (
-                  <div className="absolute top-3 left-3">
-                    <Badge className="bg-yellow-500 text-white">
-                      <Star className="h-3 w-3 mr-1" />
-                      주목
+          {seminarsLoading ? (
+            Array.from({ length: 6 }, (_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <div className="w-full h-48 bg-gray-200 animate-pulse"></div>
+                <CardContent className="p-4">
+                  <div className="h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="h-20 bg-gray-200 rounded animate-pulse mb-4"></div>
+                  <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+                </CardContent>
+              </Card>
+            ))
+          ) : filteredSeminars.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                등록된 세미나가 없습니다
+              </h3>
+              <p className="text-gray-500">
+                새로운 세미나가 곧 등록될 예정입니다.
+              </p>
+            </div>
+          ) : (
+            filteredSeminars.map((seminar) => (
+              <Card
+                key={seminar.id}
+                className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${seminar.featured ? "border-2 border-yellow-400" : ""}`}
+              >
+                <div className="relative">
+                  <img
+                    src={getImageUrl(seminar)}
+                    alt={seminar.title}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {seminar.featured && (
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-yellow-500 text-white">
+                        <Star className="h-3 w-3 mr-1" />
+                        주목
+                      </Badge>
+                    </div>
+                  )}
+                  <div className="absolute top-3 right-3">
+                    <Badge
+                      className={`${getStatusColor(getSeminarStatus(seminar))} text-white`}
+                    >
+                      {getSeminarStatus(seminar)}
                     </Badge>
                   </div>
-                )}
-                <div className="absolute top-3 right-3">
-                  <Badge
-                    className={`${getStatusColor(seminar.status)} text-white`}
-                  >
-                    {seminar.status}
-                  </Badge>
-                </div>
-                <div className="absolute bottom-3 left-3">
-                  <Badge variant="outline" className="bg-white/90">
-                    {seminar.type}
-                  </Badge>
-                </div>
-              </div>
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                  {seminar.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {seminar.description}
-                </p>
-
-                <div className="space-y-2 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-4 w-4" />
-                    <span>{seminar.date}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>{seminar.location}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4" />
-                    <span>{seminar.duration}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4" />
-                    <span>{seminar.participants}명 예상</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <DollarSign className="h-4 w-4" />
-                    <span>
-                      {seminar.price === 0
-                        ? "무료"
-                        : `${seminar.price.toLocaleString()}원`}
-                    </span>
+                  <div className="absolute bottom-3 left-3">
+                    <Badge variant="outline" className="bg-white/90">
+                      {seminar.type}
+                    </Badge>
                   </div>
                 </div>
-
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {seminar.tags.slice(0, 3).map((tag, index) => {
-                    const colors = [
-                      "bg-blue-100 text-blue-800",
-                      "bg-green-100 text-green-800",
-                      "bg-purple-100 text-purple-800",
-                      "bg-yellow-100 text-yellow-800",
-                      "bg-pink-100 text-pink-800",
-                      "bg-indigo-100 text-indigo-800",
-                    ];
-                    return (
-                      <Badge
-                        key={index}
-                        className={`text-xs ${colors[index % colors.length]}`}
-                      >
-                        {tag}
-                      </Badge>
-                    );
-                  })}
-                </div>
-
-                <div className="space-y-2">
-                  <Link href={`/seminars/${seminar.id}`}>
-                    <Button
-                      className="w-full"
-                      variant={seminar.featured ? "default" : "outline"}
-                    >
-                      {seminar.status === "접수중" ? "신청하기" : "관심등록"}
-                    </Button>
-                  </Link>
-                  <p className="text-xs text-gray-500 text-center">
-                    주최: {seminar.organizer}
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                    {seminar.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {seminar.description ||
+                      "세미나에 대한 상세 정보를 확인해보세요."}
                   </p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+
+                  <div className="space-y-2 text-sm text-gray-600 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>{formatDate(seminar.date)}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="h-4 w-4" />
+                      <span>{seminar.location || "장소 미정"}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4" />
+                      <span>1일</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4" />
+                      <span>{seminar.maxParticipants || 100}명 모집</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <DollarSign className="h-4 w-4" />
+                      <span>무료</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {/* 임시 태그 표시 */}
+                    <Badge className="text-xs bg-blue-100 text-blue-800">
+                      {seminar.type}
+                    </Badge>
+                    <Badge className="text-xs bg-green-100 text-green-800">
+                      교육
+                    </Badge>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={(e) => handleWishlist(seminar.id, e)}
+                      >
+                        <Heart className="h-4 w-4 mr-1" />
+                        관심등록
+                      </Button>
+                      <Link href={`/seminars/${seminar.id}`}>
+                        <Button variant="outline" size="sm" className="flex-1">
+                          신청하기
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         {/* Empty State */}
-        {filteredSeminars.length === 0 && (
-          <div className="text-center py-12">
-            <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">
-              검색 결과가 없습니다
-            </h3>
-            <p className="text-gray-500">다른 검색어나 필터를 사용해보세요.</p>
-          </div>
-        )}
+        {!seminarsLoading &&
+          filteredSeminars.length === 0 &&
+          seminars.length > 0 && (
+            <div className="text-center py-12">
+              <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                검색 결과가 없습니다
+              </h3>
+              <p className="text-gray-500">
+                다른 검색어나 필터를 사용해보세요.
+              </p>
+            </div>
+          )}
 
         {/* Pagination */}
         {filteredSeminars.length > 6 && (

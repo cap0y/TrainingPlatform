@@ -10,6 +10,11 @@ interface Message {
   timestamp: Date;
 }
 
+interface ChatWidgetProps {
+  isOpen?: boolean;
+  onToggle?: () => void;
+}
+
 const botResponses = {
   // 인사말
   안녕: "안녕하세요! 지누켐 연수플랫폼 AI 상담원입니다. 무엇을 도와드릴까요?",
@@ -68,8 +73,10 @@ const botResponses = {
     "죄송합니다. 정확한 답변을 드리기 어려운 질문입니다. 자세한 문의는 고객센터(055-772-2226)로 연락해 주시거나 이메일(bkim@jinuchem.co.kr)로 문의해 주세요.",
 };
 
-export default function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function ChatWidget({
+  isOpen = false,
+  onToggle,
+}: ChatWidgetProps) {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -142,7 +149,7 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-20 right-4 z-50">
       {isOpen ? (
         <Card className="w-80 h-96 shadow-xl">
           <div className="flex items-center justify-between p-4 border-b bg-blue-600 text-white rounded-t-lg">
@@ -153,7 +160,7 @@ export default function ChatWidget() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsOpen(false)}
+              onClick={() => onToggle?.()}
               className="text-white hover:bg-blue-700"
             >
               <X className="h-4 w-4" />
@@ -221,10 +228,10 @@ export default function ChatWidget() {
         </Card>
       ) : (
         <Button
-          onClick={() => setIsOpen(true)}
-          className="rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-700 shadow-lg animate-pulse mt-[65px] mb-[65px]"
+          onClick={() => onToggle?.()}
+          className="rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-700 shadow-lg animate-pulse"
         >
-          <Bot className="h-6 w-6" />
+          <Bot className="h-10 w-10" />
         </Button>
       )}
     </div>

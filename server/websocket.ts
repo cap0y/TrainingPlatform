@@ -1,32 +1,15 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { Server } from "http";
 import { storage } from "./storage";
-import { insertChatMessageSchema } from "../shared/schema.js";
+import { insertChatMessageSchema } from "@shared/schema";
 
 let wss: WebSocketServer;
 
 export function setupWebSocket(server: Server) {
-  wss = new WebSocketServer({ 
-    server, 
-    path: "/ws",
-    clientTracking: true,
-    perMessageDeflate: {
-      zlibDeflateOptions: {
-        chunkSize: 1024 * 4,
-        windowBits: 13,
-        level: 3,
-      },
-    }
-  });
+  wss = new WebSocketServer({ server, path: "/ws" });
 
   wss.on("connection", (ws: WebSocket, req) => {
     console.log("New WebSocket connection established");
-    
-    // Set up heartbeat to prevent connection timeout
-    (ws as any).isAlive = true;
-    ws.on('pong', () => {
-      (ws as any).isAlive = true;
-    });
 
     ws.on("message", async (data: string) => {
       try {
@@ -39,18 +22,6 @@ export function setupWebSocket(server: Server) {
           console.log(
             `User ${message.userId} authenticated, admin: ${message.isAdmin}`,
           );
-          
-          // Send authentication confirmation
-          ws.send(JSON.stringify({
-            type: "auth_success",
-            message: "Authentication successful"
-          }));
-        } else if (message.type === "ping") {
-          // Respond to ping messages to maintain connection
-          ws.send(JSON.stringify({
-            type: "pong",
-            timestamp: Date.now()
-          }));
         } else if (message.type === "chat") {
           // Validate and save chat message
           const chatMessage = insertChatMessageSchema.parse({
@@ -112,29 +83,12 @@ export function setupWebSocket(server: Server) {
       });
   });
 
-  // Set up heartbeat interval to check connection health
-  const heartbeatInterval = setInterval(() => {
-    wss.clients.forEach((ws) => {
-      if ((ws as any).isAlive === false) {
-        console.log('Terminating dead WebSocket connection');
-        return ws.terminate();
-      }
-      
-      (ws as any).isAlive = false;
-      ws.ping();
-    });
-  }, 30000); // Check every 30 seconds
-
-  // Clean up interval when server closes
-  wss.on('close', () => {
-    clearInterval(heartbeatInterval);
-  });
-
   return wss;
 }
 
 // Send notification to all admin users
 export function sendAdminNotification(notification: {
+  type: string;
   title: string;
   message: string;
   data?: any;
@@ -142,10 +96,7 @@ export function sendAdminNotification(notification: {
   if (!wss) return;
 
   const adminNotification = {
-    type: "admin_notification",
-    title: notification.title,
-    message: notification.message,
-    data: notification.data,
+    ...notification,
     timestamp: new Date().toISOString(),
   };
 
@@ -160,6 +111,7 @@ export function sendAdminNotification(notification: {
 export function sendUserNotification(
   userId: number,
   notification: {
+    type: string;
     title: string;
     message: string;
     data?: any;
@@ -168,10 +120,7 @@ export function sendUserNotification(
   if (!wss) return;
 
   const userNotification = {
-    type: "user_notification",
-    title: notification.title,
-    message: notification.message,
-    data: notification.data,
+    ...notification,
     timestamp: new Date().toISOString(),
   };
 

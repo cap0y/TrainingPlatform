@@ -15,27 +15,93 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Search, Shield, AlertTriangle, FileCheck, Clock } from "lucide-react";
+
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  type: string;
+  level: string;
+  credit: number;
+  price: number;
+  discountPrice?: number;
+  duration: string;
+  totalHours: number;
+  maxStudents: number;
+  status: string;
+  approvalStatus: string;
+  instructorId: number;
+  objectives?: string;
+  requirements?: string;
+  materials?: string;
+  curriculum?: string;
+  imageUrl?: string;
+  rating?: number;
+  createdAt: string;
+  updatedAt?: string;
+  enrolledCount?: number;
+}
+
+interface CoursesResponse {
+  courses: Course[];
+  total: number;
+}
 
 export default function TrainingCoursesPage() {
   const [location] = useLocation();
   const searchParams = new URLSearchParams(location.split("?")[1] || "");
-  const category = searchParams.get("category") || "";
+  // 개발 편의를 위해 category가 없으면 법정의무교육을 기본값으로 설정
+  const category = decodeURIComponent(
+    searchParams.get("category") || "법정의무교육",
+  );
+  const urlSubcategory = searchParams.get("subcategory") || "all";
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("");
+  const [selectedType, setSelectedType] = useState("all");
+  const [selectedLevel, setSelectedLevel] = useState("all");
+  const [selectedLegalCategory, setSelectedLegalCategory] =
+    useState(urlSubcategory);
+
+  // 디버깅을 위한 로그
+  console.log("Location:", location);
+  console.log("Category:", category);
+  console.log("SelectedLegalCategory:", selectedLegalCategory);
+
+  // API 쿼리 파라미터 확인
+  const queryParams = {
+    category,
+    search: searchQuery,
+    type: selectedType === "all" ? "" : selectedType,
+    level: selectedLevel === "all" ? "" : selectedLevel,
+    subcategory: selectedLegalCategory === "all" ? "" : selectedLegalCategory,
+  };
+  console.log("API Query Params:", queryParams);
 
   // Fetch courses with filters
-  const { data: coursesData, isLoading } = useQuery({
-    queryKey: [
-      "/api/courses",
-      {
-        category,
-        search: searchQuery,
-        type: selectedType,
-        level: selectedLevel,
-      },
-    ],
+  const { data: coursesData, isLoading } = useQuery<CoursesResponse>({
+    queryKey: ["/api/courses", queryParams],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+
+      if (queryParams.category)
+        searchParams.append("category", queryParams.category);
+      if (queryParams.search) searchParams.append("search", queryParams.search);
+      if (queryParams.type) searchParams.append("type", queryParams.type);
+      if (queryParams.level) searchParams.append("level", queryParams.level);
+      if (queryParams.subcategory)
+        searchParams.append("subcategory", queryParams.subcategory);
+
+      const url = `/api/courses?${searchParams.toString()}`;
+      console.log("실제 API 요청 URL:", url);
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
   });
 
   const getCategoryTitle = (category: string) => {
@@ -64,228 +130,330 @@ export default function TrainingCoursesPage() {
     }
   };
 
+  // 법정의무교육 카테고리
+  const legalEducationCategories = [
+    {
+      id: "all",
+      name: "전체",
+      count: coursesData?.courses.length || 0,
+      imageUrl: "/uploads/images/course-default.jpg",
+      overlay: "bg-blue-600",
+      description: "모든 법정의무교육 과정",
+    },
+    {
+      id: "화학물질",
+      name: "화학물질 안전교육",
+      count:
+        coursesData?.courses.filter(
+          (c) => c.title.includes("화학물질") || c.title.includes("MSDS"),
+        ).length || 0,
+      imageUrl: "/uploads/photo0.jpg",
+      overlay: "bg-red-600",
+      description: "화학물질 취급 및 MSDS 관련 필수 교육",
+    },
+    {
+      id: "산업안전",
+      name: "산업안전보건교육",
+      count:
+        coursesData?.courses.filter(
+          (c) => c.title.includes("산업안전") || c.title.includes("안전보건"),
+        ).length || 0,
+      imageUrl: "/uploads/photo1.jpg",
+      overlay: "bg-orange-600",
+      description: "산업재해 예방을 위한 안전보건 교육",
+    },
+    {
+      id: "소방안전",
+      name: "소방안전교육",
+      count:
+        coursesData?.courses.filter(
+          (c) => c.title.includes("소방") || c.title.includes("화재"),
+        ).length || 0,
+      imageUrl: "/uploads/photo2.jpg",
+      overlay: "bg-red-500",
+      description: "화재예방 및 소방시설 관리 교육",
+    },
+    {
+      id: "환경안전",
+      name: "환경안전교육",
+      count:
+        coursesData?.courses.filter(
+          (c) => c.title.includes("환경") || c.title.includes("폐기물"),
+        ).length || 0,
+      imageUrl: "/uploads/photo3.jpg",
+      overlay: "bg-green-600",
+      description: "환경보호 및 폐기물 관리 교육",
+    },
+    {
+      id: "개인정보",
+      name: "개인정보보호교육",
+      count:
+        coursesData?.courses.filter(
+          (c) => c.title.includes("개인정보") || c.title.includes("정보보호"),
+        ).length || 0,
+      imageUrl: "/uploads/photo4.jpg",
+      overlay: "bg-blue-600",
+      description: "개인정보보호법 준수 의무교육",
+    },
+    {
+      id: "성희롱예방",
+      name: "성희롱예방교육",
+      count:
+        coursesData?.courses.filter(
+          (c) => c.title.includes("성희롱") || c.title.includes("성폭력"),
+        ).length || 0,
+      imageUrl: "/uploads/photo5.jpg",
+      overlay: "bg-purple-600",
+      description: "직장 내 성희롱 예방 의무교육",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <i className="fas fa-home text-blue-600"></i>
-            <span className="mx-2">/</span>
-            <span className="text-blue-600">연수과정</span>
-            {category && (
-              <>
-                <span className="mx-2">/</span>
-                <span className="text-gray-700">
-                  {getCategoryTitle(category)}
-                </span>
-              </>
-            )}
+      {/* Hero Section */}
+      {category === "법정의무교육" ? (
+        <section className="relative bg-gradient-to-r from-red-600 to-red-800 text-white py-16 overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src="/uploads/images/4.jpg"
+              alt="법정의무교육 배경"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/50"></div>
           </div>
-        </div>
-      </div>
 
-      {/* Category Navigation with Circular Images */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
-            연수과정 분야
-          </h2>
-          <div className="flex justify-center">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-4xl">
-              <Link href="/training-courses?category=법정의무교육">
-                <div
-                  className={`text-center group cursor-pointer ${
-                    category === "법정의무교육" ? "transform scale-105" : ""
-                  }`}
+          {/* Content */}
+          <div className="relative container mx-auto px-4 z-10">
+            <div className="max-w-3xl">
+              <div className="flex items-center mb-4">
+                <Shield className="h-8 w-8 mr-3" />
+                <h1 className="text-4xl font-bold">법정 의무교육</h1>
+              </div>
+              <p className="text-xl text-red-100 mb-6">
+                법령에 의해 의무적으로 이수해야 하는 안전교육 및 보건교육
+                과정으로 안전한 작업환경을 만들어가세요.
+              </p>
+              <div className="flex space-x-4">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="bg-white text-red-600 hover:bg-gray-100"
                 >
-                  <div
-                    className={`relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300 ${
-                      category === "법정의무교육" ? "ring-4 ring-blue-500" : ""
-                    }`}
-                  >
-                    <img
-                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=center"
-                      alt="법정의무교육"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div
-                      className={`absolute inset-0 bg-blue-600 ${
-                        category === "법정의무교육"
-                          ? "bg-opacity-30"
-                          : "bg-opacity-20 group-hover:bg-opacity-10"
-                      } transition-opacity duration-300`}
-                    ></div>
-                  </div>
-                  <div
-                    className={`font-medium text-sm transition-colors ${
-                      category === "법정의무교육"
-                        ? "text-blue-600 font-semibold"
-                        : "text-gray-800 group-hover:text-blue-600"
-                    }`}
-                  >
-                    법정교육
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    화학물질 법정교육
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/professional-development">
-                <div
-                  className={`text-center group cursor-pointer ${
-                    category === "전문성강화교육" ? "transform scale-105" : ""
-                  }`}
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  필수 과정 보기
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-white text-white bg-white/20 px-6 py-3 text-base font-semibold"
                 >
-                  <div
-                    className={`relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300 ${
-                      category === "전문성강화교육"
-                        ? "ring-4 ring-purple-500"
-                        : ""
-                    }`}
-                  >
-                    <img
-                      src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=120&h=120&fit=crop&crop=center"
-                      alt="전문성강화교육"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div
-                      className={`absolute inset-0 bg-purple-600 ${
-                        category === "전문성강화교육"
-                          ? "bg-opacity-30"
-                          : "bg-opacity-20 group-hover:bg-opacity-10"
-                      } transition-opacity duration-300`}
-                    ></div>
-                  </div>
-                  <div
-                    className={`font-medium text-sm transition-colors ${
-                      category === "전문성강화교육"
-                        ? "text-purple-600 font-semibold"
-                        : "text-gray-800 group-hover:text-purple-600"
-                    }`}
-                  >
-                    전문성강화
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    역량개발 프로그램
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/certificate-courses">
-                <div
-                  className={`text-center group cursor-pointer ${
-                    category === "자격증" ? "transform scale-105" : ""
-                  }`}
-                >
-                  <div
-                    className={`relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300 ${
-                      category === "자격증" ? "ring-4 ring-green-500" : ""
-                    }`}
-                  >
-                    <img
-                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=120&h=120&fit=crop&crop=center"
-                      alt="자격증과정"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div
-                      className={`absolute inset-0 bg-green-600 ${
-                        category === "자격증"
-                          ? "bg-opacity-30"
-                          : "bg-opacity-20 group-hover:bg-opacity-10"
-                      } transition-opacity duration-300`}
-                    ></div>
-                  </div>
-                  <div
-                    className={`font-medium text-sm transition-colors ${
-                      category === "자격증"
-                        ? "text-green-600 font-semibold"
-                        : "text-gray-800 group-hover:text-green-600"
-                    }`}
-                  >
-                    자격증
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    공인자격 취득
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/seminars">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                    <img
-                      src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center"
-                      alt="세미나"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-yellow-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
-                  </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-yellow-600 transition-colors">
-                    세미나
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    학회/컨퍼런스
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/study-abroad">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                    <img
-                      src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=120&h=120&fit=crop&crop=center"
-                      alt="해외연수"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-red-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
-                  </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-red-600 transition-colors">
-                    해외연수
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    글로벌 프로그램
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/help">
-                <div className="text-center group cursor-pointer">
-                  <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                    <img
-                      src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=120&h=120&fit=crop&crop=center"
-                      alt="고객센터"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-indigo-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
-                  </div>
-                  <div className="font-medium text-gray-800 text-sm group-hover:text-indigo-600 transition-colors">
-                    고객센터
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">문의/도움말</div>
-                </div>
-              </Link>
+                  교육 일정 문의
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src="/uploads/images/4.jpg"
+              alt="연수과정 배경"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/50"></div>
+          </div>
+
+          {/* Content */}
+          <div className="relative container mx-auto px-4 z-10">
+            <div className="max-w-3xl">
+              <h1 className="text-4xl font-bold mb-4">
+                {getCategoryTitle(category)}
+              </h1>
+              <p className="text-xl text-blue-100 mb-6">
+                {getCategoryDescription(category)}
+              </p>
+              <div className="flex space-x-4">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="bg-white text-blue-600 hover:bg-gray-100"
+                >
+                  <FileCheck className="h-4 w-4 mr-2" />
+                  인기 과정 보기
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-white text-white bg-white/20 px-6 py-3 text-base font-semibold"
+                >
+                  교육 상담 문의
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Legal Education Categories - Only show for legal education */}
+      {category === "법정의무교육" && (
+        <section className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+              법정의무교육 분야
+            </h2>
+            <div className="flex justify-center">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 max-w-5xl">
+                {legalEducationCategories.map((category) => (
+                  <div
+                    key={category.id}
+                    className={`text-center cursor-pointer group ${
+                      selectedLegalCategory === category.id
+                        ? "transform scale-105"
+                        : ""
+                    }`}
+                    onClick={() => setSelectedLegalCategory(category.id)}
+                  >
+                    <div
+                      className={`relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300 ${
+                        selectedLegalCategory === category.id
+                          ? "ring-4 ring-red-500"
+                          : ""
+                      }`}
+                    >
+                      <img
+                        src={category.imageUrl}
+                        alt={category.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div
+                        className={`absolute inset-0 ${category.overlay} ${
+                          selectedLegalCategory === category.id
+                            ? "bg-opacity-30"
+                            : "bg-opacity-20 group-hover:bg-opacity-10"
+                        } transition-opacity duration-300`}
+                      ></div>
+                    </div>
+                    <div
+                      className={`font-medium text-sm transition-colors ${
+                        selectedLegalCategory === category.id
+                          ? "text-red-600 font-semibold"
+                          : "text-gray-800 group-hover:text-red-600"
+                      }`}
+                    >
+                      {category.id === "all"
+                        ? category.name
+                        : category.name.replace("교육", "")}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {category.count}개 과정
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Legal Education Categories - Show for all pages */}
+      {category !== "법정의무교육" && (
+        <section className="py-12 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+              법정의무교육 분야
+            </h2>
+            <div className="flex justify-center">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-4xl">
+                {legalEducationCategories
+                  .filter((cat) => cat.id !== "all")
+                  .map((category) => (
+                    <Link
+                      key={category.id}
+                      href={`/training-courses?category=법정의무교육&subcategory=${category.id}`}
+                    >
+                      <div className="text-center cursor-pointer group">
+                        <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                          <img
+                            src={category.imageUrl}
+                            alt={category.name}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                          <div
+                            className={`absolute inset-0 ${category.overlay} bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300`}
+                          ></div>
+                        </div>
+                        <div className="font-medium text-sm text-gray-800 group-hover:text-red-600 transition-colors">
+                          {category.name.replace("교육", "")}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {category.count}개 과정
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            {getCategoryTitle(category)}
-          </h1>
-          <p className="text-gray-600">{getCategoryDescription(category)}</p>
-        </div>
+        {/* Legal Education Info Cards - Only for legal education */}
+        {category === "법정의무교육" && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card className="p-6 bg-gradient-to-r from-red-50 to-red-100">
+              <CardContent className="p-0">
+                <div className="flex items-center mb-3">
+                  <AlertTriangle className="h-8 w-8 text-red-600 mr-3" />
+                  <h3 className="text-lg font-semibold text-red-800">
+                    법정 의무사항
+                  </h3>
+                </div>
+                <p className="text-sm text-red-700">
+                  관련 법령에 따라 정기적으로 이수해야 하는 필수 교육과정입니다.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 bg-gradient-to-r from-blue-50 to-blue-100">
+              <CardContent className="p-0">
+                <div className="flex items-center mb-3">
+                  <FileCheck className="h-8 w-8 text-blue-600 mr-3" />
+                  <h3 className="text-lg font-semibold text-blue-800">
+                    수료증 발급
+                  </h3>
+                </div>
+                <p className="text-sm text-blue-700">
+                  교육 이수 후 법정 교육 수료증이 자동으로 발급됩니다.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 bg-gradient-to-r from-green-50 to-green-100">
+              <CardContent className="p-0">
+                <div className="flex items-center mb-3">
+                  <Clock className="h-8 w-8 text-green-600 mr-3" />
+                  <h3 className="text-lg font-semibold text-green-800">
+                    이수 기한
+                  </h3>
+                </div>
+                <p className="text-sm text-green-700">
+                  법정 교육 이수 기한을 놓치지 않도록 알림 서비스를 제공합니다.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Search and Filters */}
         <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="relative">
               <Input
                 type="text"
@@ -294,7 +462,7 @@ export default function TrainingCoursesPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
-              <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <Select value={selectedType} onValueChange={setSelectedType}>
@@ -315,14 +483,14 @@ export default function TrainingCoursesPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="beginner">초급</SelectItem>
-                <SelectItem value="intermediate">중급</SelectItem>
-                <SelectItem value="advanced">고급</SelectItem>
+                <SelectItem value="기초">기초</SelectItem>
+                <SelectItem value="심화">심화</SelectItem>
+                <SelectItem value="관리자">관리자</SelectItem>
               </SelectContent>
             </Select>
 
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <i className="fas fa-search mr-2"></i>
+            <Button className="bg-red-600 hover:bg-red-700">
+              <Search className="h-4 w-4 mr-2" />
               검색
             </Button>
           </div>
@@ -345,9 +513,9 @@ export default function TrainingCoursesPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="latest">최신순</SelectItem>
+                <SelectItem value="deadline">마감임박순</SelectItem>
                 <SelectItem value="popular">인기순</SelectItem>
-                <SelectItem value="price-low">가격낮은순</SelectItem>
-                <SelectItem value="price-high">가격높은순</SelectItem>
+                <SelectItem value="required">필수순</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -370,24 +538,36 @@ export default function TrainingCoursesPage() {
               </div>
             ))}
           </div>
-        ) : coursesData?.courses?.length > 0 ? (
+        ) : coursesData?.courses && coursesData.courses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {coursesData.courses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+              <CourseCard
+                key={course.id}
+                course={{
+                  ...course,
+                  price: course.price.toString(),
+                  discountPrice: course.discountPrice?.toString(),
+                  duration: course.totalHours,
+                  currentStudents: course.enrolledCount || 0,
+                  isActive: course.status === "active",
+                }}
+              />
             ))}
           </div>
         ) : (
           <div className="text-center py-12">
-            <i className="fas fa-search text-4xl text-gray-300 mb-4"></i>
+            <Shield className="h-16 w-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-600 mb-2">
-              검색 결과가 없습니다
+              등록된 법정의무교육 과정이 없습니다
             </h3>
-            <p className="text-gray-500">다른 검색어나 필터를 사용해보세요.</p>
+            <p className="text-gray-500">
+              새로운 교육과정이 곧 추가될 예정입니다.
+            </p>
           </div>
         )}
 
         {/* Pagination would go here */}
-        {coursesData?.total > 6 && (
+        {coursesData?.total && coursesData.total > 6 && (
           <div className="flex justify-center mt-12">
             <div className="flex space-x-2">
               <Button variant="outline" size="sm">
@@ -396,7 +576,7 @@ export default function TrainingCoursesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="bg-blue-600 text-white"
+                className="bg-red-600 text-white"
               >
                 1
               </Button>

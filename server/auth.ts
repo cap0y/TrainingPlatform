@@ -8,7 +8,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { sendAdminNotification } from "./websocket";
-import { User as SelectUser } from "../shared/schema.js";
+import { User as SelectUser } from "@shared/schema";
 
 declare global {
   namespace Express {
@@ -165,19 +165,21 @@ export function setupAuth(app: Express) {
   }
 
   passport.serializeUser((user: any, done) => {
-    console.log("Serializing user:", user);
+    // 개발 환경에서만 로그 출력
+    if (process.env.NODE_ENV === "development") {
+      console.log("Serializing user:", user.id);
+    }
     done(null, user.id);
   });
 
   passport.deserializeUser(async (id: number, done) => {
     try {
-      console.log("Deserializing user ID:", id);
       const user = await storage.getUser(id);
-      console.log("Deserialized user:", user ? "User found" : "User not found");
       if (user) {
         done(null, user);
       } else {
-        console.log("User not found during deserialization");
+        // 사용자를 찾을 수 없는 경우에만 로그 출력
+        console.log("User not found during deserialization for ID:", id);
         done(null, false);
       }
     } catch (error) {
@@ -200,6 +202,7 @@ export function setupAuth(app: Express) {
     // Send notification to admins if it's a business registration
     if (req.body.userType === "business") {
       sendAdminNotification({
+        type: "business_pending",
         title: "새로운 기관 승인 요청",
         message: `"${req.body.organizationName || req.body.name}" 기관이 승인을 기다리고 있습니다.`,
         data: { userId: user.id, organizationName: req.body.organizationName },
@@ -213,22 +216,99 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err: any, user: any, info: any) => {
+    const { username, password, userType, businessNumber } = req.body;
+
+    // 입력 검증
+    if (!username || !password || !userType) {
+      return res
+        .status(400)
+        .json({ message: "모든 필수 필드를 입력해주세요." });
+    }
+
+    // 기관회원인 경우 사업자번호 필수 검증
+    if (userType === "business" && !businessNumber) {
+      return res
+        .status(400)
+        .json({ message: "기관회원 로그인 시 사업자번호는 필수입니다." });
+    }
+
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
       if (err) {
         console.error("Login error:", err);
-        return res.status(500).json({ message: "Login error" });
+        return res
+          .status(500)
+          .json({ message: "로그인 중 오류가 발생했습니다." });
       }
+
       if (!user) {
-        console.log("Authentication failed - no user");
-        return res.status(400).json({ message: "Invalid credentials" });
+        return res
+          .status(401)
+          .json({ message: "이메일 또는 비밀번호가 일치하지 않습니다." });
       }
+
+      // 회원 유형 검증
+      if (user.userType !== userType) {
+        const memberTypeText =
+          userType === "business" ? "기관회원" : "개인회원";
+        const userTypeText =
+          user.userType === "business" ? "기관회원" : "개인회원";
+        return res.status(401).json({
+          message: `${memberTypeText}으로 로그인하려 하셨지만, 등록된 계정은 ${userTypeText}입니다.`,
+          userType: user.userType,
+        });
+      }
+
+      // 기관회원의 경우 사업자번호 검증
+      if (userType === "business") {
+        if (!user.businessNumber) {
+          return res
+            .status(401)
+            .json({
+              message: "등록된 사업자번호가 없습니다. 관리자에게 문의해주세요.",
+            });
+        }
+
+        if (user.businessNumber !== businessNumber) {
+          return res
+            .status(401)
+            .json({ message: "사업자번호가 일치하지 않습니다." });
+        }
+
+        // 기관 승인 여부 확인
+        if (!user.isApproved) {
+          return res
+            .status(401)
+            .json({
+              message:
+                "아직 승인되지 않은 기관입니다. 승인 후 로그인이 가능합니다.",
+            });
+        }
+      }
+
+      // 계정 활성화 상태 확인
+      if (!user.isActive) {
+        return res
+          .status(401)
+          .json({ message: "비활성화된 계정입니다. 관리자에게 문의해주세요." });
+      }
+
       req.logIn(user, (err) => {
         if (err) {
           console.error("Session login error:", err);
-          return res.status(500).json({ message: "Login error" });
+          return res
+            .status(500)
+            .json({ message: "로그인 세션 생성 중 오류가 발생했습니다." });
         }
-        console.log("User logged in successfully:", user);
-        console.log("Session after login:", req.session);
+
+        if (process.env.NODE_ENV === "development") {
+          console.log(
+            "User logged in successfully:",
+            user.username,
+            "Type:",
+            user.userType,
+          );
+        }
+
         res.json(user);
       });
     })(req, res, next);
@@ -242,13 +322,15 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
-    console.log("User info - Session ID:", req.sessionID);
-    console.log("User info - isAuthenticated:", req.isAuthenticated());
-    console.log("User info - user:", req.user);
-    console.log("User info - session:", req.session);
+    // 개발 환경에서만 디버그 로그 출력
+    if (process.env.NODE_ENV === "development" && process.env.DEBUG_AUTH) {
+      console.log("User info - Session ID:", req.sessionID);
+      console.log("User info - isAuthenticated:", req.isAuthenticated());
+      console.log("User info - user:", req.user);
+      console.log("User info - session:", req.session);
+    }
 
     if (!req.isAuthenticated()) {
-      console.log("User not authenticated");
       return res.sendStatus(401);
     }
     res.json(req.user);
@@ -286,4 +368,12 @@ export function setupAuth(app: Express) {
       res.redirect("/");
     },
   );
+}
+
+// 인증 필요 미들웨어
+export function requireAuth(req: any, res: any, next: any) {
+  if (!req.user) {
+    return res.status(401).json({ error: "로그인이 필요합니다." });
+  }
+  next();
 }

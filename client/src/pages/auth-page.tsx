@@ -22,11 +22,37 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 
 export default function AuthPage() {
-  const { user, loginMutation, registerMutation } = useAuth();
+  const {
+    user,
+    loginMutation,
+    registerMutation,
+    kakaoLoginMutation,
+    googleLoginMutation,
+  } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("login");
   const [memberType, setMemberType] = useState("individual");
+
+  // OAuth 에러 처리
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get("error");
+
+    if (error === "google_login_failed") {
+      toast({
+        title: "구글 로그인 실패",
+        description: "구글 로그인 중 문제가 발생했습니다. 다시 시도해주세요.",
+        variant: "destructive",
+      });
+    } else if (error === "kakao_login_failed") {
+      toast({
+        title: "카카오 로그인 실패",
+        description: "카카오 로그인 중 문제가 발생했습니다. 다시 시도해주세요.",
+        variant: "destructive",
+      });
+    }
+  }, [toast]);
 
   // Login form state
   const [loginForm, setLoginForm] = useState({
@@ -67,16 +93,116 @@ export default function AuthPage() {
     marketingAgreed: false,
   });
 
+  // 회원 유형 변경 시 입력 필드 초기화
+  const handleMemberTypeChange = (type: string) => {
+    setMemberType(type);
+    setLoginForm((prev) => ({
+      ...prev,
+      email: "",
+      password: "",
+      businessNumber: "",
+    }));
+  };
+
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 기관회원 로그인 시 사업자번호 필수 검증
+    if (memberType === "business" && !loginForm.businessNumber.trim()) {
+      toast({
+        title: "사업자번호 입력 필요",
+        description: "기관회원 로그인 시 사업자번호를 입력해주세요.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      await loginMutation.mutateAsync({
+      const loginData: any = {
         username: loginForm.email,
         password: loginForm.password,
-      });
+        userType: memberType,
+      };
+
+      // 기관회원인 경우 사업자번호 추가
+      if (memberType === "business") {
+        loginData.businessNumber = loginForm.businessNumber;
+      }
+
+      await loginMutation.mutateAsync(loginData);
       setLocation("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed:", error);
+
+      const errorMessage = error?.response?.data?.message || error?.message;
+      const errorStatus = error?.response?.status;
+
+      if (errorStatus === 400) {
+        toast({
+          title: "입력 오류",
+          description: errorMessage || "입력하신 정보를 다시 확인해주세요.",
+          variant: "destructive",
+        });
+      } else if (errorStatus === 401) {
+        const responseData = error?.response?.data;
+
+        // 회원 유형 불일치 에러 처리
+        if (responseData?.userType) {
+          const correctTypeText =
+            responseData.userType === "business" ? "기관회원" : "개인회원";
+          const wrongTypeText =
+            memberType === "business" ? "기관회원" : "개인회원";
+
+          toast({
+            title: "회원 유형 불일치",
+            description: `${wrongTypeText}으로 로그인하려 하셨지만, 등록된 계정은 ${correctTypeText}입니다. 올바른 회원 유형을 선택해주세요.`,
+            variant: "destructive",
+          });
+
+          // 자동으로 올바른 회원 유형으로 변경
+          setMemberType(responseData.userType);
+        } else if (errorMessage?.includes("사업자번호")) {
+          toast({
+            title: "사업자번호 오류",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        } else if (errorMessage?.includes("승인")) {
+          toast({
+            title: "승인 대기",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        } else if (errorMessage?.includes("비활성화")) {
+          toast({
+            title: "계정 비활성화",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "로그인 실패",
+            description:
+              errorMessage || "이메일 또는 비밀번호가 일치하지 않습니다.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "로그인 오류",
+          description:
+            "로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    if (provider === "kakao") {
+      kakaoLoginMutation.mutate();
+    } else if (provider === "google") {
+      googleLoginMutation.mutate();
     }
   };
 
@@ -123,8 +249,14 @@ export default function AuthPage() {
   };
 
   // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
   if (user) {
-    return null;
+    return <div>리다이렉트 중...</div>;
   }
 
   return (
@@ -139,9 +271,7 @@ export default function AuthPage() {
             {/* Left side - Form */}
             <div className="space-y-8">
               <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900">
-                  한국연수교육플랫폼
-                </h2>
+                <h2 className="text-3xl font-bold text-gray-900">연수플랫폼</h2>
                 <p className="mt-2 text-gray-600">
                   전문가를 위한 최고의 연수교육 플랫폼
                 </p>
@@ -167,7 +297,7 @@ export default function AuthPage() {
                         <div className="flex rounded-lg bg-gray-100 p-1">
                           <button
                             type="button"
-                            onClick={() => setMemberType("individual")}
+                            onClick={() => handleMemberTypeChange("individual")}
                             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                               memberType === "individual"
                                 ? "bg-white text-primary shadow-sm"
@@ -178,7 +308,7 @@ export default function AuthPage() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => setMemberType("business")}
+                            onClick={() => handleMemberTypeChange("business")}
                             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                               memberType === "business"
                                 ? "bg-white text-primary shadow-sm"
@@ -187,6 +317,14 @@ export default function AuthPage() {
                           >
                             기관회원
                           </button>
+                        </div>
+
+                        <div className="text-center">
+                          <p className="text-sm text-gray-600">
+                            {memberType === "individual"
+                              ? "개인회원으로 가입하신 분만 로그인 가능합니다"
+                              : "기관회원으로 가입하신 분만 로그인 가능합니다"}
+                          </p>
                         </div>
 
                         <div>
@@ -208,10 +346,12 @@ export default function AuthPage() {
 
                         {memberType === "business" && (
                           <div>
-                            <Label htmlFor="businessNumber">사업자번호</Label>
+                            <Label htmlFor="businessNumber">
+                              사업자번호 <span className="text-red-500">*</span>
+                            </Label>
                             <Input
                               id="businessNumber"
-                              placeholder="000-00-00000"
+                              placeholder="0000000000"
                               value={loginForm.businessNumber}
                               onChange={(e) =>
                                 setLoginForm((prev) => ({
@@ -221,6 +361,9 @@ export default function AuthPage() {
                               }
                               required
                             />
+                            <p className="text-xs text-gray-500 mt-1">
+                              기관회원 로그인 시 사업자번호가 필요합니다
+                            </p>
                           </div>
                         )}
 
@@ -273,6 +416,78 @@ export default function AuthPage() {
                         >
                           {loginMutation.isPending ? "로그인 중..." : "로그인"}
                         </Button>
+
+                        {/* 소셜 로그인 - 개인회원만 */}
+                        {memberType === "individual" && (
+                          <>
+                            <div className="relative">
+                              <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
+                              </div>
+                              <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-white px-2 text-muted-foreground">
+                                  또는
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="space-y-3">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full bg-[#FEE500] hover:bg-[#FDD835] text-black border-[#FEE500]"
+                                onClick={() => handleSocialLogin("kakao")}
+                                disabled={kakaoLoginMutation.isPending}
+                              >
+                                <svg
+                                  className="mr-2 h-4 w-4"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    fill="currentColor"
+                                    d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3Z"
+                                  />
+                                </svg>
+                                {kakaoLoginMutation.isPending
+                                  ? "카카오 로그인 중..."
+                                  : "카카오로 로그인"}
+                              </Button>
+
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => handleSocialLogin("google")}
+                                disabled={googleLoginMutation.isPending}
+                              >
+                                <svg
+                                  className="mr-2 h-4 w-4"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                  />
+                                  <path
+                                    fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                  />
+                                  <path
+                                    fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                  />
+                                  <path
+                                    fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                  />
+                                </svg>
+                                {googleLoginMutation.isPending
+                                  ? "구글 로그인 중..."
+                                  : "구글로 로그인"}
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </form>
                     </TabsContent>
 

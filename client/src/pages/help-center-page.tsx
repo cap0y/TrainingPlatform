@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -29,14 +31,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Search,
+  MessageCircle,
+  Bell,
+  Lock,
+  Reply,
+  File,
+  HelpCircle,
+  Grid3X3,
+  Package,
+  Truck,
+  CreditCard,
+  Repeat,
+  Settings,
+  Plus,
+  Megaphone,
+} from "lucide-react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import { queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const HelpCenterPage: React.FC = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("faq");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [inquiryType, setInquiryType] = useState("product");
   const [inquiryDialogOpen, setInquiryDialogOpen] = useState(false);
   const [inquiryFile, setInquiryFile] = useState<File | null>(null);
   const [inquiryData, setInquiryData] = useState({
@@ -46,14 +68,76 @@ const HelpCenterPage: React.FC = () => {
     isPrivate: false,
   });
 
+  // 공지사항 조회
+  const { data: noticesData, isLoading: noticesLoading } = useQuery({
+    queryKey: ["/api/notices"],
+    queryFn: () => fetch("/api/notices").then((res) => res.json()),
+  });
+
+  // 문의사항 조회 (로그인한 사용자만)
+  const {
+    data: inquiriesData,
+    isLoading: inquiriesLoading,
+    refetch: refetchInquiries,
+  } = useQuery({
+    queryKey: ["/api/inquiries"],
+    queryFn: () =>
+      fetch("/api/inquiries", {
+        credentials: "include",
+      }).then((res) => res.json()),
+    enabled: !!user,
+  });
+
+  // 문의사항 등록 mutation
+  const createInquiryMutation = useMutation({
+    mutationFn: async (inquiryData: any) => {
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(inquiryData),
+      });
+
+      if (!response.ok) {
+        throw new Error("문의 등록에 실패했습니다.");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "문의 등록 완료",
+        description:
+          "문의가 성공적으로 등록되었습니다. 빠른 시일 내에 답변드리겠습니다.",
+      });
+      setInquiryDialogOpen(false);
+      setInquiryData({
+        title: "",
+        content: "",
+        type: "product",
+        isPrivate: false,
+      });
+      refetchInquiries();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "문의 등록 실패",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const categories = [
-    { id: "all", name: "전체", icon: "fas fa-th-large" },
-    { id: "product", name: "상품 문의", icon: "fas fa-box" },
-    { id: "delivery", name: "배송 문의", icon: "fas fa-truck" },
-    { id: "payment", name: "결제 문의", icon: "fas fa-credit-card" },
-    { id: "refund", name: "환불/교환", icon: "fas fa-exchange-alt" },
-    { id: "account", name: "계정 관리", icon: "fas fa-user-cog" },
-    { id: "etc", name: "기타 문의", icon: "fas fa-question-circle" },
+    { id: "all", name: "전체", icon: "grid" },
+    { id: "product", name: "상품 문의", icon: "package" },
+    { id: "delivery", name: "배송 문의", icon: "truck" },
+    { id: "payment", name: "결제 문의", icon: "credit-card" },
+    { id: "refund", name: "환불/교환", icon: "repeat" },
+    { id: "account", name: "계정 관리", icon: "settings" },
+    { id: "etc", name: "기타 문의", icon: "help-circle" },
   ];
 
   const faqs = [
@@ -115,53 +199,139 @@ const HelpCenterPage: React.FC = () => {
     },
   ];
 
-  const inquiries = [
+  // 이용가이드 FAQ 데이터
+  const guideItems = [
     {
       id: 1,
-      title: "수강 신청 관련 문의",
-      content:
-        "안녕하세요. 화학물질 관리사 자격증 과정 수강 신청을 하려고 하는데...",
-      category: "상품 문의",
-      status: "답변 대기",
-      date: "2025.06.15",
-      isPrivate: false,
-      answer: null,
-    },
-    {
-      id: 2,
-      title: "결제 오류 문의",
-      content: "결제 진행 중 오류가 발생했습니다. 확인 부탁드립니다.",
-      category: "결제 문의",
-      status: "답변 완료",
-      date: "2025.06.14",
-      isPrivate: true,
-      answer: {
-        content:
-          "안녕하세요. 결제 오류 관련 문의 주셔서 감사합니다. 해당 문제는 시스템 점검으로 인한 일시적 오류였으며, 현재는 정상 작동하고 있습니다.",
-        date: "2025.06.14",
-        answerer: "고객지원팀",
-      },
-    },
-  ];
+      title: "회원가입 안내",
+      content: `
+        <div class="space-y-4">
+          <h4 class="font-semibold">1. 회원가입 절차</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>홈페이지 우상단 '로그인/회원가입' 클릭</li>
+            <li>개인정보 입력 및 약관 동의</li>
+            <li>이메일 인증 완료</li>
+            <li>회원가입 완료</li>
+          </ul>
 
-  const notices = [
-    {
-      id: 1,
-      title: "2025년 하계 연수 일정 안내",
-      date: "2025.06.15",
-      isImportant: true,
+          <h4 class="font-semibold">2. 회원 혜택</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>강의 할인 혜택</li>
+            <li>포인트 적립 및 사용</li>
+            <li>개인 맞춤형 강의 추천</li>
+            <li>학습 진도 관리</li>
+          </ul>
+        </div>
+      `,
     },
     {
       id: 2,
-      title: "시스템 점검 안내 (6월 20일)",
-      date: "2025.06.12",
-      isImportant: false,
+      title: "수강신청 안내",
+      content: `
+        <div class="space-y-4">
+          <h4 class="font-semibold">1. 수강신청 방법</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>원하는 강의 선택</li>
+            <li>강의 상세정보 확인</li>
+            <li>'수강신청' 버튼 클릭</li>
+            <li>결제 진행</li>
+            <li>수강신청 완료</li>
+          </ul>
+
+          <h4 class="font-semibold">2. 수강 취소 및 환불</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>강의 시작 전: 100% 환불</li>
+            <li>강의 시작 후 1/3 진행 전: 2/3 환불</li>
+            <li>강의 시작 후 1/2 진행 전: 1/2 환불</li>
+            <li>강의 시작 후 1/2 진행 후: 환불 불가</li>
+          </ul>
+        </div>
+      `,
     },
     {
       id: 3,
-      title: "새로운 교육과정 오픈 안내",
-      date: "2025.06.10",
-      isImportant: false,
+      title: "결제 안내",
+      content: `
+        <div class="space-y-4">
+          <h4 class="font-semibold">1. 결제 방법</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>신용카드/체크카드</li>
+            <li>무통장입금</li>
+            <li>휴대폰 결제</li>
+            <li>간편결제 (카카오페이, 네이버페이, 토스)</li>
+          </ul>
+
+          <h4 class="font-semibold">2. 환불 정책</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>카드결제: 승인취소 (영업일 기준 3-5일)</li>
+            <li>무통장입금: 계좌이체 (영업일 기준 3-5일)</li>
+            <li>부분환불 시 수수료 차감될 수 있음</li>
+          </ul>
+        </div>
+      `,
+    },
+    {
+      id: 4,
+      title: "수료증 발급",
+      content: `
+        <div class="space-y-4">
+          <h4 class="font-semibold">1. 수료 조건</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>전체 강의의 80% 이상 수강</li>
+            <li>과제 및 시험 합격 (해당 시)</li>
+            <li>출석률 80% 이상 (오프라인 강의)</li>
+          </ul>
+
+          <h4 class="font-semibold">2. 수료증 발급 절차</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>수료 조건 충족 시 자동 발급</li>
+            <li>마이페이지에서 수료증 다운로드</li>
+            <li>필요 시 종이 수료증 별도 신청 가능</li>
+          </ul>
+        </div>
+      `,
+    },
+    {
+      id: 5,
+      title: "모바일 이용 안내",
+      content: `
+        <div class="space-y-4">
+          <h4 class="font-semibold">1. 모바일 접속</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>모바일 웹브라우저로 접속</li>
+            <li>반응형 디자인으로 최적화</li>
+            <li>모든 기능 동일하게 이용 가능</li>
+          </ul>
+
+          <h4 class="font-semibold">2. 추천 환경</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>안드로이드: Chrome 브라우저</li>
+            <li>iOS: Safari 브라우저</li>
+            <li>안정적인 Wi-Fi 또는 4G/5G 연결</li>
+          </ul>
+        </div>
+      `,
+    },
+    {
+      id: 6,
+      title: "고객지원",
+      content: `
+        <div class="space-y-4">
+          <h4 class="font-semibold">1. 고객센터 운영시간</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>평일: 09:00 - 18:00</li>
+            <li>토요일: 09:00 - 13:00</li>
+            <li>일요일 및 공휴일: 휴무</li>
+          </ul>
+
+          <h4 class="font-semibold">2. 문의 방법</h4>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li>1:1 문의 (24시간 접수)</li>
+            <li>이메일: support@trainingplatform.com</li>
+            <li>전화: 1588-1234</li>
+          </ul>
+        </div>
+      `,
     },
   ];
 
@@ -175,20 +345,82 @@ const HelpCenterPage: React.FC = () => {
   });
 
   const handleInquirySubmit = () => {
-    if (!inquiryData.title.trim() || !inquiryData.content.trim()) {
-      alert("제목과 내용을 입력해주세요.");
+    if (!user) {
+      toast({
+        title: "로그인 필요",
+        description: "문의를 등록하려면 로그인이 필요합니다.",
+        variant: "destructive",
+      });
       return;
     }
 
-    // Handle inquiry submission
-    alert("문의가 접수되었습니다. 빠른 시일 내에 답변드리겠습니다.");
-    setInquiryDialogOpen(false);
-    setInquiryData({
-      title: "",
-      content: "",
-      type: "product",
-      isPrivate: false,
+    if (!inquiryData.title.trim() || !inquiryData.content.trim()) {
+      toast({
+        title: "입력 오류",
+        description: "제목과 내용을 입력해주세요.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    createInquiryMutation.mutate(inquiryData);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     });
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "pending":
+        return <Badge variant="secondary">답변 대기</Badge>;
+      case "answered":
+        return <Badge variant="default">답변 완료</Badge>;
+      case "closed":
+        return <Badge variant="outline">종료</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
+  const getTypeName = (type: string) => {
+    const typeMap: { [key: string]: string } = {
+      product: "상품 문의",
+      payment: "결제 문의",
+      delivery: "배송 문의",
+      refund: "환불/교환",
+      account: "계정 관리",
+      general: "일반 문의",
+      etc: "기타 문의",
+    };
+    return typeMap[type] || type;
+  };
+
+  const renderIcon = (iconName: string) => {
+    const iconProps = { className: "w-4 h-4 mr-2" };
+
+    switch (iconName) {
+      case "grid":
+        return <Grid3X3 {...iconProps} />;
+      case "package":
+        return <Package {...iconProps} />;
+      case "truck":
+        return <Truck {...iconProps} />;
+      case "credit-card":
+        return <CreditCard {...iconProps} />;
+      case "repeat":
+        return <Repeat {...iconProps} />;
+      case "settings":
+        return <Settings {...iconProps} />;
+      case "help-circle":
+        return <HelpCircle {...iconProps} />;
+      default:
+        return <HelpCircle {...iconProps} />;
+    }
   };
 
   return (
@@ -211,8 +443,8 @@ const HelpCenterPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Button className="absolute right-1 top-1 bottom-1 px-4">
-                <i className="fas fa-search"></i>
+              <Button className="absolute right-1 top-0 bottom-0 px-4">
+                <Search className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -245,14 +477,16 @@ const HelpCenterPage: React.FC = () => {
                       <button
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center ${
                           selectedCategory === category.id
                             ? "bg-blue-100 text-blue-600"
                             : "hover:bg-gray-100"
                         }`}
                       >
-                        <i className={`${category.icon} mr-2`}></i>
-                        {category.name}
+                        <span className="flex items-center">
+                          {renderIcon(category.icon)}
+                          <span>{category.name}</span>
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -294,7 +528,7 @@ const HelpCenterPage: React.FC = () => {
 
                 {filteredFaqs.length === 0 && (
                   <div className="text-center py-12">
-                    <i className="fas fa-search text-4xl text-gray-300 mb-4"></i>
+                    <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500">검색 결과가 없습니다.</p>
                   </div>
                 )}
@@ -307,145 +541,210 @@ const HelpCenterPage: React.FC = () => {
             <div className="space-y-6">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">1:1 문의</h3>
-                <Dialog
-                  open={inquiryDialogOpen}
-                  onOpenChange={setInquiryDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button>
-                      <i className="fas fa-plus mr-2"></i>새 문의 작성
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>새 문의 작성</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="inquiry-type">문의 유형</Label>
-                        <Select
-                          onValueChange={(value) =>
-                            setInquiryData({ ...inquiryData, type: value })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="문의 유형을 선택하세요" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="product">상품 문의</SelectItem>
-                            <SelectItem value="payment">결제 문의</SelectItem>
-                            <SelectItem value="delivery">배송 문의</SelectItem>
-                            <SelectItem value="refund">환불/교환</SelectItem>
-                            <SelectItem value="account">계정 관리</SelectItem>
-                            <SelectItem value="etc">기타 문의</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="inquiry-title">제목</Label>
-                        <Input
-                          id="inquiry-title"
-                          value={inquiryData.title}
-                          onChange={(e) =>
-                            setInquiryData({
-                              ...inquiryData,
-                              title: e.target.value,
-                            })
-                          }
-                          placeholder="문의 제목을 입력하세요"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="inquiry-content">내용</Label>
-                        <Textarea
-                          id="inquiry-content"
-                          value={inquiryData.content}
-                          onChange={(e) =>
-                            setInquiryData({
-                              ...inquiryData,
-                              content: e.target.value,
-                            })
-                          }
-                          placeholder="문의 내용을 상세히 입력해주세요"
-                          className="min-h-[150px]"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="inquiry-file">첨부파일</Label>
-                        <Input
-                          id="inquiry-file"
-                          type="file"
-                          onChange={(e) =>
-                            setInquiryFile(e.target.files?.[0] || null)
-                          }
-                        />
-                        <p className="text-sm text-gray-500 mt-1">
-                          파일 크기는 10MB 이하로 제한됩니다.
-                        </p>
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        variant="outline"
-                        onClick={() => setInquiryDialogOpen(false)}
-                      >
-                        취소
+                {user && (
+                  <Dialog
+                    open={inquiryDialogOpen}
+                    onOpenChange={setInquiryDialogOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="w-4 h-4 mr-2" />새 문의 작성
                       </Button>
-                      <Button onClick={handleInquirySubmit}>문의 등록</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-
-              <div className="space-y-4">
-                {inquiries.map((inquiry) => (
-                  <Card key={inquiry.id} className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center space-x-3">
-                        <Badge
-                          variant={
-                            inquiry.status === "답변 완료"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {inquiry.status}
-                        </Badge>
-                        <Badge variant="outline">{inquiry.category}</Badge>
-                        {inquiry.isPrivate && (
-                          <Badge variant="outline" className="text-orange-600">
-                            <i className="fas fa-lock mr-1"></i>
-                            비공개
-                          </Badge>
-                        )}
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {inquiry.date}
-                      </span>
-                    </div>
-
-                    <h4 className="font-semibold mb-2">{inquiry.title}</h4>
-                    <p className="text-gray-600 mb-4">{inquiry.content}</p>
-
-                    {inquiry.answer && (
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <div className="flex items-center mb-2">
-                          <i className="fas fa-reply text-blue-600 mr-2"></i>
-                          <span className="font-medium text-blue-600">
-                            답변
-                          </span>
-                          <span className="text-sm text-gray-500 ml-auto">
-                            {inquiry.answer.date} | {inquiry.answer.answerer}
-                          </span>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>새 문의 작성</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="inquiry-type">문의 유형</Label>
+                          <Select
+                            onValueChange={(value) =>
+                              setInquiryData({ ...inquiryData, type: value })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="문의 유형을 선택하세요" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="product">상품 문의</SelectItem>
+                              <SelectItem value="payment">결제 문의</SelectItem>
+                              <SelectItem value="delivery">
+                                배송 문의
+                              </SelectItem>
+                              <SelectItem value="refund">환불/교환</SelectItem>
+                              <SelectItem value="account">계정 관리</SelectItem>
+                              <SelectItem value="general">일반 문의</SelectItem>
+                              <SelectItem value="etc">기타 문의</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
-                        <p className="text-gray-700">
-                          {inquiry.answer.content}
-                        </p>
+                        <div>
+                          <Label htmlFor="inquiry-title">제목</Label>
+                          <Input
+                            id="inquiry-title"
+                            value={inquiryData.title}
+                            onChange={(e) =>
+                              setInquiryData({
+                                ...inquiryData,
+                                title: e.target.value,
+                              })
+                            }
+                            placeholder="문의 제목을 입력하세요"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="inquiry-content">내용</Label>
+                          <Textarea
+                            id="inquiry-content"
+                            value={inquiryData.content}
+                            onChange={(e) =>
+                              setInquiryData({
+                                ...inquiryData,
+                                content: e.target.value,
+                              })
+                            }
+                            placeholder="문의 내용을 상세히 입력해주세요"
+                            className="min-h-[150px]"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="inquiry-file">첨부파일</Label>
+                          <Input
+                            id="inquiry-file"
+                            type="file"
+                            onChange={(e) =>
+                              setInquiryFile(e.target.files?.[0] || null)
+                            }
+                          />
+                          <p className="text-sm text-gray-500 mt-1">
+                            파일 크기는 10MB 이하로 제한됩니다.
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id="inquiry-private"
+                            checked={inquiryData.isPrivate}
+                            onChange={(e) =>
+                              setInquiryData({
+                                ...inquiryData,
+                                isPrivate: e.target.checked,
+                              })
+                            }
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <Label htmlFor="inquiry-private" className="text-sm">
+                            <Lock className="w-3 h-3 mr-1 text-orange-600 inline" />
+                            비밀글로 작성 (관리자와 본인만 확인 가능)
+                          </Label>
+                        </div>
                       </div>
-                    )}
-                  </Card>
-                ))}
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setInquiryDialogOpen(false)}
+                        >
+                          취소
+                        </Button>
+                        <Button
+                          onClick={handleInquirySubmit}
+                          disabled={createInquiryMutation.isPending}
+                        >
+                          {createInquiryMutation.isPending
+                            ? "등록 중..."
+                            : "문의 등록"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
+
+              {!user && (
+                <Card className="p-6 text-center">
+                  <p className="text-gray-600 mb-4">
+                    1:1 문의를 이용하려면 로그인이 필요합니다.
+                  </p>
+                  <Button onClick={() => (window.location.href = "/auth")}>
+                    로그인하기
+                  </Button>
+                </Card>
+              )}
+
+              {user && (
+                <div className="space-y-4">
+                  {inquiriesLoading && (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">
+                        문의 내역을 불러오는 중...
+                      </p>
+                    </div>
+                  )}
+
+                  {inquiriesData?.inquiries?.map((inquiry: any) => (
+                    <Card
+                      key={inquiry.id}
+                      className={`p-6 ${inquiry.isPrivate ? "border-orange-200 bg-orange-50" : ""}`}
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center space-x-3">
+                          {getStatusBadge(inquiry.status)}
+                          <Badge variant="outline">
+                            {getTypeName(inquiry.type)}
+                          </Badge>
+                          {inquiry.isPrivate && (
+                            <Badge
+                              variant="outline"
+                              className="text-orange-600 border-orange-600 bg-orange-100"
+                            >
+                              <Lock className="w-3 h-3 mr-1" />
+                              비밀글
+                            </Badge>
+                          )}
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          {formatDate(inquiry.createdAt)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center mb-2">
+                        {inquiry.isPrivate && (
+                          <Lock className="w-4 h-4 text-orange-600 mr-2" />
+                        )}
+                        <h4 className="font-semibold">{inquiry.title}</h4>
+                      </div>
+                      <p className="text-gray-600 mb-4 whitespace-pre-wrap">
+                        {inquiry.content}
+                      </p>
+
+                      {inquiry.answer && (
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                          <div className="flex items-center mb-2">
+                            <Reply className="w-4 h-4 text-blue-600 mr-2" />
+                            <span className="font-medium text-blue-600">
+                              답변
+                            </span>
+                            <span className="text-sm text-gray-500 ml-auto">
+                              {formatDate(inquiry.answeredAt)} | 관리자
+                            </span>
+                          </div>
+                          <p className="text-gray-700 whitespace-pre-wrap">
+                            {inquiry.answer}
+                          </p>
+                        </div>
+                      )}
+                    </Card>
+                  ))}
+
+                  {inquiriesData?.inquiries?.length === 0 && (
+                    <div className="text-center py-12">
+                      <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500">등록된 문의가 없습니다.</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </TabsContent>
 
@@ -453,97 +752,84 @@ const HelpCenterPage: React.FC = () => {
           <TabsContent value="notice" className="mt-8">
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">공지사항</h3>
-              <div className="space-y-2">
-                {notices.map((notice) => (
-                  <Card
+
+              {noticesLoading && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">공지사항을 불러오는 중...</p>
+                </div>
+              )}
+
+              <Accordion type="single" collapsible className="space-y-2">
+                {noticesData?.notices?.map((notice: any) => (
+                  <AccordionItem
                     key={notice.id}
-                    className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+                    value={`notice-${notice.id}`}
+                    className="border border-gray-200 rounded-lg px-4"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        {notice.isImportant && (
-                          <Badge className="bg-red-500">중요</Badge>
-                        )}
-                        <h4 className="font-medium">{notice.title}</h4>
+                    <AccordionTrigger className="text-left hover:no-underline">
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center space-x-3">
+                          {notice.isImportant && (
+                            <Badge className="bg-red-500">중요</Badge>
+                          )}
+                          <Megaphone className="w-4 h-4 text-blue-600" />
+                          <span className="font-medium">{notice.title}</span>
+                        </div>
+                        <span className="text-sm text-gray-500 mr-4">
+                          {formatDate(notice.createdAt)}
+                        </span>
                       </div>
-                      <span className="text-sm text-gray-500">
-                        {notice.date}
-                      </span>
-                    </div>
-                  </Card>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-4 border-t border-gray-100">
+                      <div className="text-gray-600">
+                        {notice.content ? (
+                          <div className="whitespace-pre-wrap">
+                            {notice.content}
+                          </div>
+                        ) : (
+                          <p className="text-gray-400 italic">
+                            내용이 없습니다.
+                          </p>
+                        )}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
                 ))}
-              </div>
+              </Accordion>
+
+              {noticesData?.notices?.length === 0 && (
+                <div className="text-center py-12">
+                  <Megaphone className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500">등록된 공지사항이 없습니다.</p>
+                </div>
+              )}
             </div>
           </TabsContent>
 
           {/* Guide Tab */}
           <TabsContent value="guide" className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="p-6 text-center">
-                <i className="fas fa-user-plus text-4xl text-blue-600 mb-4"></i>
-                <h4 className="font-semibold mb-2">회원가입 안내</h4>
-                <p className="text-gray-600 text-sm mb-4">
-                  회원가입 절차와 혜택에 대해 안내합니다.
-                </p>
-                <Button variant="outline" size="sm">
-                  자세히 보기
-                </Button>
-              </Card>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">이용가이드</h3>
 
-              <Card className="p-6 text-center">
-                <i className="fas fa-graduation-cap text-4xl text-blue-600 mb-4"></i>
-                <h4 className="font-semibold mb-2">수강신청 안내</h4>
-                <p className="text-gray-600 text-sm mb-4">
-                  교육과정 수강신청 방법을 안내합니다.
-                </p>
-                <Button variant="outline" size="sm">
-                  자세히 보기
-                </Button>
-              </Card>
-
-              <Card className="p-6 text-center">
-                <i className="fas fa-credit-card text-4xl text-blue-600 mb-4"></i>
-                <h4 className="font-semibold mb-2">결제 안내</h4>
-                <p className="text-gray-600 text-sm mb-4">
-                  다양한 결제 방법과 환불 정책을 안내합니다.
-                </p>
-                <Button variant="outline" size="sm">
-                  자세히 보기
-                </Button>
-              </Card>
-
-              <Card className="p-6 text-center">
-                <i className="fas fa-certificate text-4xl text-blue-600 mb-4"></i>
-                <h4 className="font-semibold mb-2">수료증 발급</h4>
-                <p className="text-gray-600 text-sm mb-4">
-                  수료증 발급 조건과 절차를 안내합니다.
-                </p>
-                <Button variant="outline" size="sm">
-                  자세히 보기
-                </Button>
-              </Card>
-
-              <Card className="p-6 text-center">
-                <i className="fas fa-mobile-alt text-4xl text-blue-600 mb-4"></i>
-                <h4 className="font-semibold mb-2">모바일 이용 안내</h4>
-                <p className="text-gray-600 text-sm mb-4">
-                  모바일에서 편리하게 이용하는 방법을 안내합니다.
-                </p>
-                <Button variant="outline" size="sm">
-                  자세히 보기
-                </Button>
-              </Card>
-
-              <Card className="p-6 text-center">
-                <i className="fas fa-headset text-4xl text-blue-600 mb-4"></i>
-                <h4 className="font-semibold mb-2">고객지원</h4>
-                <p className="text-gray-600 text-sm mb-4">
-                  고객지원 채널과 운영시간을 안내합니다.
-                </p>
-                <Button variant="outline" size="sm">
-                  자세히 보기
-                </Button>
-              </Card>
+              <Accordion type="single" collapsible className="space-y-2">
+                {guideItems.map((item) => (
+                  <AccordionItem
+                    key={item.id}
+                    value={`guide-${item.id}`}
+                    className="border border-gray-200 rounded-lg px-4"
+                  >
+                    <AccordionTrigger className="text-left hover:no-underline">
+                      <div className="flex items-center space-x-3">
+                        <HelpCircle className="w-4 h-4 text-blue-600" />
+                        <span className="font-medium">{item.title}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-4 border-t border-gray-100">
+                      <div dangerouslySetInnerHTML={{ __html: item.content }} />
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
           </TabsContent>
         </Tabs>

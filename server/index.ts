@@ -1,3 +1,6 @@
+import { config } from "dotenv";
+config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -5,13 +8,32 @@ import { setupAuth } from "./auth";
 import path from "path";
 import { setupWebSocket } from "./websocket";
 import { seedDatabase } from "./seed-db";
+import { createServer } from "http";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import { registerBusinessRoutes } from "./routes/business";
+import { registerUserRoutes } from "./routes/user";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+const server = createServer(app);
+
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Serve uploaded images
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// Serve static files from public directory
+app.use(express.static(path.join(process.cwd(), "public")));
+
+// 한글 파일명 처리를 위한 인코딩 설정
+app.use((req, res, next) => {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -43,6 +65,21 @@ app.use((req, res, next) => {
   next();
 });
 
+// 정적 파일 제공 설정
+app.use(express.static("public"));
+app.use("/images", express.static("public/images"));
+
+// CORS 설정
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS",
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
 (async () => {
   // Seed database on startup (with better error handling)
   try {
@@ -53,6 +90,14 @@ app.use((req, res, next) => {
     // Continue running even if seeding fails
   }
 
+  // Setup authentication first
+  setupAuth(app);
+
+  // Setup business routes after auth
+  registerBusinessRoutes(app);
+  registerUserRoutes(app);
+
+  // Then register other routes
   const server = await registerRoutes(app);
 
   // Setup WebSocket after server is created
@@ -79,14 +124,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  server.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    },
-  );
+  server.listen(port, "127.0.0.1", () => {
+    log(`serving on port ${port}`);
+  });
 })();

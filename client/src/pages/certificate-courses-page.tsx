@@ -16,6 +16,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, Award, Calendar, CheckCircle } from "lucide-react";
+
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  type: string;
+  level: string;
+  credit: number;
+  price: number;
+  discountPrice?: number;
+  duration: string;
+  totalHours: number;
+  maxStudents: number;
+  status: string;
+  approvalStatus: string;
+  instructorId: number;
+  objectives?: string;
+  requirements?: string;
+  materials?: string;
+  curriculum?: string;
+  imageUrl?: string;
+  rating?: number;
+  createdAt: string;
+  updatedAt?: string;
+  enrolledCount?: number;
+}
+
+interface CoursesResponse {
+  courses: Course[];
+  total: number;
+}
 
 export default function CertificateCoursesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,23 +56,73 @@ export default function CertificateCoursesPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
 
   // Fetch certificate courses
-  const { data: coursesData, isLoading } = useQuery({
+  const { data: coursesData, isLoading } = useQuery<CoursesResponse>({
     queryKey: ["/api/courses", { category: "자격증", search: searchQuery }],
   });
 
   const certificateCategories = [
-    { id: "safety", name: "안전관리", icon: "fas fa-shield-alt", count: 15 },
-    { id: "environment", name: "환경관리", icon: "fas fa-leaf", count: 12 },
-    { id: "quality", name: "품질관리", icon: "fas fa-award", count: 8 },
-    { id: "information", name: "정보보안", icon: "fas fa-lock", count: 10 },
-    { id: "construction", name: "건설관리", icon: "fas fa-hard-hat", count: 6 },
+    {
+      id: "safety",
+      name: "안전관리",
+      icon: "fas fa-shield-alt",
+      imageUrl: "/uploads/photo0.jpg",
+    },
+    {
+      id: "environment",
+      name: "환경관리",
+      icon: "fas fa-leaf",
+      imageUrl: "/uploads/photo1.jpg",
+    },
+    {
+      id: "quality",
+      name: "품질관리",
+      icon: "fas fa-award",
+      imageUrl: "/uploads/photo2.jpg",
+    },
+    {
+      id: "information",
+      name: "정보보안",
+      icon: "fas fa-lock",
+      imageUrl: "/uploads/photo3.jpg",
+    },
+    {
+      id: "construction",
+      name: "건설관리",
+      icon: "fas fa-hard-hat",
+      imageUrl: "/uploads/photo4.jpg",
+    },
     {
       id: "fire",
       name: "소방안전",
       icon: "fas fa-fire-extinguisher",
-      count: 9,
+      imageUrl: "/uploads/photo5.jpg",
     },
   ];
+
+  // 각 카테고리별 과정 수 계산
+  const getCategoryCount = (categoryId: string) => {
+    if (!coursesData?.courses) return 0;
+
+    const keywords = {
+      safety: ["안전", "안전관리", "산업안전"],
+      environment: ["환경", "환경관리", "환경보호"],
+      quality: ["품질", "품질관리", "품질보증"],
+      information: ["정보", "정보보안", "보안"],
+      construction: ["건설", "건설관리", "건축"],
+      fire: ["소방", "소방안전", "화재"],
+    };
+
+    const categoryKeywords =
+      keywords[categoryId as keyof typeof keywords] || [];
+    return coursesData.courses.filter((course) =>
+      categoryKeywords.some(
+        (keyword) =>
+          course.title.includes(keyword) ||
+          course.description?.includes(keyword) ||
+          course.category.includes(keyword),
+      ),
+    ).length;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,16 +130,23 @@ export default function CertificateCoursesPage() {
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-green-600 to-green-800 text-white py-16 overflow-hidden">
-        <div className="absolute inset-0 opacity-25">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
           <img
-            src="/uploads/images/4901b8c8f6c3cdb40238ce25968be771_1750405130302.jpg"
-            alt="Certificate of Completion"
+            src="/uploads/images/4.jpg"
+            alt="자격증 과정 배경"
             className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
-        <div className="relative container mx-auto px-4">
+
+        {/* Content */}
+        <div className="relative container mx-auto px-4 z-10">
           <div className="max-w-3xl">
-            <h1 className="text-4xl font-bold mb-4">자격증 취득 과정</h1>
+            <div className="flex items-center mb-4">
+              <Award className="h-8 w-8 mr-3" />
+              <h1 className="text-4xl font-bold">자격증 취득 과정</h1>
+            </div>
             <p className="text-xl text-green-100 mb-6">
               국가공인 자격증 취득을 위한 체계적이고 전문적인 교육과정을
               제공합니다.
@@ -67,12 +157,13 @@ export default function CertificateCoursesPage() {
                 variant="secondary"
                 className="bg-white text-green-600 hover:bg-gray-100"
               >
+                <CheckCircle className="h-4 w-4 mr-2" />
                 인기 자격증 보기
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-green-600"
+                className="border-white text-white bg-white/20 px-6 py-3 text-base font-semibold"
               >
                 수강 문의
               </Button>
@@ -81,56 +172,57 @@ export default function CertificateCoursesPage() {
         </div>
       </section>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {/* Category Navigation */}
-        <section className="py-12 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
-              자격증 분야별 과정
-            </h2>
-            <div className="flex justify-center">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-4xl">
-                {certificateCategories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/certificate-courses?category=${category.id}`}
-                  >
-                    <div className="text-center group cursor-pointer">
-                      <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                        <img
-                          src={
-                            category.id === "safety"
-                              ? "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=120&h=120&fit=crop&crop=center"
-                              : category.id === "environment"
-                                ? "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=120&fit=crop&crop=center"
-                                : category.id === "quality"
-                                  ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=center"
-                                  : category.id === "information"
-                                    ? "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=120&h=120&fit=crop&crop=center"
-                                    : category.id === "construction"
-                                      ? "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=120&h=120&fit=crop&crop=center"
-                                      : "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=120&h=120&fit=crop&crop=center"
-                          }
-                          alt={category.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                        <div className="absolute inset-0 bg-green-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
-                      </div>
-                      <div className="font-medium text-sm text-gray-800 group-hover:text-green-600 transition-colors">
-                        {category.name}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {category.count}개 과정
-                      </div>
+      {/* Breadcrumb */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center text-sm text-gray-600">
+            <i className="fas fa-home text-blue-600"></i>
+            <span className="mx-2">/</span>
+            <span className="text-blue-600">연수과정</span>
+            <span className="mx-2">/</span>
+            <span className="text-gray-700">자격증 과정</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Category Navigation */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+            자격증 분야별 과정
+          </h2>
+          <div className="flex justify-center">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-4xl">
+              {certificateCategories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/certificate-courses?category=${category.id}`}
+                >
+                  <div className="text-center group cursor-pointer">
+                    <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                      <img
+                        src={category.imageUrl}
+                        alt={category.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-green-600 bg-opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
                     </div>
-                  </Link>
-                ))}
-              </div>
+                    <div className="font-medium text-sm text-gray-800 group-hover:text-green-600 transition-colors">
+                      {category.name}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {getCategoryCount(category.id)}개 과정
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
         {/* Search and Filters */}
         <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -142,7 +234,7 @@ export default function CertificateCoursesPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
-              <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <Select
@@ -177,7 +269,7 @@ export default function CertificateCoursesPage() {
             </Select>
 
             <Button className="bg-green-600 hover:bg-green-700">
-              <i className="fas fa-search mr-2"></i>
+              <Search className="h-4 w-4 mr-2" />
               검색
             </Button>
           </div>
@@ -213,20 +305,38 @@ export default function CertificateCoursesPage() {
                     </div>
                   ))}
                 </div>
-              ) : (
+              ) : coursesData?.courses && coursesData.courses.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {coursesData?.courses
-                    ?.slice(0, 6)
-                    .map((course) => (
-                      <CourseCard key={course.id} course={course} />
-                    ))}
+                  {coursesData.courses.slice(0, 6).map((course) => (
+                    <CourseCard
+                      key={course.id}
+                      course={{
+                        ...course,
+                        price: course.price.toString(),
+                        discountPrice: course.discountPrice?.toString(),
+                        duration: course.totalHours,
+                        currentStudents: course.enrolledCount || 0,
+                        isActive: course.status === "active",
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Award className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                    등록된 자격증 과정이 없습니다
+                  </h3>
+                  <p className="text-gray-500">
+                    새로운 자격증 과정이 곧 추가될 예정입니다.
+                  </p>
                 </div>
               )}
             </TabsContent>
 
             <TabsContent value="new" className="mt-6">
               <div className="text-center py-12">
-                <i className="fas fa-plus-circle text-4xl text-gray-300 mb-4"></i>
+                <CheckCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 mb-2">
                   새로운 자격증 과정
                 </h3>
@@ -239,7 +349,7 @@ export default function CertificateCoursesPage() {
             <TabsContent value="upcoming" className="mt-6">
               <div className="bg-blue-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-blue-800 mb-4">
-                  <i className="fas fa-calendar-check mr-2"></i>
+                  <Calendar className="h-5 w-5 mr-2 inline" />
                   다가오는 시험 일정
                 </h3>
                 <div className="space-y-4">
@@ -313,7 +423,7 @@ export default function CertificateCoursesPage() {
         </section>
 
         {/* Study Guide Section */}
-        <section className="mb-12">
+        <section className="mb-0">
           <div className="bg-green-50 rounded-lg p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               자격증 취득 가이드

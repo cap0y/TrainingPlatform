@@ -4,7 +4,7 @@ export interface Course {
   credit: number;
   progress?: number;
   category?: string;
-  type: 'course' | 'seminar' | 'overseas';
+  type: "course" | "seminar" | "overseas";
   startDate?: string;
   endDate?: string;
   location?: string;
@@ -12,11 +12,11 @@ export interface Course {
 
 export interface Enrollment {
   id: string;
-  status: 'enrolled' | 'completed' | 'cancelled' | 'pending';
+  status: "enrolled" | "completed" | "cancelled" | "pending";
   course: Course;
   createdAt: string;
   progress: number;
-  type: 'course' | 'seminar' | 'overseas';
+  type: "course" | "seminar" | "overseas";
   subtype?: string;
 }
 
@@ -26,4 +26,4 @@ export interface Payment {
   status: string;
   createdAt: string;
   course: Course;
-} 
+}
