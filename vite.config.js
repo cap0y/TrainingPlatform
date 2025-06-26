@@ -33,7 +33,15 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    allowedHosts: ["all"],
+    allowedHosts: "all",
     host: "0.0.0.0",
+    hmr: {
+      allowedHosts: "all",
+      host: "0.0.0.0",
+    },
+    disableHostCheck: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
   },
 });
