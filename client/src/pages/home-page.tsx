@@ -27,24 +27,44 @@ import {
   CheckCircle,
   Bell,
   Headphones,
+  Clock,
 } from "lucide-react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import CourseCard from "@/components/course-card";
 import ChatWidget from "@/components/chat-widget";
 import NotificationPanel from "@/components/notification-panel";
+import { Input } from "@/components/ui/input";
+import { Search, Filter } from "lucide-react";
 
 interface Course {
   id: number;
   title: string;
   description: string;
-  instructor?: string;
-  duration?: string;
-  price?: number;
+  category: string;
+  type: string;
+  level: string;
+  credit: number;
+  price: number;
+  discountPrice?: number;
+  duration: string;
+  totalHours: number;
+  maxStudents: number;
+  status: string;
+  approvalStatus: string;
+  instructorId: number;
+  objectives?: string;
+  requirements?: string;
+  materials?: string;
+  curriculum?: string;
   imageUrl?: string;
-  category?: string;
   rating?: number;
-  students?: number;
+  createdAt: string;
+  updatedAt?: string;
+  enrolledCount?: number;
+  startDate?: string;
+  endDate?: string;
+  reviewCount?: number;
 }
 
 interface Notice {
@@ -52,12 +72,52 @@ interface Notice {
   title: string;
   category: string;
   createdAt: string;
+  isImportant: boolean;
+  views?: number;
+}
+
+interface Seminar {
+  id: number;
+  title: string;
+  description?: string | null;
+  date: Date | string;
+  location?: string | null;
+  type: string;
+  maxParticipants?: number | null;
+  currentParticipants?: number | null;
+  imageUrl?: string | null;
+  isActive?: boolean | null;
+  createdAt?: Date | string | null;
+}
+
+interface OverseasProgram {
+  id: number;
+  title: string;
+  destination: string;
+  startDate: string;
+  endDate: string;
+  description?: string;
+  type: string;
+  maxParticipants?: number;
+  currentParticipants?: number;
+  price: number;
+  duration?: string;
+  imageUrl?: string;
+  isActive?: boolean;
+  createdAt?: string;
 }
 
 export default function HomePage() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [activeTab, setActiveTab] = useState("popular");
   const [selectedSeminarCategory, setSelectedSeminarCategory] =
+    useState("전체");
+  const [selectedOverseasCategory, setSelectedOverseasCategory] =
+    useState("전체");
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("전체");
+  const [selectedEducationCategory, setSelectedEducationCategory] =
     useState("전체");
 
   const { data: coursesData, isLoading: coursesLoading } = useQuery<{
@@ -67,89 +127,109 @@ export default function HomePage() {
     queryKey: ["/api/courses"],
   });
 
-  const { data: noticesData, isLoading: noticesLoading } = useQuery<{
-    notices: Notice[];
-  }>({
+  const { data: noticesData } = useQuery<{ notices: Notice[] }>({
     queryKey: ["/api/notices"],
   });
 
-  // All seminar events data
-  const allSeminarEvents = [
-    {
-      id: 1,
-      title: "2025 한국교육학회 춘계학술대회",
-      date: "2025.07.15-16",
-      location: "서울대학교",
-      type: "교육학회",
-      participants: 500,
-      image:
-        "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "디지털 교육혁신 국제 컨퍼런스",
-      date: "2025.08.10",
-      location: "온라인",
-      type: "AI 컨퍼런스",
-      participants: 1200,
-      image:
-        "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=300&h=200&fit=crop",
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "AI와 교육의 미래 심포지엄",
-      date: "2025.08.25",
-      location: "COEX",
-      type: "심포지엄",
-      participants: 300,
-      image:
-        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop",
-      featured: false,
-    },
-    {
-      id: 4,
-      title: "창의교육 실무 워크샵",
-      date: "2025.09.05",
-      location: "경기대학교",
-      type: "워크샵",
-      participants: 150,
-      image:
-        "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=200&fit=crop",
-      featured: false,
-    },
-    {
-      id: 5,
-      title: "글로벌 교육정책 국제행사",
-      date: "2025.09.20",
-      location: "부산 BEXCO",
-      type: "국제행사",
-      participants: 800,
-      image:
-        "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300&h=200&fit=crop",
-      featured: true,
-    },
-    {
-      id: 6,
-      title: "온라인 수업설계 세미나",
-      date: "2025.10.10",
-      location: "온라인",
-      type: "온라인세미나",
-      participants: 2000,
-      image:
-        "https://images.unsplash.com/photo-1552581234-26160f608093?w=300&h=200&fit=crop",
-      featured: false,
-    },
-  ];
+  const { data: seminarsData, isLoading: seminarsLoading } = useQuery<
+    Seminar[]
+  >({
+    queryKey: ["/api/seminars"],
+  });
+
+  const { data: overseasData, isLoading: overseasLoading } = useQuery<{
+    programs: OverseasProgram[];
+    total: number;
+  }>({
+    queryKey: ["/api/overseas-programs"],
+  });
+
+  const notices = noticesData?.notices || [];
+  const seminars = seminarsData || [];
+  const overseas = Array.isArray(overseasData?.programs)
+    ? overseasData.programs
+    : [];
+  const courses = coursesData?.courses || [];
 
   // Filter seminars based on selected category
   const filteredSeminars =
     selectedSeminarCategory === "전체"
-      ? allSeminarEvents
-      : allSeminarEvents.filter(
-          (event) => event.type === selectedSeminarCategory,
-        );
+      ? seminars
+      : seminars.filter((seminar) => seminar.type === selectedSeminarCategory);
+
+  // Filter overseas programs based on selected category
+  const filteredOverseas =
+    selectedOverseasCategory === "전체"
+      ? overseas
+      : Array.isArray(overseas)
+        ? overseas.filter(
+            (program) => program.type === selectedOverseasCategory,
+          )
+        : [];
+
+  // Filter courses for different tabs
+  const getPopularCourses = () => {
+    // 실시간 인기: 수강 중인 인원수 기준으로 정렬
+    return courses
+      .filter(
+        (course) =>
+          course.status === "active" && course.approvalStatus === "approved",
+      )
+      .sort((a, b) => {
+        const enrolledA = a.enrolledCount || 0;
+        const enrolledB = b.enrolledCount || 0;
+        return enrolledB - enrolledA;
+      })
+      .slice(0, 10);
+  };
+
+  const getCategoryCourses = () => {
+    // 분야별 인기: 각 카테고리에서 가장 인기 있는 과정 1개씩 선별
+    const categories = [
+      "교육과정",
+      "자격증",
+      "전문성강화",
+      "교육평가",
+      "교수법",
+      "융합교육",
+    ];
+    const coursesByCategory: Course[] = [];
+
+    categories.forEach((category) => {
+      const categoryTopCourse = courses
+        .filter(
+          (course) =>
+            course.category === category &&
+            course.status === "active" &&
+            course.approvalStatus === "approved",
+        )
+        .sort((a, b) => (b.enrolledCount || 0) - (a.enrolledCount || 0))[0];
+
+      if (categoryTopCourse) {
+        coursesByCategory.push(categoryTopCourse);
+      }
+    });
+
+    return coursesByCategory.slice(0, 10);
+  };
+
+  const getUpcomingCourses = () => {
+    // 신규 과정: 최근 등록된 과정들을 생성일 기준으로 정렬
+    return courses
+      .filter(
+        (course) =>
+          course.status === "active" && course.approvalStatus === "approved",
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )
+      .slice(0, 10);
+  };
+
+  const popularCourses = getPopularCourses();
+  const categoryCourses = getCategoryCourses();
+  const upcomingCourses = getUpcomingCourses();
 
   return (
     <div className="min-h-screen bg-white">
@@ -171,7 +251,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/courses">
                 <Button
-                  size="md"
+                  size="lg"
                   className="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 text-base font-semibold"
                 >
                   <BookOpen className="h-4 w-4 mr-2" />
@@ -180,7 +260,7 @@ export default function HomePage() {
               </Link>
               <Link href="/seminars">
                 <Button
-                  size="md"
+                  size="lg"
                   variant="outline"
                   className="border-white text-white bg-white/20 px-6 py-3 text-base font-semibold"
                 >
@@ -198,7 +278,7 @@ export default function HomePage() {
               {/* Slide 1 - 교육과정 개정안 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1000&h=700&fit=crop"
+                  src="/uploads/images/4.jpg"
                   alt="교육과정 개정안 이해와 적용"
                   className="w-full h-full object-cover"
                 />
@@ -207,7 +287,7 @@ export default function HomePage() {
               {/* Slide 2 - 디지털 교수법 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1000&h=700&fit=crop"
+                  src="/uploads/images/5.jpg"
                   alt="디지털 교수법 심화과정"
                   className="w-full h-full object-cover"
                 />
@@ -216,7 +296,7 @@ export default function HomePage() {
               {/* Slide 3 - AI 교육혁신 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1000&h=700&fit=crop"
+                  src="/uploads/images/6.jpg"
                   alt="AI 시대의 교육 혁신"
                   className="w-full h-full object-cover"
                 />
@@ -225,7 +305,7 @@ export default function HomePage() {
               {/* Slide 4 - 평가방법 개선 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1000&h=700&fit=crop"
+                  src="/uploads/images/10.jpg"
                   alt="창의적 평가방법 개발"
                   className="w-full h-full object-cover"
                 />
@@ -234,7 +314,7 @@ export default function HomePage() {
               {/* Slide 5 - 학습자 중심 교육 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1000&h=700&fit=crop"
+                  src="/uploads/images/12.jpg"
                   alt="학습자 중심 교육방법론"
                   className="w-full h-full object-cover"
                 />
@@ -243,7 +323,7 @@ export default function HomePage() {
               {/* Slide 6 - 창의융합교육 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1000&h=700&fit=crop"
+                  src="/uploads/images/14.jpg"
                   alt="창의융합교육 실무과정"
                   className="w-full h-full object-cover"
                 />
@@ -252,7 +332,7 @@ export default function HomePage() {
               {/* Slide 7 - 다문화교육 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1000&h=700&fit=crop"
+                  src="/uploads/images/4.jpg"
                   alt="다문화교육 전문가과정"
                   className="w-full h-full object-cover"
                 />
@@ -261,7 +341,7 @@ export default function HomePage() {
               {/* Slide 8 - 특수교육 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1000&h=700&fit=crop"
+                  src="/uploads/images/5.jpg"
                   alt="특수교육 지원 전문과정"
                   className="w-full h-full object-cover"
                 />
@@ -270,7 +350,7 @@ export default function HomePage() {
               {/* Slide 9 - 진로진학상담 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=1000&h=700&fit=crop"
+                  src="/uploads/images/6.jpg"
                   alt="진로진학상담 전문과정"
                   className="w-full h-full object-cover"
                 />
@@ -279,7 +359,7 @@ export default function HomePage() {
               {/* Slide 10 - 학교안전교육 */}
               <div className="min-w-full relative h-full bg-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=1000&h=700&fit=crop"
+                  src="/uploads/images/10.jpg"
                   alt="학교안전교육 관리자과정"
                   className="w-full h-full object-cover"
                 />
@@ -299,18 +379,119 @@ export default function HomePage() {
         </div>
       </section>
       {/* Categories Section with Circular Images */}
-      <section className="py-12 bg-white">
+      <section className="py-2 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">
             교육 분야
           </h2>
-          <div className="flex justify-center">
+
+          {/* Mobile: Horizontal scroll */}
+          <div className="flex lg:hidden overflow-x-auto space-x-6 pb-4 px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <Link href="/training-courses?category=법정의무교육">
+              <div className="flex-shrink-0 text-center cursor-pointer">
+                <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo0.jpg"
+                    alt="법정의무교육"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-blue-600 bg-opacity-10"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                  법정교육
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/professional-development">
+              <div className="flex-shrink-0 text-center cursor-pointer">
+                <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo1.jpg"
+                    alt="전문성강화교육"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-purple-600 bg-opacity-10"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                  전문성강화
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/certificate-courses">
+              <div className="flex-shrink-0 text-center cursor-pointer">
+                <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo2.jpg"
+                    alt="자격증과정"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-green-600 bg-opacity-10"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                  자격증
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/seminars">
+              <div className="flex-shrink-0 text-center cursor-pointer">
+                <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo3.jpg"
+                    alt="세미나"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-yellow-600 bg-opacity-10"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                  세미나
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/study-abroad">
+              <div className="flex-shrink-0 text-center cursor-pointer">
+                <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo4.jpg"
+                    alt="해외연수"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-red-600 bg-opacity-10"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                  해외연수
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/help">
+              <div className="flex-shrink-0 text-center cursor-pointer">
+                <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo5.jpg"
+                    alt="고객센터"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-indigo-600 bg-opacity-10"></div>
+                </div>
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                  고객센터
+                </div>
+              </div>
+            </Link>
+          </div>
+
+          {/* Desktop: Grid layout */}
+          <div className="hidden lg:flex lg:justify-center">
             <div className="grid grid-cols-3 md:grid-cols-6 gap-8 max-w-4xl">
               <Link href="/training-courses?category=법정의무교육">
                 <div className="text-center cursor-pointer">
                   <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img
-                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=center"
+                      src="/uploads/photo0.jpg"
                       alt="법정의무교육"
                       className="w-full h-full object-cover"
                     />
@@ -326,7 +507,7 @@ export default function HomePage() {
                 <div className="text-center cursor-pointer">
                   <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img
-                      src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=120&h=120&fit=crop&crop=center"
+                      src="/uploads/photo1.jpg"
                       alt="전문성강화교육"
                       className="w-full h-full object-cover"
                     />
@@ -342,7 +523,7 @@ export default function HomePage() {
                 <div className="text-center cursor-pointer">
                   <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img
-                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=120&h=120&fit=crop&crop=center"
+                      src="/uploads/photo2.jpg"
                       alt="자격증과정"
                       className="w-full h-full object-cover"
                     />
@@ -358,7 +539,7 @@ export default function HomePage() {
                 <div className="text-center cursor-pointer">
                   <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img
-                      src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center"
+                      src="/uploads/photo3.jpg"
                       alt="세미나"
                       className="w-full h-full object-cover"
                     />
@@ -374,7 +555,7 @@ export default function HomePage() {
                 <div className="text-center cursor-pointer">
                   <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img
-                      src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=120&h=120&fit=crop&crop=center"
+                      src="/uploads/photo4.jpg"
                       alt="해외연수"
                       className="w-full h-full object-cover"
                     />
@@ -390,7 +571,7 @@ export default function HomePage() {
                 <div className="text-center cursor-pointer">
                   <div className="relative w-20 h-20 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                     <img
-                      src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=120&h=120&fit=crop&crop=center"
+                      src="/uploads/photo5.jpg"
                       alt="고객센터"
                       className="w-full h-full object-cover"
                     />
@@ -406,11 +587,11 @@ export default function HomePage() {
         </div>
       </section>
       {/* Popular Courses with Tabs */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-8 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 인기 연수과정
               </h2>
               <p className="text-gray-600">
@@ -429,7 +610,7 @@ export default function HomePage() {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-4">
               <TabsList className="grid w-full max-w-md grid-cols-3">
                 <TabsTrigger
                   value="popular"
@@ -443,279 +624,577 @@ export default function HomePage() {
                   className="flex items-center space-x-2"
                 >
                   <Target className="h-4 w-4" />
-                  <span>분야별 인기</span>
+                  <span>분야별 추천</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="upcoming"
                   className="flex items-center space-x-2"
                 >
                   <Calendar className="h-4 w-4" />
-                  <span>신규 과정</span>
+                  <span>신규 개설</span>
                 </TabsTrigger>
               </TabsList>
             </div>
 
             <TabsContent value="popular" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    id: 1,
-                    title: "2025 교육과정 개정안 이해와 적용",
-                    category: "교육정책",
-                    students: 1250,
-                    rating: 4.8,
-                    price: "120,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=300&h=200&fit=crop",
-                    trending: true,
-                  },
-                  {
-                    id: 2,
-                    title: "디지털 교수법 심화과정",
-                    category: "교수법",
-                    students: 980,
-                    rating: 4.9,
-                    price: "150,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300&h=200&fit=crop",
-                    trending: true,
-                  },
-                  {
-                    id: 3,
-                    title: "AI 시대의 교육 혁신",
-                    category: "교육기술",
-                    students: 750,
-                    rating: 4.7,
-                    price: "180,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop",
-                    trending: true,
-                  },
-                ].map((course) => (
-                  <Card
-                    key={course.id}
-                    className="group hover:shadow-lg transition-all duration-300 overflow-hidden"
-                  >
-                    <div className="relative">
-                      <img
-                        src={course.image}
-                        alt={course.title}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      {course.trending && (
-                        <div className="absolute top-3 left-3">
-                          <Badge className="bg-red-500 text-white">
-                            <Zap className="h-3 w-3 mr-1" />
-                            HOT
-                          </Badge>
-                        </div>
-                      )}
-                      <div className="absolute top-3 right-3">
-                        <Badge variant="outline" className="bg-white/90">
-                          {course.category}
-                        </Badge>
-                      </div>
+              <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div className="flex space-x-4 animate-scroll-left hover:[animation-play-state:paused] w-max">
+                  {coursesLoading ? (
+                    Array.from({ length: 10 }, (_, i) => (
+                      <Card
+                        key={i}
+                        className="flex-shrink-0 w-80 h-[480px] flex flex-col overflow-hidden"
+                      >
+                        <div className="w-full h-40 bg-gray-200 animate-pulse"></div>
+                        <CardContent className="p-4">
+                          <div className="h-5 bg-gray-200 rounded animate-pulse mb-3"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-4"></div>
+                          <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : popularCourses.length === 0 ? (
+                    <div className="w-full text-center py-8 text-gray-500">
+                      <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p>등록된 연수과정이 없습 ��다.</p>
                     </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors">
-                        {course.title}
-                      </h3>
-                      <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-1">
-                            <Users className="h-4 w-4" />
-                            <span>{course.students}명</span>
+                  ) : (
+                    // 원본 과정들과 복사본을 연결하여 무한 스크롤 효과
+                    [...popularCourses, ...popularCourses].map(
+                      (course, index) => (
+                        <Card
+                          key={`${course.id}-${index}`}
+                          className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 w-80 h-[430px] flex flex-col"
+                        >
+                          <div className="relative">
+                            <img
+                              src={
+                                course.imageUrl &&
+                                course.imageUrl !== "/api/placeholder/400/250"
+                                  ? course.imageUrl
+                                  : "/uploads/images/1.jpg"
+                              }
+                              alt={course.title}
+                              className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                const fallbackImages = [
+                                  "/uploads/images/1.jpg",
+                                  "/uploads/images/4.jpg",
+                                  "/uploads/images/5.jpg",
+                                ];
+                                const randomFallback =
+                                  fallbackImages[
+                                    Math.floor(
+                                      Math.random() * fallbackImages.length,
+                                    )
+                                  ];
+                                e.currentTarget.src = randomFallback;
+                              }}
+                            />
+                            <div className="absolute top-2 right-2">
+                              <Badge
+                                variant="outline"
+                                className="bg-white/90 text-xs"
+                              >
+                                {course.category}
+                              </Badge>
+                            </div>
+                            {course.discountPrice && (
+                              <div className="absolute top-2 left-2">
+                                <Badge className="bg-red-500 text-white text-xs">
+                                  {Math.round(
+                                    ((course.price - course.discountPrice) /
+                                      course.price) *
+                                      100,
+                                  )}
+                                  % 할인
+                                </Badge>
+                              </div>
+                            )}
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span>{course.rating}</span>
-                          </div>
-                        </div>
-                        <span className="font-semibold text-blue-600">
-                          {course.price}
-                        </span>
-                      </div>
-                      <Button className="w-full">수강신청</Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                          <CardContent className="p-4 flex flex-col flex-grow">
+                            <h3 className="font-semibold text-base mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                              {course.title}
+                            </h3>
+
+                            {/* 연수 기본 정보 */}
+                            <div className="space-y-2 mb-4">
+                              <div className="flex items-center text-xs text-gray-600">
+                                <Calendar className="h-3 w-3 mr-1.5" />
+                                <span>
+                                  연수기간:{" "}
+                                  {course.startDate && course.endDate
+                                    ? `${new Date(course.startDate).toLocaleDateString("ko-KR")} - ${new Date(course.endDate).toLocaleDateString("ko-KR")}`
+                                    : "2025.07.01 - 2025.08.30"}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-gray-600">
+                                <div className="flex items-center">
+                                  <Award className="h-3 w-3 mr-1.5" />
+                                  <span>학점: {course.credit}학점</span>
+                                </div>
+                                <div className="flex items-center">
+                                  <Clock className="h-3 w-3 mr-1.5" />
+                                  <span>
+                                    총 학습시간: {course.totalHours || 45}시간
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center text-xs text-gray-600">
+                                <Target className="h-3 w-3 mr-1.5" />
+                                <span>
+                                  난이도:{" "}
+                                  {course.level === "beginner"
+                                    ? "기초"
+                                    : course.level === "intermediate"
+                                      ? "중급"
+                                      : course.level === "advanced"
+                                        ? "고급"
+                                        : "중급"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* 평점 및 수강 정보 */}
+                            <div className="flex items-center justify-between text-xs text-gray-600 mb-4">
+                              <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1">
+                                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                  <span className="font-medium">
+                                    {course.rating || 4.8}
+                                  </span>
+                                </div>
+                                <span>({course.reviewCount || 0}개 후기)</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Users className="h-3 w-3" />
+                                <span>
+                                  /{course.enrolledCount || 145}명 수강중
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* 가격 정보 */}
+                            <div className="mb-4">
+                              {course.discountPrice ? (
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-lg font-bold text-blue-600">
+                                    {new Intl.NumberFormat("ko-KR").format(
+                                      course.discountPrice,
+                                    )}
+                                    원
+                                  </span>
+                                  <span className="text-sm text-gray-500 line-through">
+                                    {new Intl.NumberFormat("ko-KR").format(
+                                      course.price,
+                                    )}
+                                    원
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-lg font-bold text-blue-600">
+                                  {new Intl.NumberFormat("ko-KR").format(
+                                    course.price,
+                                  )}
+                                  원
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="mt-1">
+                              <Link href={`/courses/${course.id}`}>
+                                <Button className="w-full text-sm py-2">
+                                  수강신청
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ),
+                    )
+                  )}
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="category" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    id: 4,
-                    title: "창의적 평가방법 개발 및 적용",
-                    category: "평가방법",
-                    students: 820,
-                    rating: 4.6,
-                    price: "140,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop",
-                    trending: false,
-                  },
-                  {
-                    id: 5,
-                    title: "학습자 중심 교수학습방법론",
-                    category: "교수법",
-                    students: 1100,
-                    rating: 4.8,
-                    price: "160,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop",
-                    trending: false,
-                  },
-                  {
-                    id: 6,
-                    title: "다문화교육 전문가 양성과정",
-                    category: "교육정책",
-                    students: 680,
-                    rating: 4.5,
-                    price: "180,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=200&fit=crop",
-                    trending: false,
-                  },
-                ].map((course) => (
-                  <Card
-                    key={course.id}
-                    className="group hover:shadow-lg transition-all duration-300 overflow-hidden"
-                  >
-                    <div className="relative">
-                      <img
-                        src={course.image}
-                        alt={course.title}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute top-3 right-3">
-                        <Badge variant="outline" className="bg-white/90">
-                          {course.category}
-                        </Badge>
-                      </div>
+              <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div className="flex space-x-4 animate-scroll-left hover:[animation-play-state:paused] w-max">
+                  {coursesLoading ? (
+                    Array.from({ length: 10 }, (_, i) => (
+                      <Card
+                        key={i}
+                        className="flex-shrink-0 w-80 h-[480px] flex flex-col overflow-hidden"
+                      >
+                        <div className="w-full h-40 bg-gray-200 animate-pulse"></div>
+                        <CardContent className="p-4">
+                          <div className="h-5 bg-gray-200 rounded animate-pulse mb-3"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-4"></div>
+                          <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : categoryCourses.length === 0 ? (
+                    <div className="w-full text-center py-8 text-gray-500">
+                      <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p>등록된 연수과정이 없습니다.</p>
                     </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors">
-                        {course.title}
-                      </h3>
-                      <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-1">
-                            <Users className="h-4 w-4" />
-                            <span>{course.students}명</span>
+                  ) : (
+                    // 원본 과정들과 복사본을 연결하여 무한 스크롤 효과
+                    [...categoryCourses, ...categoryCourses].map(
+                      (course, index) => (
+                        <Card
+                          key={`${course.id}-${index}`}
+                          className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 w-80 h-[480px] flex flex-col"
+                        >
+                          <div className="relative">
+                            <img
+                              src={
+                                course.imageUrl &&
+                                course.imageUrl !== "/api/placeholder/400/250"
+                                  ? course.imageUrl
+                                  : "/uploads/images/5.jpg"
+                              }
+                              alt={course.title}
+                              className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                const fallbackImages = [
+                                  "/uploads/images/1.jpg",
+                                  "/uploads/images/4.jpg",
+                                  "/uploads/images/5.jpg",
+                                ];
+                                const randomFallback =
+                                  fallbackImages[
+                                    Math.floor(
+                                      Math.random() * fallbackImages.length,
+                                    )
+                                  ];
+                                e.currentTarget.src = randomFallback;
+                              }}
+                            />
+                            <div className="absolute top-2 right-2">
+                              <Badge
+                                variant="outline"
+                                className="bg-white/90 text-xs"
+                              >
+                                {course.category}
+                              </Badge>
+                            </div>
+                            {course.discountPrice && (
+                              <div className="absolute top-2 left-2">
+                                <Badge className="bg-red-500 text-white text-xs">
+                                  {Math.round(
+                                    ((course.price - course.discountPrice) /
+                                      course.price) *
+                                      100,
+                                  )}
+                                  % 할인
+                                </Badge>
+                              </div>
+                            )}
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span>{course.rating}</span>
-                          </div>
-                        </div>
-                        <span className="font-semibold text-blue-600">
-                          {course.price}
-                        </span>
-                      </div>
-                      <Button className="w-full">수강신청</Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                          <CardContent className="p-4 flex flex-col flex-grow">
+                            <h3 className="font-semibold text-base mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                              {course.title}
+                            </h3>
+
+                            {/* 연수 기본 정보 */}
+                            <div className="space-y-2 mb-4">
+                              <div className="flex items-center text-xs text-gray-600">
+                                <Calendar className="h-3 w-3 mr-1.5" />
+                                <span>
+                                  연수기간:{" "}
+                                  {course.startDate && course.endDate
+                                    ? `${new Date(course.startDate).toLocaleDateString("ko-KR")} - ${new Date(course.endDate).toLocaleDateString("ko-KR")}`
+                                    : "2025.07.01 - 2025.08.30"}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-gray-600">
+                                <div className="flex items-center">
+                                  <Award className="h-3 w-3 mr-1.5" />
+                                  <span>학점: {course.credit}학점</span>
+                                </div>
+                                <div className="flex items-center">
+                                  <Clock className="h-3 w-3 mr-1.5" />
+                                  <span>
+                                    총 학습시간: {course.totalHours || 45}시간
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center text-xs text-gray-600">
+                                <Target className="h-3 w-3 mr-1.5" />
+                                <span>
+                                  난이도:{" "}
+                                  {course.level === "beginner"
+                                    ? "기초"
+                                    : course.level === "intermediate"
+                                      ? "중급"
+                                      : course.level === "advanced"
+                                        ? "고급"
+                                        : "중급"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* 평점 및 수강 정보 */}
+                            <div className="flex items-center justify-between text-xs text-gray-600 mb-4">
+                              <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1">
+                                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                  <span className="font-medium">
+                                    {course.rating || 4.8}
+                                  </span>
+                                </div>
+                                <span>({course.reviewCount || 0}개 후기)</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Users className="h-3 w-3" />
+                                <span>
+                                  /{course.enrolledCount || 145}명 수강중
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* 가격 정보 */}
+                            <div className="mb-4">
+                              {course.discountPrice ? (
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-lg font-bold text-blue-600">
+                                    {new Intl.NumberFormat("ko-KR").format(
+                                      course.discountPrice,
+                                    )}
+                                    원
+                                  </span>
+                                  <span className="text-sm text-gray-500 line-through">
+                                    {new Intl.NumberFormat("ko-KR").format(
+                                      course.price,
+                                    )}
+                                    원
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-lg font-bold text-blue-600">
+                                  {new Intl.NumberFormat("ko-KR").format(
+                                    course.price,
+                                  )}
+                                  원
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="mt-auto">
+                              <Link href={`/courses/${course.id}`}>
+                                <Button className="w-full text-sm py-2">
+                                  수강신청
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ),
+                    )
+                  )}
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="upcoming" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    id: 7,
-                    title: "메타버스 교육 플랫폼 활용법",
-                    category: "교육기술",
-                    students: 320,
-                    rating: 4.9,
-                    price: "220,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1592478411213-6153e4ebc696?w=300&h=200&fit=crop",
-                    isNew: true,
-                  },
-                  {
-                    id: 8,
-                    title: "블록체인 기반 학습 관리 시스템",
-                    category: "교육기술",
-                    students: 180,
-                    rating: 4.7,
-                    price: "250,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=300&h=200&fit=crop",
-                    isNew: true,
-                  },
-                  {
-                    id: 9,
-                    title: "VR/AR 활용 체험형 교육과정",
-                    category: "교육기술",
-                    students: 95,
-                    rating: 4.8,
-                    price: "280,000원",
-                    image:
-                      "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=300&h=200&fit=crop",
-                    isNew: true,
-                  },
-                ].map((course) => (
-                  <Card
-                    key={course.id}
-                    className="group hover:shadow-lg transition-all duration-300 overflow-hidden"
-                  >
-                    <div className="relative">
-                      <img
-                        src={course.image}
-                        alt={course.title}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      {course.isNew && (
-                        <div className="absolute top-3 left-3">
-                          <Badge className="bg-green-500 text-white">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            NEW
-                          </Badge>
-                        </div>
-                      )}
-                      <div className="absolute top-3 right-3">
-                        <Badge variant="outline" className="bg-white/90">
-                          {course.category}
-                        </Badge>
-                      </div>
+              <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div className="flex space-x-4 animate-scroll-left hover:[animation-play-state:paused] w-max">
+                  {coursesLoading ? (
+                    Array.from({ length: 10 }, (_, i) => (
+                      <Card
+                        key={i}
+                        className="flex-shrink-0 w-80 h-[480px] flex flex-col overflow-hidden"
+                      >
+                        <div className="w-full h-40 bg-gray-200 animate-pulse"></div>
+                        <CardContent className="p-4">
+                          <div className="h-5 bg-gray-200 rounded animate-pulse mb-3"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-4"></div>
+                          <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : upcomingCourses.length === 0 ? (
+                    <div className="w-full text-center py-8 text-gray-500">
+                      <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p>등록된 연수과정이 없습니다.</p>
                     </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors">
-                        {course.title}
-                      </h3>
-                      <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-1">
-                            <Users className="h-4 w-4" />
-                            <span>{course.students}명</span>
+                  ) : (
+                    // 원본 과정들과 복사본을 연결하여 무한 스크롤 효과
+                    [...upcomingCourses, ...upcomingCourses].map(
+                      (course, index) => (
+                        <Card
+                          key={`${course.id}-${index}`}
+                          className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 w-80 h-[480px] flex flex-col"
+                        >
+                          <div className="relative">
+                            <img
+                              src={
+                                course.imageUrl &&
+                                course.imageUrl !== "/api/placeholder/400/250"
+                                  ? course.imageUrl
+                                  : "/uploads/images/12.jpg"
+                              }
+                              alt={course.title}
+                              className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                const fallbackImages = [
+                                  "/uploads/images/1.jpg",
+                                  "/uploads/images/4.jpg",
+                                  "/uploads/images/5.jpg",
+                                  "/uploads/images/6.jpg",
+                                  "/uploads/images/12.jpg",
+                                ];
+                                const randomFallback =
+                                  fallbackImages[
+                                    Math.floor(
+                                      Math.random() * fallbackImages.length,
+                                    )
+                                  ];
+                                e.currentTarget.src = randomFallback;
+                              }}
+                            />
+                            <div className="absolute top-2 right-2">
+                              <Badge
+                                variant="outline"
+                                className="bg-white/90 text-xs"
+                              >
+                                {course.category}
+                              </Badge>
+                            </div>
+                            {course.discountPrice && (
+                              <div className="absolute top-2 left-2">
+                                <Badge className="bg-red-500 text-white text-xs">
+                                  {Math.round(
+                                    ((course.price - course.discountPrice) /
+                                      course.price) *
+                                      100,
+                                  )}
+                                  % 할인
+                                </Badge>
+                              </div>
+                            )}
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span>{course.rating}</span>
-                          </div>
-                        </div>
-                        <span className="font-semibold text-blue-600">
-                          {course.price}
-                        </span>
-                      </div>
-                      <Button className="w-full">수강신청</Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                          <CardContent className="p-4 flex flex-col flex-grow">
+                            <h3 className="font-semibold text-base mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                              {course.title}
+                            </h3>
+
+                            {/* 연수 기본 정보 */}
+                            <div className="space-y-2 mb-4">
+                              <div className="flex items-center text-xs text-gray-600">
+                                <Calendar className="h-3 w-3 mr-1.5" />
+                                <span>
+                                  연수기간:{" "}
+                                  {course.startDate && course.endDate
+                                    ? `${new Date(course.startDate).toLocaleDateString("ko-KR")} - ${new Date(course.endDate).toLocaleDateString("ko-KR")}`
+                                    : "2025.07.01 - 2025.08.30"}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-gray-600">
+                                <div className="flex items-center">
+                                  <Award className="h-3 w-3 mr-1.5" />
+                                  <span>학점: {course.credit}학점</span>
+                                </div>
+                                <div className="flex items-center">
+                                  <Clock className="h-3 w-3 mr-1.5" />
+                                  <span>
+                                    총 학습시간: {course.totalHours || 45}시간
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center text-xs text-gray-600">
+                                <Target className="h-3 w-3 mr-1.5" />
+                                <span>
+                                  난이도:{" "}
+                                  {course.level === "beginner"
+                                    ? "기초"
+                                    : course.level === "intermediate"
+                                      ? "중급"
+                                      : course.level === "advanced"
+                                        ? "고급"
+                                        : "중급"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* 평점 및 수강 정보 */}
+                            <div className="flex items-center justify-between text-xs text-gray-600 mb-4">
+                              <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1">
+                                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                  <span className="font-medium">
+                                    {course.rating || 4.8}
+                                  </span>
+                                </div>
+                                <span>({course.reviewCount || 0}개 후기)</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Users className="h-3 w-3" />
+                                <span>
+                                  /{course.enrolledCount || 145}명 수강중
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* 가격 정보 */}
+                            <div className="mb-4">
+                              {course.discountPrice ? (
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-lg font-bold text-blue-600">
+                                    {new Intl.NumberFormat("ko-KR").format(
+                                      course.discountPrice,
+                                    )}
+                                    원
+                                  </span>
+                                  <span className="text-sm text-gray-500 line-through">
+                                    {new Intl.NumberFormat("ko-KR").format(
+                                      course.price,
+                                    )}
+                                    원
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-lg font-bold text-blue-600">
+                                  {new Intl.NumberFormat("ko-KR").format(
+                                    course.price,
+                                  )}
+                                  원
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="mt-auto">
+                              <Link href={`/courses/${course.id}`}>
+                                <Button className="w-full text-sm py-2">
+                                  수강신청
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ),
+                    )
+                  )}
+                </div>
               </div>
             </TabsContent>
           </Tabs>
         </div>
       </section>
       {/* Upcoming Seminars & Conferences */}
-      <section className="py-12 bg-white">
+      <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 다가오는 학회 및 세미나
               </h2>
               <p className="text-gray-600">
@@ -730,10 +1209,11 @@ export default function HomePage() {
           </div>
 
           {/* Seminar Categories */}
-          <div className="flex justify-center mb-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 max-w-4xl">
+          <div className="mb-4">
+            {/* Mobile: Horizontal scroll */}
+            <div className="flex lg:hidden overflow-x-auto space-x-4 pb-4 px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <div
-                className={`text-center cursor-pointer ${selectedSeminarCategory === "전체" ? "opacity-100" : "opacity-60"}`}
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedSeminarCategory === "전체" ? "opacity-100" : "opacity-60"}`}
                 onClick={() => setSelectedSeminarCategory("전체")}
               >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
@@ -744,16 +1224,18 @@ export default function HomePage() {
                     <div className="absolute inset-0 ring-2 ring-blue-500 rounded-full"></div>
                   )}
                 </div>
-                <div className="font-medium text-gray-800 text-sm">전체</div>
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                  전체
+                </div>
               </div>
 
               <div
-                className={`text-center cursor-pointer ${selectedSeminarCategory === "교육학회" ? "opacity-100" : "opacity-60"}`}
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedSeminarCategory === "교육학회" ? "opacity-100" : "opacity-60"}`}
                 onClick={() => setSelectedSeminarCategory("교육학회")}
               >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img
-                    src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=120&h=120&fit=crop&crop=center"
+                    src="/uploads/photo3.jpg"
                     alt="교육학회"
                     className="w-full h-full object-cover"
                   />
@@ -762,18 +1244,18 @@ export default function HomePage() {
                     <div className="absolute inset-0 ring-2 ring-blue-500 rounded-full"></div>
                   )}
                 </div>
-                <div className="font-medium text-gray-800 text-sm">
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
                   교육학회
                 </div>
               </div>
 
               <div
-                className={`text-center cursor-pointer ${selectedSeminarCategory === "AI 컨퍼런스" ? "opacity-100" : "opacity-60"}`}
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedSeminarCategory === "AI 컨퍼런스" ? "opacity-100" : "opacity-60"}`}
                 onClick={() => setSelectedSeminarCategory("AI 컨퍼런스")}
               >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img
-                    src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=120&h=120&fit=crop&crop=center"
+                    src="/uploads/photo6.jpg"
                     alt="AI 컨퍼런스"
                     className="w-full h-full object-cover"
                   />
@@ -782,18 +1264,18 @@ export default function HomePage() {
                     <div className="absolute inset-0 ring-2 ring-purple-500 rounded-full"></div>
                   )}
                 </div>
-                <div className="font-medium text-gray-800 text-sm">
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
                   AI 컨퍼런스
                 </div>
               </div>
 
               <div
-                className={`text-center cursor-pointer ${selectedSeminarCategory === "워크샵" ? "opacity-100" : "opacity-60"}`}
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedSeminarCategory === "워크샵" ? "opacity-100" : "opacity-60"}`}
                 onClick={() => setSelectedSeminarCategory("워크샵")}
               >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img
-                    src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop&crop=center"
+                    src="/uploads/photo7.jpg"
                     alt="워크샵"
                     className="w-full h-full object-cover"
                   />
@@ -802,16 +1284,18 @@ export default function HomePage() {
                     <div className="absolute inset-0 ring-2 ring-green-500 rounded-full"></div>
                   )}
                 </div>
-                <div className="font-medium text-gray-800 text-sm">워크샵</div>
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                  워크샵
+                </div>
               </div>
 
               <div
-                className={`text-center cursor-pointer ${selectedSeminarCategory === "심포지엄" ? "opacity-100" : "opacity-60"}`}
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedSeminarCategory === "심포지엄" ? "opacity-100" : "opacity-60"}`}
                 onClick={() => setSelectedSeminarCategory("심포지엄")}
               >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img
-                    src="https://images.unsplash.com/photo-1559223607-a43c3004071b?w=120&h=120&fit=crop&crop=center"
+                    src="/uploads/photo8.jpg"
                     alt="심포지엄"
                     className="w-full h-full object-cover"
                   />
@@ -820,18 +1304,18 @@ export default function HomePage() {
                     <div className="absolute inset-0 ring-2 ring-orange-500 rounded-full"></div>
                   )}
                 </div>
-                <div className="font-medium text-gray-800 text-sm">
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
                   심포지엄
                 </div>
               </div>
 
               <div
-                className={`text-center cursor-pointer ${selectedSeminarCategory === "국제행사" ? "opacity-100" : "opacity-60"}`}
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedSeminarCategory === "국제행사" ? "opacity-100" : "opacity-60"}`}
                 onClick={() => setSelectedSeminarCategory("국제행사")}
               >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img
-                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=120&h=120&fit=crop&crop=center"
+                    src="/uploads/photo9.jpg"
                     alt="국제행사"
                     className="w-full h-full object-cover"
                   />
@@ -840,18 +1324,18 @@ export default function HomePage() {
                     <div className="absolute inset-0 ring-2 ring-red-500 rounded-full"></div>
                   )}
                 </div>
-                <div className="font-medium text-gray-800 text-sm">
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
                   국제행사
                 </div>
               </div>
 
               <div
-                className={`text-center cursor-pointer ${selectedSeminarCategory === "온라인세미나" ? "opacity-100" : "opacity-60"}`}
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedSeminarCategory === "온라인세미나" ? "opacity-100" : "opacity-60"}`}
                 onClick={() => setSelectedSeminarCategory("온라인세미나")}
               >
                 <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
                   <img
-                    src="https://images.unsplash.com/photo-1552581234-26160f608093?w=120&h=120&fit=crop&crop=center"
+                    src="/uploads/photo10.jpg"
                     alt="온라인세미나"
                     className="w-full h-full object-cover"
                   />
@@ -860,82 +1344,864 @@ export default function HomePage() {
                     <div className="absolute inset-0 ring-2 ring-indigo-500 rounded-full"></div>
                   )}
                 </div>
-                <div className="font-medium text-gray-800 text-sm">
+                <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
                   온라인세미나
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop: Grid layout */}
+            <div className="hidden lg:flex lg:justify-center">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 max-w-4xl">
+                <div
+                  className={`text-center cursor-pointer ${selectedSeminarCategory === "전체" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedSeminarCategory("전체")}
+                >
+                  <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                      <Globe className="h-8 w-8 text-white" />
+                    </div>
+                    {selectedSeminarCategory === "전체" && (
+                      <div className="absolute inset-0 ring-2 ring-blue-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-sm">전체</div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedSeminarCategory === "교육학회" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedSeminarCategory("교육학회")}
+                >
+                  <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo3.jpg"
+                      alt="교육학회"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-blue-600 bg-opacity-10"></div>
+                    {selectedSeminarCategory === "교육학회" && (
+                      <div className="absolute inset-0 ring-2 ring-blue-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                    교육학회
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedSeminarCategory === "AI 컨퍼런스" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedSeminarCategory("AI 컨퍼런스")}
+                >
+                  <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo6.jpg"
+                      alt="AI 컨퍼런스"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-purple-600 bg-opacity-10"></div>
+                    {selectedSeminarCategory === "AI 컨퍼런스" && (
+                      <div className="absolute inset-0 ring-2 ring-purple-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                    AI 컨퍼런스
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedSeminarCategory === "워크샵" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedSeminarCategory("워크샵")}
+                >
+                  <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo7.jpg"
+                      alt="워크샵"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-green-600 bg-opacity-10"></div>
+                    {selectedSeminarCategory === "워크샵" && (
+                      <div className="absolute inset-0 ring-2 ring-green-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                    워크샵
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedSeminarCategory === "심포지엄" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedSeminarCategory("심포지엄")}
+                >
+                  <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo8.jpg"
+                      alt="심포지엄"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-orange-600 bg-opacity-10"></div>
+                    {selectedSeminarCategory === "심포지엄" && (
+                      <div className="absolute inset-0 ring-2 ring-orange-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                    심포지엄
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedSeminarCategory === "국제행사" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedSeminarCategory("국제행사")}
+                >
+                  <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo9.jpg"
+                      alt="국제행사"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-red-600 bg-opacity-10"></div>
+                    {selectedSeminarCategory === "국제행사" && (
+                      <div className="absolute inset-0 ring-2 ring-red-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                    국제행사
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedSeminarCategory === "온라인세미나" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedSeminarCategory("온라인세미나")}
+                >
+                  <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo10.jpg"
+                      alt="온라인세미나"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-indigo-600 bg-opacity-10"></div>
+                    {selectedSeminarCategory === "온라인세미나" && (
+                      <div className="absolute inset-0 ring-2 ring-indigo-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-sm whitespace-nowrap">
+                    온라인세미나
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {filteredSeminars.slice(0, 3).map((event) => (
+          {/* Desktop: Grid layout */}
+          <div className="hidden gap-4 mb-6">
+            {filteredSeminars.slice(0, 10).map((seminar) => (
               <Card
-                key={event.id}
-                className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${event.featured ? "border-2 border-yellow-400" : ""}`}
+                key={seminar.id}
+                className="group hover:shadow-lg transition-all duration-300 overflow-hidden"
               >
                 <div className="relative">
                   <img
-                    src={event.image}
-                    alt={event.title}
+                    src={
+                      seminar.imageUrl &&
+                      seminar.imageUrl !== "/api/placeholder/400/250"
+                        ? seminar.imageUrl
+                        : "/uploads/images/5.jpg"
+                    }
+                    alt={seminar.title}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      const fallbackImages = [
+                        "/uploads/images/1.jpg",
+                        "/uploads/images/4.jpg",
+                        "/uploads/images/5.jpg",
+                      ];
+                      const randomFallback =
+                        fallbackImages[
+                          Math.floor(Math.random() * fallbackImages.length)
+                        ];
+                      e.currentTarget.src = randomFallback;
+                    }}
                   />
-                  {event.featured && (
-                    <div className="absolute top-3 left-3">
-                      <Badge className="bg-yellow-500 text-white">
-                        <Star className="h-3 w-3 mr-1" />
-                        주목
-                      </Badge>
-                    </div>
-                  )}
                   <div className="absolute top-3 right-3">
                     <Badge variant="outline" className="bg-white/90">
-                      {event.type}
+                      {seminar.type}
                     </Badge>
                   </div>
                 </div>
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-lg mb-3 group-hover:text-blue-600 transition-colors">
-                    {event.title}
+                    {seminar.title}
                   </h3>
                   <div className="space-y-2 text-sm text-gray-600 mb-4">
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4" />
-                      <span>{event.date}</span>
+                      <span>
+                        {new Date(seminar.date).toLocaleDateString("ko-KR", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          weekday: "short",
+                        })}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <MapPin className="h-4 w-4" />
-                      <span>{event.location}</span>
+                      <span>{seminar.location || "장소 미정"}</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4" />
-                      <span>{event.participants}명 예상</span>
+                      <span>{seminar.maxParticipants || 100}명 모집</span>
                     </div>
                   </div>
-                  <Button
-                    className="w-full"
-                    variant={event.featured ? "default" : "outline"}
-                  >
-                    {event.featured ? "사전등록" : "관심등록"}
-                  </Button>
+                  <Link href={`/seminars/${seminar.id}`}>
+                    <Button className="w-full">세미나 보기</Button>
+                  </Link>
                 </CardContent>
               </Card>
             ))}
+            {filteredSeminars.length === 0 && !seminarsLoading && (
+              <div className="col-span-full text-center py-8 text-gray-500">
+                <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p>등록된 세미나가 없습니다.</p>
+              </div>
+            )}
+            {seminarsLoading && (
+              <div className="col-span-full text-center py-8 text-gray-500">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                <p>세미나 정보를 불러오는 중...</p>
+              </div>
+            )}
+          </div>
+
+          {/* Horizontal scroll layout for all screen sizes */}
+          <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="flex space-x-4 w-max">
+              {filteredSeminars.slice(0, 10).map((seminar) => (
+                <Card
+                  key={seminar.id}
+                  className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 w-72"
+                >
+                  <div className="relative">
+                    <img
+                      src={
+                        seminar.imageUrl &&
+                        seminar.imageUrl !== "/api/placeholder/400/250"
+                          ? seminar.imageUrl
+                          : "/uploads/images/5.jpg"
+                      }
+                      alt={seminar.title}
+                      className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        const fallbackImages = [
+                          "/uploads/images/1.jpg",
+                          "/uploads/images/4.jpg",
+                          "/uploads/images/5.jpg",
+                        ];
+                        const randomFallback =
+                          fallbackImages[
+                            Math.floor(Math.random() * fallbackImages.length)
+                          ];
+                        e.currentTarget.src = randomFallback;
+                      }}
+                    />
+                    <div className="absolute top-3 right-3">
+                      <Badge variant="outline" className="bg-white/90 text-xs">
+                        {seminar.type}
+                      </Badge>
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-base mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                      {seminar.title}
+                    </h3>
+                    <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-3 w-3" />
+                        <span className="text-xs">
+                          {new Date(seminar.date).toLocaleDateString("ko-KR", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-3 w-3" />
+                        <span className="text-xs truncate">
+                          {seminar.location || "장소 미정"}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-3 w-3" />
+                        <span className="text-xs">
+                          {seminar.maxParticipants || 100}명
+                        </span>
+                      </div>
+                    </div>
+                    <Link href={`/seminars/${seminar.id}`}>
+                      <Button className="w-full text-sm py-2">
+                        세미나 보기
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+              {filteredSeminars.length === 0 && !seminarsLoading && (
+                <div className="w-72 text-center py-8 text-gray-500">
+                  <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>등록된 세미나가 없습니다.</p>
+                </div>
+              )}
+              {seminarsLoading && (
+                <div className="w-72 text-center py-8 text-gray-500">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                  <p>세미나 정보를 불러오는 중...</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* Overseas Study Programs */}
+      <section className="py-8 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                해외연수 프로그램
+              </h2>
+              <p className="text-gray-600">
+                글로벌 역량 강화를 위한 다양한 해외연수 기회
+              </p>
+            </div>
+            <Link href="/study-abroad">
+              <Button size="lg" variant="outline">
+                모든 해외연수 보기
+              </Button>
+            </Link>
+          </div>
+
+          {/* Overseas Categories */}
+          <div className="mb-6">
+            {/* Mobile: Horizontal scroll */}
+            <div className="flex lg:hidden overflow-x-auto space-x-4 pb-4 px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <div
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedOverseasCategory === "전체" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedOverseasCategory("전체")}
+              >
+                <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                  <div className="w-full h-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center">
+                    <Globe className="h-6 w-6 text-white" />
+                  </div>
+                  {selectedOverseasCategory === "전체" && (
+                    <div className="absolute inset-0 ring-2 ring-green-500 rounded-full"></div>
+                  )}
+                </div>
+                <div className="font-medium text-gray-800 text-xs whitespace-nowrap">
+                  전체
+                </div>
+              </div>
+
+              <div
+                className={`flex-shrink-0 text-center cursor-pointer ${selectedOverseasCategory === "교육시찰" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedOverseasCategory("교육시찰")}
+              >
+                <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo11.jpg"
+                    alt="교육시찰"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-blue-600 bg-opacity-10"></div>
+                  {selectedOverseasCategory === "교육시찰" && (
+                    <div className="absolute inset-0 ring-2 ring-blue-500 rounded-full"></div>
+                  )}
+                </div>
+                <div className="font-medium text-gray-800 text-xs">
+                  교육시찰
+                </div>
+              </div>
+
+              <div
+                className={`text-center cursor-pointer ${selectedOverseasCategory === "연구연수" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedOverseasCategory("연구연수")}
+              >
+                <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo12.jpg"
+                    alt="연구연수"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-purple-600 bg-opacity-10"></div>
+                  {selectedOverseasCategory === "연구연수" && (
+                    <div className="absolute inset-0 ring-2 ring-purple-500 rounded-full"></div>
+                  )}
+                </div>
+                <div className="font-medium text-gray-800 text-xs">
+                  연구연수
+                </div>
+              </div>
+
+              <div
+                className={`text-center cursor-pointer ${selectedOverseasCategory === "교육과정개발" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedOverseasCategory("교육과정개발")}
+              >
+                <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo13.jpg"
+                    alt="교육과정개발"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-green-600 bg-opacity-10"></div>
+                  {selectedOverseasCategory === "교육과정개발" && (
+                    <div className="absolute inset-0 ring-2 ring-green-500 rounded-full"></div>
+                  )}
+                </div>
+                <div className="font-medium text-gray-800 text-xs">
+                  교육과정개발
+                </div>
+              </div>
+
+              <div
+                className={`text-center cursor-pointer ${selectedOverseasCategory === "국제교류" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedOverseasCategory("국제교류")}
+              >
+                <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo14.jpg"
+                    alt="국제교류"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-orange-600 bg-opacity-10"></div>
+                  {selectedOverseasCategory === "국제교류" && (
+                    <div className="absolute inset-0 ring-2 ring-orange-500 rounded-full"></div>
+                  )}
+                </div>
+                <div className="font-medium text-gray-800 text-xs">
+                  국제교류
+                </div>
+              </div>
+
+              <div
+                className={`text-center cursor-pointer ${selectedOverseasCategory === "어학연수" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedOverseasCategory("어학연수")}
+              >
+                <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo15.jpg"
+                    alt="어학연수"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-red-600 bg-opacity-10"></div>
+                  {selectedOverseasCategory === "어학연수" && (
+                    <div className="absolute inset-0 ring-2 ring-red-500 rounded-full"></div>
+                  )}
+                </div>
+                <div className="font-medium text-gray-800 text-xs">
+                  어학연수
+                </div>
+              </div>
+
+              <div
+                className={`text-center cursor-pointer ${selectedOverseasCategory === "문화체험" ? "opacity-100" : "opacity-60"}`}
+                onClick={() => setSelectedOverseasCategory("문화체험")}
+              >
+                <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                  <img
+                    src="/uploads/photo16.jpg"
+                    alt="문화체험"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-indigo-600 bg-opacity-10"></div>
+                  {selectedOverseasCategory === "문화체험" && (
+                    <div className="absolute inset-0 ring-2 ring-indigo-500 rounded-full"></div>
+                  )}
+                </div>
+                <div className="font-medium text-gray-800 text-xs">
+                  문화체험
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop: Grid layout */}
+            <div className="hidden lg:flex lg:justify-center">
+              <div className="flex flex-wrap justify-center gap-4 max-w-6xl">
+                <div
+                  className={`text-center cursor-pointer ${selectedOverseasCategory === "전체" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedOverseasCategory("전체")}
+                >
+                  <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                    <div className="w-full h-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center">
+                      <Globe className="h-6 w-6 text-white" />
+                    </div>
+                    {selectedOverseasCategory === "전체" && (
+                      <div className="absolute inset-0 ring-2 ring-green-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-xs">전체</div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedOverseasCategory === "교육시찰" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedOverseasCategory("교육시찰")}
+                >
+                  <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo11.jpg"
+                      alt="교육시찰"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-blue-600 bg-opacity-10"></div>
+                    {selectedOverseasCategory === "교육시찰" && (
+                      <div className="absolute inset-0 ring-2 ring-blue-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-xs">
+                    교육시찰
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedOverseasCategory === "연구연수" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedOverseasCategory("연구연수")}
+                >
+                  <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo12.jpg"
+                      alt="연구연수"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-purple-600 bg-opacity-10"></div>
+                    {selectedOverseasCategory === "연구연수" && (
+                      <div className="absolute inset-0 ring-2 ring-purple-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-xs">
+                    연구연수
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedOverseasCategory === "교육과정개발" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedOverseasCategory("교육과정개발")}
+                >
+                  <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo13.jpg"
+                      alt="교육과정개발"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-green-600 bg-opacity-10"></div>
+                    {selectedOverseasCategory === "교육과정개발" && (
+                      <div className="absolute inset-0 ring-2 ring-green-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-xs">
+                    교육과정개발
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedOverseasCategory === "국제교류" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedOverseasCategory("국제교류")}
+                >
+                  <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo14.jpg"
+                      alt="국제교류"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-orange-600 bg-opacity-10"></div>
+                    {selectedOverseasCategory === "국제교류" && (
+                      <div className="absolute inset-0 ring-2 ring-orange-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-xs">
+                    국제교류
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedOverseasCategory === "어학연수" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedOverseasCategory("어학연수")}
+                >
+                  <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo15.jpg"
+                      alt="어학연수"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-red-600 bg-opacity-10"></div>
+                    {selectedOverseasCategory === "어학연수" && (
+                      <div className="absolute inset-0 ring-2 ring-red-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-xs">
+                    어학연수
+                  </div>
+                </div>
+
+                <div
+                  className={`text-center cursor-pointer ${selectedOverseasCategory === "문화체험" ? "opacity-100" : "opacity-60"}`}
+                  onClick={() => setSelectedOverseasCategory("문화체험")}
+                >
+                  <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-full shadow-lg">
+                    <img
+                      src="/uploads/photo16.jpg"
+                      alt="문화체험"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-indigo-600 bg-opacity-10"></div>
+                    {selectedOverseasCategory === "문화체험" && (
+                      <div className="absolute inset-0 ring-2 ring-indigo-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="font-medium text-gray-800 text-xs">
+                    문화체험
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop: Grid layout */}
+          <div className="hidden gap-4 mb-6">
+            {filteredOverseas.slice(0, 10).map((program) => (
+              <Card
+                key={program.id}
+                className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-[500px]"
+              >
+                <div className="relative">
+                  <img
+                    src={
+                      program.imageUrl &&
+                      program.imageUrl !== "/api/placeholder/400/250"
+                        ? program.imageUrl
+                        : "/uploads/images/8.jpg"
+                    }
+                    alt={program.title}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      const fallbackImages = [
+                        "/uploads/images/8.jpg",
+                        "/uploads/images/9.jpg",
+                        "/uploads/images/10.jpg",
+                      ];
+                      const randomFallback =
+                        fallbackImages[
+                          Math.floor(Math.random() * fallbackImages.length)
+                        ];
+                      e.currentTarget.src = randomFallback;
+                    }}
+                  />
+                  <div className="absolute top-3 right-3">
+                    <Badge variant="outline" className="bg-white/90">
+                      {program.type}
+                    </Badge>
+                  </div>
+                  <div className="absolute top-3 left-3">
+                    <Badge className="bg-green-500 text-white">
+                      {program.price
+                        ? `${program.price.toLocaleString()}원`
+                        : "문의"}
+                    </Badge>
+                  </div>
+                </div>
+                <CardContent className="p-4 flex flex-col flex-grow">
+                  <h3 className="font-semibold text-lg mb-3 group-hover:text-blue-600 transition-colors">
+                    {program.title}
+                  </h3>
+                  <div className="space-y-2 text-sm text-gray-600 mb-4 flex-grow">
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="h-4 w-4" />
+                      <span>{program.destination}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>
+                        {new Date(program.startDate).toLocaleDateString(
+                          "ko-KR",
+                        )}{" "}
+                        ~{" "}
+                        {new Date(program.endDate).toLocaleDateString("ko-KR")}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4" />
+                      <span>{program.maxParticipants || 30}명 모집</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4" />
+                      <span>{program.currentParticipants || 0}명 신청중</span>
+                    </div>
+                    {program.duration && (
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4" />
+                        <span>{program.duration}</span>
+                      </div>
+                    )}
+                    {program.description && (
+                      <p className="text-sm text-gray-600 line-clamp-3 mt-2">
+                        {program.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="mt-auto">
+                    <Link href={`/study-abroad/${program.id}`}>
+                      <Button className="w-full">연수 신청하기</Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            {filteredOverseas.length === 0 && !overseasLoading && (
+              <div className="col-span-full text-center py-8 text-gray-500">
+                <Globe className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p>등록된 해외연수 프로그램이 없습니다.</p>
+              </div>
+            )}
+            {overseasLoading && (
+              <div className="col-span-full text-center py-8 text-gray-500">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                <p>해외연수 정보를 불러오는 중...</p>
+              </div>
+            )}
+          </div>
+
+          {/* Horizontal scroll layout for all screen sizes */}
+          <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="flex space-x-4 w-max">
+              {filteredOverseas.slice(0, 10).map((program) => (
+                <Card
+                  key={program.id}
+                  className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 w-72 h-[450px] flex flex-col"
+                >
+                  <div className="relative">
+                    <img
+                      src={
+                        program.imageUrl &&
+                        program.imageUrl !== "/api/placeholder/400/250"
+                          ? program.imageUrl
+                          : "/uploads/images/8.jpg"
+                      }
+                      alt={program.title}
+                      className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        const fallbackImages = [
+                          "/uploads/images/8.jpg",
+                          "/uploads/images/9.jpg",
+                          "/uploads/images/10.jpg",
+                        ];
+                        const randomFallback =
+                          fallbackImages[
+                            Math.floor(Math.random() * fallbackImages.length)
+                          ];
+                        e.currentTarget.src = randomFallback;
+                      }}
+                    />
+                    <div className="absolute top-3 right-3">
+                      <Badge variant="outline" className="bg-white/90 text-xs">
+                        {program.type}
+                      </Badge>
+                    </div>
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-green-500 text-white text-xs">
+                        {program.price
+                          ? `${program.price.toLocaleString()}원`
+                          : "문의"}
+                      </Badge>
+                    </div>
+                  </div>
+                  <CardContent className="p-4 flex flex-col flex-grow">
+                    <h3 className="font-semibold text-lg mb-3 group-hover:text-blue-600 transition-colors line-clamp-1">
+                      {program.title}
+                    </h3>
+                    <div className="space-y-2 text-sm text-gray-600 mb-4 flex-grow">
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-3 w-3" />
+                        <span className="text-xs">{program.destination}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-3 w-3" />
+                        <span className="text-xs">
+                          {new Date(program.startDate).toLocaleDateString(
+                            "ko-KR",
+                            {
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}{" "}
+                          ~{" "}
+                          {new Date(program.endDate).toLocaleDateString(
+                            "ko-KR",
+                            {
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-3 w-3" />
+                        <span className="text-xs">
+                          {program.maxParticipants || 30}명 모집
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-3 w-3" />
+                        <span className="text-xs">
+                          {program.currentParticipants || 0}명 신청중
+                        </span>
+                      </div>
+                      {program.duration && (
+                        <div className="flex items-center space-x-2">
+                          <Clock className="h-3 w-3" />
+                          <span className="text-xs">{program.duration}</span>
+                        </div>
+                      )}
+                      {program.description && (
+                        <p className="text-xs text-gray-600 line-clamp-3 mt-2">
+                          {program.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-auto">
+                      <Link href={`/study-abroad/${program.id}`}>
+                        <Button className="w-full text-sm py-2">
+                          연수 신청하기
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {filteredOverseas.length === 0 && !overseasLoading && (
+                <div className="w-72 text-center py-8 text-gray-500">
+                  <Globe className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>등록된 해외연수 프로그램이 없습니다.</p>
+                </div>
+              )}
+              {overseasLoading && (
+                <div className="w-72 text-center py-8 text-gray-500">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                  <p>해외연수 정보를 불러오는 중...</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
       {/* Notice Section */}
-      <section className="py-12 bg-white pt-[0px] pb-[0px]">
+      <section className="py-8 bg-white pt-[0px] pb-[0px]">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 공지사항
               </h2>
               <p className="text-gray-600">
                 중요한 공지사항과 업데이트 소식을 확인하세요
               </p>
             </div>
-            <Link href="/notices">
+            <Link href="/announcements">
               <Button variant="outline" size="lg">
                 더보기
               </Button>
@@ -952,58 +2218,53 @@ export default function HomePage() {
                 </CardTitle>
               </CardHeader>
               <div className="space-y-3">
-                {[
-                  {
-                    type: "공지",
-                    title: "2025년 하계 연수 일정 안내",
-                    date: "2025.06.15",
-                    urgent: true,
-                  },
-                  {
-                    type: "안내",
-                    title: "교육부 인정 연수 과정 업데이트 안내",
-                    date: "2025.06.10",
-                    urgent: false,
-                  },
-                  {
-                    type: "공지",
-                    title: "연수 플랫폼 서비스 개선 안내",
-                    date: "2025.06.05",
-                    urgent: true,
-                  },
-                  {
-                    type: "안내",
-                    title: "하계 휴원 참가 신청 마감 연장",
-                    date: "2025.06.01",
-                    urgent: false,
-                  },
-                ].map((notice, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          notice.urgent
-                            ? "bg-red-100 text-red-600"
-                            : "bg-blue-100 text-blue-600"
-                        }`}
-                      >
-                        {notice.type}
-                      </span>
-                      <span className="text-sm font-medium">
-                        {notice.title}
-                      </span>
+                {notices.slice(0, 6).map((notice: Notice) => (
+                  <Link key={notice.id} href="/announcements">
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                      <div className="flex items-center space-x-3">
+                        <span
+                          className={`text-xs px-2 py-1 rounded-full font-medium ${
+                            notice.isImportant
+                              ? "bg-red-100 text-red-600"
+                              : "bg-blue-100 text-blue-600"
+                          }`}
+                        >
+                          {notice.category}
+                        </span>
+                        <span className="text-sm font-medium">
+                          {notice.title}
+                        </span>
+                        {notice.isImportant && (
+                          <Badge className="bg-red-500 text-white text-xs">
+                            중요
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-gray-500">
+                          {new Date(notice.createdAt).toLocaleDateString(
+                            "ko-KR",
+                          )}
+                        </span>
+                        {notice.views && (
+                          <div className="flex items-center space-x-1">
+                            <Eye className="h-3 w-3 text-gray-400" />
+                            <span className="text-xs text-gray-400">
+                              {notice.views}
+                            </span>
+                          </div>
+                        )}
+                        <ArrowRight className="h-4 w-4 text-gray-400" />
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs text-gray-500">
-                        {notice.date}
-                      </span>
-                      <ArrowRight className="h-4 w-4 text-gray-400" />
-                    </div>
-                  </div>
+                  </Link>
                 ))}
+                {notices.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p>등록된 공지사항이 없습니다.</p>
+                  </div>
+                )}
               </div>
             </Card>
 
@@ -1031,7 +2292,7 @@ export default function HomePage() {
                   <div>
                     <div className="text-sm text-gray-600">전화 문의</div>
                     <div className="font-semibold text-gray-900">
-                      02-1234-5678
+                      055-772-2226
                     </div>
                   </div>
                 </div>
@@ -1046,22 +2307,32 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => setIsChatOpen(true)}
+                >
                   <MessageCircle className="h-4 w-4 mr-2" />
                   실시간 상담 시작하기
                 </Button>
 
-                <Button variant="outline" className="w-full">
-                  <HelpCircle className="h-4 w-4 mr-2" />
-                  자주 묻는 질문 FAQ
-                </Button>
+                <div className="mt-3">
+                  <Link href="/help">
+                    <Button variant="outline" className="w-full">
+                      <HelpCircle className="h-4 w-4 mr-2" />
+                      자주 묻는 질문 FAQ
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </Card>
           </div>
         </div>
       </section>
       <Footer />
-      <ChatWidget />
+      <ChatWidget
+        isOpen={isChatOpen}
+        onToggle={() => setIsChatOpen(!isChatOpen)}
+      />
       {showNotifications && (
         <NotificationPanel onClose={() => setShowNotifications(false)} />
       )}

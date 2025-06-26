@@ -200,7 +200,6 @@ export function setupAuth(app: Express) {
     // Send notification to admins if it's a business registration
     if (req.body.userType === "business") {
       sendAdminNotification({
-        type: "business_pending",
         title: "새로운 기관 승인 요청",
         message: `"${req.body.organizationName || req.body.name}" 기관이 승인을 기다리고 있습니다.`,
         data: { userId: user.id, organizationName: req.body.organizationName },
