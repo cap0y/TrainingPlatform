@@ -5,14 +5,13 @@ import { createServer as createViteServer } from "vite";
 import { type Server } from "http";
 
 export async function setupProductionVite(app: Express, server: Server) {
-  // Create Vite server in development mode for production deployment
-  // This ensures proper asset serving without build dependency issues
+  // Create Vite server that allows all hosts for production deployment
   const vite = await createViteServer({
     configFile: false,
     mode: "development",
     server: {
       middlewareMode: true,
-      hmr: false, // Disable HMR in production
+      hmr: false,
       host: "0.0.0.0",
     },
     resolve: {
@@ -24,7 +23,11 @@ export async function setupProductionVite(app: Express, server: Server) {
     },
     root: path.resolve(process.cwd(), "client"),
     appType: "custom",
-    logLevel: "warn", // Reduce log verbosity in production
+    logLevel: "warn",
+    define: {
+      // Override host checks
+      'process.env.NODE_ENV': '"development"',
+    },
   });
 
   app.use(vite.middlewares);
