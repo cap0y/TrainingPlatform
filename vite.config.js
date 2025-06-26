@@ -33,11 +33,18 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    allowedHosts: "all",
+    allowedHosts: [
+      "5c87d8d0-3aa6-45dc-adb3-e18022599d45-00-rk1q7wk1mnxb.janeway.replit.dev",
+      "localhost",
+      "127.0.0.1",
+      "0.0.0.0",
+      ".replit.dev",
+      ".replit.app"
+    ],
     host: "0.0.0.0",
     hmr: {
-      allowedHosts: "all",
       host: "0.0.0.0",
+      port: 24678,
     },
     disableHostCheck: true,
     headers: {
