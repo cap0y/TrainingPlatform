@@ -52,6 +52,18 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       retry: false,
+      onError: (error) => {
+        console.error('Mutation error:', error);
+      },
     },
   },
 });
+
+// Add global error handling for unhandled promise rejections
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    // Prevent the error from being logged to console as an unhandled rejection
+    event.preventDefault();
+  });
+}

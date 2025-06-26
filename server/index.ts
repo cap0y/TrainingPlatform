@@ -89,51 +89,71 @@ app.use((req, res, next) => {
   next();
 });
 
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Promise Rejection:', reason);
+  // Don't exit the process, just log the error
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // For uncaught exceptions, we should exit gracefully
+  process.exit(1);
+});
+
 (async () => {
-  // Seed database on startup (with better error handling)
   try {
-    await seedDatabase();
-    console.log("Database seeded successfully");
+    // Seed database on startup (with better error handling)
+    try {
+      await seedDatabase();
+      console.log("Database seeded successfully");
+    } catch (error) {
+      console.error("Database seeding failed:", error);
+      // Continue running even if seeding fails
+    }
+
+    // Setup authentication first
+    setupAuth(app);
+
+    // Setup business routes after auth
+    registerBusinessRoutes(app);
+    registerUserRoutes(app);
+
+    // Then register other routes
+    registerRoutes(app);
+
+    // Setup WebSocket after server is created
+    setupWebSocket(server);
+
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+
+      console.error('Error caught by middleware:', err);
+      
+      if (!res.headersSent) {
+        res.status(status).json({ message });
+      }
+    });
+
+    // importantly only setup vite in development and after
+    // setting up all the other routes so the catch-all route
+    // doesn't interfere with the other routes
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    // ALWAYS serve the app on port 5000
+    // this serves both the API and the client.
+    // It is the only port that is not firewalled.
+    const port = 5000;
+    server.listen(port, "0.0.0.0", () => {
+      log(`serving on port ${port}`);
+    });
   } catch (error) {
-    console.error("Database seeding failed:", error);
-    // Continue running even if seeding fails
+    console.error('Failed to start server:', error);
+    process.exit(1);
   }
-
-  // Setup authentication first
-  setupAuth(app);
-
-  // Setup business routes after auth
-  registerBusinessRoutes(app);
-  registerUserRoutes(app);
-
-  // Then register other routes
-  registerRoutes(app);
-
-  // Setup WebSocket after server is created
-  setupWebSocket(server);
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen(port, "127.0.0.1", () => {
-    log(`serving on port ${port}`);
-  });
 })();

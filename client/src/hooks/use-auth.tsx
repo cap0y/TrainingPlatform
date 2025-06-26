@@ -5,7 +5,6 @@ import {
   UseMutationResult,
 } from "@tanstack/react-query";
 import {
-  insertUserSchema,
   User as SelectUser,
   InsertUser,
 } from "../../../shared/schema";

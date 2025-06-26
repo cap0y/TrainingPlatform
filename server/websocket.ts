@@ -11,6 +11,10 @@ export function setupWebSocket(server: Server) {
   wss.on("connection", (ws: WebSocket, req) => {
     console.log("New WebSocket connection established");
 
+    ws.on("error", (error) => {
+      console.error("WebSocket error:", error);
+    });
+
     ws.on("message", async (data: string) => {
       try {
         const message = JSON.parse(data);
@@ -40,18 +44,26 @@ export function setupWebSocket(server: Server) {
 
           wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-              client.send(broadcastData);
+              try {
+                client.send(broadcastData);
+              } catch (sendError) {
+                console.error("Failed to send message to client:", sendError);
+              }
             }
           });
         }
       } catch (error) {
         console.error("WebSocket message error:", error);
-        ws.send(
-          JSON.stringify({
-            type: "error",
-            message: "Invalid message format",
-          }),
-        );
+        try {
+          ws.send(
+            JSON.stringify({
+              type: "error",
+              message: "Invalid message format",
+            }),
+          );
+        } catch (sendError) {
+          console.error("Failed to send error message:", sendError);
+        }
       }
     });
 
@@ -60,23 +72,31 @@ export function setupWebSocket(server: Server) {
     });
 
     // Send welcome message
-    ws.send(
-      JSON.stringify({
-        type: "connected",
-        message: "WebSocket connection established",
-      }),
-    );
+    try {
+      ws.send(
+        JSON.stringify({
+          type: "connected",
+          message: "WebSocket connection established",
+        }),
+      );
+    } catch (error) {
+      console.error("Failed to send welcome message:", error);
+    }
 
     // Send initial chat history (with error handling)
     storage
       .getChatMessages(20)
       .then((messages) => {
-        ws.send(
-          JSON.stringify({
-            type: "chat_history",
-            data: messages,
-          }),
-        );
+        try {
+          ws.send(
+            JSON.stringify({
+              type: "chat_history",
+              data: messages,
+            }),
+          );
+        } catch (error) {
+          console.error("Failed to send chat history:", error);
+        }
       })
       .catch((error) => {
         console.error("Failed to load chat history:", error);
