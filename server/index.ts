@@ -7,6 +7,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { setupProductionVite } from "./production-vite";
 import { setupAuth } from "./auth";
 import path from "path";
+import fs from "fs";
 import { setupWebSocket } from "./websocket";
 import { seedDatabase } from "./seed-db";
 import { createServer } from "http";
@@ -141,11 +142,33 @@ process.on('uncaughtException', (error) => {
     // setting up all the other routes so the catch-all route
     // doesn't interfere with the other routes
     
-    // Use production-optimized Vite server for deployment
+    // For production deployment, serve static files directly to avoid Vite host issues
     const isProduction = process.env.NODE_ENV === "production";
     
     if (isProduction) {
-      await setupProductionVite(app, server);
+      // Serve built static files
+      app.use(express.static(path.join(process.cwd(), "dist/public")));
+      
+      // Serve index.html for all non-API routes (SPA fallback)
+      app.get("*", (req, res, next) => {
+        // Skip API routes and file requests
+        if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/') || req.path.includes('.')) {
+          return next();
+        }
+        
+        const indexPath = path.join(process.cwd(), "dist/public/index.html");
+        res.sendFile(indexPath, (err) => {
+          if (err) {
+            // Fallback to client index.html if dist doesn't exist
+            const fallbackPath = path.join(process.cwd(), "client/index.html");
+            res.sendFile(fallbackPath, (fallbackErr) => {
+              if (fallbackErr) {
+                res.status(404).send("Application not found");
+              }
+            });
+          }
+        });
+      });
     } else {
       await setupVite(app, server);
     }
