@@ -27,7 +27,7 @@ import {
   type InsertCertificate,
   type PrivateMessage,
   type InsertPrivateMessage,
-} from "@shared/schema";
+} from "../shared/schema.js";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { DbStorage } from "./db-storage";

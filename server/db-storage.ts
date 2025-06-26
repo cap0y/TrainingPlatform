@@ -17,7 +17,7 @@ import {
   cart,
   privateMessages,
   inquiries,
-} from "@shared/schema";
+} from "../shared/schema.js";
 import { eq, like, desc, and, sql, or, count, gte, lte } from "drizzle-orm";
 import type {
   User,
@@ -52,7 +52,7 @@ import type {
   InsertPrivateMessage,
   Inquiry,
   InsertInquiry,
-} from "@shared/schema";
+} from "../shared/schema.js";
 import type { IStorage } from "./storage";
 import session from "express-session";
 import createMemoryStore from "memorystore";

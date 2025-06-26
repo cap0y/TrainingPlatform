@@ -1,6 +1,6 @@
 import express from "express";
 import { storage } from "../storage";
-import { insertCourseSchema } from "@shared/schema";
+import { insertCourseSchema } from "../../shared/schema.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";

@@ -14,7 +14,7 @@ import {
   insertReviewSchema,
   insertPaymentSchema,
   insertInquirySchema,
-} from "@shared/schema";
+} from "../shared/schema.js";
 import multer from "multer";
 import path from "path";
 import express from "express";

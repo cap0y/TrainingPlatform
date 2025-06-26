@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { Server } from "http";
 import { storage } from "./storage";
-import { insertChatMessageSchema } from "@shared/schema";
+import { insertChatMessageSchema } from "../shared/schema.js";
 
 let wss: WebSocketServer;
 

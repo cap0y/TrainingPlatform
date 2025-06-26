@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { users, courses, instructors, notices, seminars } from "@shared/schema";
+import { users, courses, instructors, notices, seminars } from "../shared/schema.js";
 import { eq } from "drizzle-orm";
 import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
