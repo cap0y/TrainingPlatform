@@ -33,7 +33,5 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    allowedHosts: ["all"],
-    host: "0.0.0.0",
   },
 });

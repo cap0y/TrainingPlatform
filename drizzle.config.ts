@@ -9,6 +9,6 @@ export default {
     user: "neondb_owner",
     password: "npg_7nwBviZQqC0p",
     database: "neondb",
-    ssl: true
-  }
-} satisfies Config; 
+    ssl: true,
+  },
+} satisfies Config;
