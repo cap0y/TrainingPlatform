@@ -69,6 +69,15 @@ app.use((req, res, next) => {
 app.use(express.static("public"));
 app.use("/images", express.static("public/images"));
 
+// Host bypass middleware - must come before Vite middleware
+app.use((req, res, next) => {
+  // Override host check for Replit environments
+  if (req.headers.host && req.headers.host.includes('replit.dev')) {
+    req.headers.host = 'localhost:5000';
+  }
+  next();
+});
+
 // CORS 설정
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

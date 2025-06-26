@@ -16,6 +16,9 @@ export default defineConfig({
         ]
       : []),
   ],
+  define: {
+    global: 'globalThis',
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -30,25 +33,17 @@ export default defineConfig({
   },
   server: {
     fs: {
-      strict: true,
-      deny: ["**/.*"],
+      strict: false,
+      allow: [".."],
     },
-    allowedHosts: [
-      "5c87d8d0-3aa6-45dc-adb3-e18022599d45-00-rk1q7wk1mnxb.janeway.replit.dev",
-      "localhost",
-      "127.0.0.1",
-      "0.0.0.0",
-      ".replit.dev",
-      ".replit.app"
-    ],
     host: "0.0.0.0",
+    port: 5173,
+    strictPort: false,
     hmr: {
-      host: "0.0.0.0",
       port: 24678,
+      host: "0.0.0.0",
     },
     disableHostCheck: true,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
+    origin: "http://0.0.0.0:5173",
   },
 });
