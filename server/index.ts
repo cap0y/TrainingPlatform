@@ -4,6 +4,7 @@ config();
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupProductionVite } from "./production-vite";
 import { setupAuth } from "./auth";
 import path from "path";
 import { setupWebSocket } from "./websocket";
@@ -140,9 +141,14 @@ process.on('uncaughtException', (error) => {
     // setting up all the other routes so the catch-all route
     // doesn't interfere with the other routes
     
-    // Always use Vite dev server for both development and production
-    // This ensures consistent behavior and avoids build timeout issues
-    await setupVite(app, server);
+    // Use production-optimized Vite server for deployment
+    const isProduction = process.env.NODE_ENV === "production";
+    
+    if (isProduction) {
+      await setupProductionVite(app, server);
+    } else {
+      await setupVite(app, server);
+    }
 
     // ALWAYS serve the app on port 5000
     // this serves both the API and the client.
