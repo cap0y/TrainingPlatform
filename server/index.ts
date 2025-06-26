@@ -107,7 +107,7 @@ app.use((req, res, next) => {
   registerUserRoutes(app);
 
   // Then register other routes
-  const server = await registerRoutes(app);
+  registerRoutes(app);
 
   // Setup WebSocket after server is created
   setupWebSocket(server);

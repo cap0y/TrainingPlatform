@@ -1,10 +1,9 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth } from "./auth";
-import { setupWebSocket, sendAdminNotification } from "./websocket";
+
+import { sendAdminNotification } from "./websocket";
 import { registerAdminRoutes } from "./routes/admin";
-import { registerBusinessRoutes } from "./routes/business";
+
 import {
   insertCourseSchema,
   insertInstructorSchema,
@@ -40,15 +39,9 @@ const upload = multer({
   },
 });
 
-export function registerRoutes(app: Express): Server {
-  // Setup authentication routes
-  setupAuth(app);
-
+export function registerRoutes(app: Express): void {
   // Setup admin routes
   registerAdminRoutes(app);
-
-  // Setup business routes
-  registerBusinessRoutes(app);
 
   // Static file serving for uploads
   app.use("/uploads", express.static("uploads"));
@@ -1348,6 +1341,5 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  const httpServer = createServer(app);
-  return httpServer;
+  // Server instance is created and managed in index.ts
 }
