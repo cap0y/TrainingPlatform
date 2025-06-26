@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { useAuth } from './use-auth';
-import { useToast } from './use-toast';
+import { useEffect, useRef, useState } from "react";
+import { useAuth } from "./use-auth";
+import { useToast } from "./use-toast";
 
 interface WebSocketMessage {
   type: string;
@@ -27,79 +27,100 @@ export function useWebSocket() {
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log('WebSocket connected');
+        console.log("WebSocket connected");
         setIsConnected(true);
         reconnectAttempts.current = 0;
-        
+
         // Authenticate user
         if (user) {
-          ws.send(JSON.stringify({
-            type: 'auth',
-            userId: user.id,
-            isAdmin: user.isAdmin
-          }));
+          ws.send(
+            JSON.stringify({
+              type: "auth",
+              userId: user.id,
+              isAdmin: user.isAdmin,
+            }),
+          );
         }
+
+        // Set up ping interval to keep connection alive
+        const pingInterval = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'ping' }));
+          } else {
+            clearInterval(pingInterval);
+          }
+        }, 25000); // Send ping every 25 seconds
+
+        // Store interval reference for cleanup
+        (ws as any).pingInterval = pingInterval;
       };
 
       ws.onmessage = (event) => {
         try {
           const message: WebSocketMessage = JSON.parse(event.data);
-          
+
           // Handle different message types
-          if (message.type === 'admin_notification' && user?.isAdmin) {
+          if (message.type === "admin_notification" && user?.isAdmin) {
             // Show toast notification for admins
             toast({
-              title: message.title || '새 알림',
+              title: message.title || "새 알림",
               description: message.message,
             });
-            
+
             // Add to notifications list
-            setNotifications(prev => [message, ...prev.slice(0, 19)]); // Keep only 20 recent notifications
-          } else if (message.type === 'user_notification') {
+            setNotifications((prev) => [message, ...prev.slice(0, 19)]); // Keep only 20 recent notifications
+          } else if (message.type === "user_notification") {
             // Show toast notification for users
             toast({
-              title: message.title || '알림',
+              title: message.title || "알림",
               description: message.message,
             });
-            
-            setNotifications(prev => [message, ...prev.slice(0, 19)]);
+
+            setNotifications((prev) => [message, ...prev.slice(0, 19)]);
           }
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          console.error("Error parsing WebSocket message:", error);
         }
       };
 
       ws.onclose = () => {
-        console.log('WebSocket disconnected');
+        console.log("WebSocket disconnected");
         setIsConnected(false);
-        
+
+        // Clean up ping interval
+        if ((ws as any).pingInterval) {
+          clearInterval((ws as any).pingInterval);
+        }
+
         // Attempt to reconnect
         if (reconnectAttempts.current < maxReconnectAttempts) {
           reconnectAttempts.current++;
           const delay = Math.pow(2, reconnectAttempts.current) * 1000; // Exponential backoff
-          console.log(`Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts.current})`);
-          
+          console.log(
+            `Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts.current})`,
+          );
+
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
           }, delay);
         } else {
-          console.log('Max reconnection attempts reached');
+          console.log("Max reconnection attempts reached");
         }
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
       };
 
       setSocket(ws);
     } catch (error) {
-      console.error('Failed to connect WebSocket:', error);
+      console.error("Failed to connect WebSocket:", error);
     }
   };
 
   useEffect(() => {
     connect();
-    
+
     return () => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
@@ -125,6 +146,6 @@ export function useWebSocket() {
     isConnected,
     notifications,
     sendMessage,
-    clearNotifications
+    clearNotifications,
   };
 }

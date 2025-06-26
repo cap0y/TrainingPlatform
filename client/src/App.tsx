@@ -7,18 +7,16 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
-import LoginPage from "@/pages/login-page";
-import SignupPage from "@/pages/signup-page";
+// import LoginPage from "@/pages/login-page";
+// import SignupPage from "@/pages/signup-page";
 import TrainingPage from "@/pages/training-page";
 import CoursesPage from "@/pages/courses-page";
-import CourseDetailPage from "@/pages/course-detail-page";
 import EnhancedCourseDetailPage from "@/pages/enhanced-course-detail-page";
 import TrainingCoursesPage from "@/pages/training-courses-page";
 import CertificateCoursesPage from "@/pages/certificate-courses-page";
 import ProfessionalDevelopmentPage from "@/pages/professional-development-page";
 import SeminarsPage from "@/pages/seminars-page";
 import SeminarDetailPage from "@/pages/seminar-detail-page";
-import SeminarsListPage from "@/pages/seminars-list-page";
 import NoticesPage from "@/pages/notices-page";
 import AllAnnouncementsPage from "@/pages/all-announcements-page";
 import HelpCenterPage from "@/pages/help-center-page";
@@ -40,15 +38,18 @@ function Router() {
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
-      <Route path="/login" component={LoginPage} />
-      <Route path="/signup" component={SignupPage} />
+      <Route path="/login" component={AuthPage} />
+      <Route path="/signup" component={AuthPage} />
       <Route path="/" component={HomePage} />
       <Route path="/training" component={TrainingPage} />
       <Route path="/courses" component={CoursesPage} />
       <Route path="/courses/:id" component={EnhancedCourseDetailPage} />
       <Route path="/training-courses" component={TrainingCoursesPage} />
       <Route path="/certificate-courses" component={CertificateCoursesPage} />
-      <Route path="/professional-development" component={ProfessionalDevelopmentPage} />
+      <Route
+        path="/professional-development"
+        component={ProfessionalDevelopmentPage}
+      />
       <Route path="/seminars" component={SeminarsPage} />
       <Route path="/seminars/:id" component={SeminarDetailPage} />
       <Route path="/notices" component={NoticesPage} />
@@ -56,13 +57,25 @@ function Router() {
       <Route path="/help" component={HelpCenterPage} />
       <Route path="/study-abroad" component={StudyAbroadListPage} />
       <Route path="/study-abroad/:id" component={StudyAbroadPage} />
-      <ProtectedRoute path="/training-application" component={TrainingApplicationPage} />
-      <ProtectedRoute path="/all-training-programs" component={AllTrainingProgramsPage} />
-      <ProtectedRoute path="/admin" component={AdminPage} />
-      <ProtectedRoute path="/enhanced-admin" component={EnhancedAdminPage} />
-      <ProtectedRoute path="/business-dashboard" component={BusinessDashboardPage} />
-      <ProtectedRoute path="/super-admin" component={SuperAdminPage} />
-      <ProtectedRoute path="/enhanced-help" component={EnhancedHelpCenterPage} />
+      <ProtectedRoute
+        path="/training-application"
+        component={() => <TrainingApplicationPage />}
+      />
+      <ProtectedRoute
+        path="/all-training-programs"
+        component={() => <AllTrainingProgramsPage />}
+      />
+      <ProtectedRoute path="/admin" component={() => <AdminPage />} />
+      <ProtectedRoute path="/enhanced-admin" component={() => <EnhancedAdminPage />} />
+      <ProtectedRoute
+        path="/business-dashboard"
+        component={() => <BusinessDashboardPage />}
+      />
+      <ProtectedRoute path="/super-admin" component={() => <SuperAdminPage />} />
+      <ProtectedRoute
+        path="/enhanced-help"
+        component={() => <EnhancedHelpCenterPage />}
+      />
       <ProtectedRoute path="/enhanced-notice" component={EnhancedNoticePage} />
       <ProtectedRoute path="/mypage" component={MyPage} />
       <Route component={NotFound} />

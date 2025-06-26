@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -23,7 +29,7 @@ const StudyAbroadPage: React.FC = () => {
     location: "미국 캘리포니아 실리콘밸리",
     startDate: "2025년 8월 15일",
     endDate: "2025년 8월 29일",
-    image: "/api/placeholder/1200/600"
+    image: "/api/placeholder/1200/600",
   };
 
   // 신청자 정보
@@ -46,14 +52,18 @@ const StudyAbroadPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onNotificationClick={() => {}} />
-      
+
       {/* 메인 컨텐츠 */}
       <main className="container mx-auto px-4 py-8">
         {/* 페이지 경로 */}
         <div className="flex items-center text-sm text-gray-500 mb-6">
-          <a href="/" className="hover:text-blue-600">홈</a>
+          <a href="/" className="hover:text-blue-600">
+            홈
+          </a>
           <i className="fas fa-chevron-right mx-2"></i>
-          <a href="/training" className="hover:text-blue-600">연수 프로그램</a>
+          <a href="/training" className="hover:text-blue-600">
+            연수 프로그램
+          </a>
           <i className="fas fa-chevron-right mx-2"></i>
           <span className="text-gray-800">해외연수</span>
         </div>
@@ -63,17 +73,23 @@ const StudyAbroadPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <Badge className="bg-blue-100 text-blue-600">{program.category}</Badge>
+                <Badge className="bg-blue-100 text-blue-600">
+                  {program.category}
+                </Badge>
                 <Badge variant="outline">{program.duration}</Badge>
                 <Badge variant="outline">{program.credits}학점</Badge>
               </div>
-              
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">{program.title}</h1>
-              
+
+              <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                {program.title}
+              </h1>
+
               <div className="space-y-3 text-gray-600">
                 <div className="flex items-center">
                   <i className="fas fa-calendar-alt w-5 text-blue-600 mr-3"></i>
-                  <span>{program.startDate} ~ {program.endDate}</span>
+                  <span>
+                    {program.startDate} ~ {program.endDate}
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <i className="fas fa-map-marker-alt w-5 text-blue-600 mr-3"></i>
@@ -99,8 +115,8 @@ const StudyAbroadPage: React.FC = () => {
             </div>
 
             <div>
-              <img 
-                src={program.image} 
+              <img
+                src={program.image}
                 alt={program.title}
                 className="w-full h-64 object-cover rounded-lg"
               />
@@ -122,19 +138,27 @@ const StudyAbroadPage: React.FC = () => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label className="text-sm font-medium text-gray-600">이름</Label>
+                    <Label className="text-sm font-medium text-gray-600">
+                      이름
+                    </Label>
                     <p className="text-lg font-medium">{applicant.name}</p>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-gray-600">이메일</Label>
+                    <Label className="text-sm font-medium text-gray-600">
+                      이메일
+                    </Label>
                     <p className="text-lg">{applicant.email}</p>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-gray-600">연락처</Label>
+                    <Label className="text-sm font-medium text-gray-600">
+                      연락처
+                    </Label>
                     <p className="text-lg">{applicant.phone}</p>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-gray-600">소속</Label>
+                    <Label className="text-sm font-medium text-gray-600">
+                      소속
+                    </Label>
                     <p className="text-lg">{applicant.organization}</p>
                   </div>
                 </div>
@@ -156,7 +180,8 @@ const StudyAbroadPage: React.FC = () => {
                     <ul className="space-y-2 text-gray-700">
                       <li className="flex items-start">
                         <i className="fas fa-check text-green-600 mr-2 mt-1"></i>
-                        실리콘밸리 주요 IT 기업 방문 (구글, 애플, 메타, 테슬라 등)
+                        실리콘밸리 주요 IT 기업 방문 (구글, 애플, 메타, 테슬라
+                        등)
                       </li>
                       <li className="flex items-start">
                         <i className="fas fa-check text-green-600 mr-2 mt-1"></i>
@@ -230,7 +255,9 @@ const StudyAbroadPage: React.FC = () => {
                 <div className="space-y-4">
                   {/* 신청 번호 */}
                   <div className="bg-gray-50 p-3 rounded-lg">
-                    <Label className="text-sm font-medium text-gray-600">신청 번호</Label>
+                    <Label className="text-sm font-medium text-gray-600">
+                      신청 번호
+                    </Label>
                     <p className="font-mono text-sm">{applicationNumber}</p>
                   </div>
 
@@ -242,37 +269,60 @@ const StudyAbroadPage: React.FC = () => {
                     </div>
                     <div className="flex justify-between text-red-600">
                       <span>할인 금액</span>
-                      <span>-{formatPrice(program.price - program.discountPrice)}</span>
+                      <span>
+                        -{formatPrice(program.price - program.discountPrice)}
+                      </span>
                     </div>
                     <Separator />
                     <div className="flex justify-between font-bold text-lg">
                       <span>총 결제 금액</span>
-                      <span className="text-blue-600">{formatPrice(program.discountPrice)}</span>
+                      <span className="text-blue-600">
+                        {formatPrice(program.discountPrice)}
+                      </span>
                     </div>
                   </div>
 
                   {/* 결제 방법 */}
                   <div>
-                    <Label className="text-sm font-medium mb-3 block">결제 방법</Label>
-                    <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                    <Label className="text-sm font-medium mb-3 block">
+                      결제 방법
+                    </Label>
+                    <RadioGroup
+                      value={paymentMethod}
+                      onValueChange={setPaymentMethod}
+                    >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="creditCard" id="creditCard" />
-                        <Label htmlFor="creditCard" className="cursor-pointer">신용카드</Label>
+                        <Label htmlFor="creditCard" className="cursor-pointer">
+                          신용카드
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="bankTransfer" id="bankTransfer" />
-                        <Label htmlFor="bankTransfer" className="cursor-pointer">계좌이체</Label>
+                        <RadioGroupItem
+                          value="bankTransfer"
+                          id="bankTransfer"
+                        />
+                        <Label
+                          htmlFor="bankTransfer"
+                          className="cursor-pointer"
+                        >
+                          계좌이체
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="kakaoPay" id="kakaoPay" />
-                        <Label htmlFor="kakaoPay" className="cursor-pointer">카카오페이</Label>
+                        <Label htmlFor="kakaoPay" className="cursor-pointer">
+                          카카오페이
+                        </Label>
                       </div>
                     </RadioGroup>
                   </div>
 
                   {/* 결제 안내 */}
                   <div className="bg-blue-50 p-3 rounded-lg text-sm">
-                    <h5 className="font-medium text-blue-800 mb-2">결제 안내</h5>
+                    <h5 className="font-medium text-blue-800 mb-2">
+                      결제 안내
+                    </h5>
                     <ul className="space-y-1 text-blue-700">
                       <li>• 결제 완료 후 확인 메일이 발송됩니다</li>
                       <li>• 출발 14일 전까지 취소 시 100% 환불</li>

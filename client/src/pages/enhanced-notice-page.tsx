@@ -8,11 +8,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Search, Calendar, Pin, MessageSquare, Bell, FileText } from "lucide-react";
+import {
+  Search,
+  Calendar,
+  Pin,
+  MessageSquare,
+  Bell,
+  FileText,
+} from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function EnhancedNoticePage() {
@@ -30,20 +49,45 @@ export default function EnhancedNoticePage() {
 
   const categories = [
     { id: "all", name: "전체", count: notices?.notices?.length || 0 },
-    { id: "notice", name: "공지사항", count: notices?.notices?.filter(n => n.category === "notice").length || 0 },
-    { id: "announcement", name: "안내", count: notices?.notices?.filter(n => n.category === "announcement").length || 0 },
-    { id: "update", name: "업데이트", count: notices?.notices?.filter(n => n.category === "update").length || 0 },
-    { id: "event", name: "이벤트", count: notices?.notices?.filter(n => n.category === "event").length || 0 },
+    {
+      id: "notice",
+      name: "공지사항",
+      count:
+        notices?.notices?.filter((n) => n.category === "notice").length || 0,
+    },
+    {
+      id: "announcement",
+      name: "안내",
+      count:
+        notices?.notices?.filter((n) => n.category === "announcement").length ||
+        0,
+    },
+    {
+      id: "update",
+      name: "업데이트",
+      count:
+        notices?.notices?.filter((n) => n.category === "update").length || 0,
+    },
+    {
+      id: "event",
+      name: "이벤트",
+      count:
+        notices?.notices?.filter((n) => n.category === "event").length || 0,
+    },
   ];
 
-  const filteredNotices = notices?.notices?.filter(notice => {
-    const matchesCategory = selectedCategory === "all" || notice.category === selectedCategory;
-    const matchesSearch = notice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         notice.content?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  }) || [];
+  const filteredNotices =
+    notices?.notices?.filter((notice) => {
+      const matchesCategory =
+        selectedCategory === "all" || notice.category === selectedCategory;
+      const matchesSearch =
+        notice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        notice.content?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    }) || [];
 
-  const importantNotices = notices?.notices?.filter(notice => notice.isImportant) || [];
+  const importantNotices =
+    notices?.notices?.filter((notice) => notice.isImportant) || [];
 
   const handleNoticeClick = (notice) => {
     setSelectedNotice(notice);
@@ -52,33 +96,43 @@ export default function EnhancedNoticePage() {
 
   const getCategoryBadgeColor = (category) => {
     switch (category) {
-      case "notice": return "default";
-      case "announcement": return "secondary";
-      case "update": return "outline";
-      case "event": return "destructive";
-      default: return "outline";
+      case "notice":
+        return "default";
+      case "announcement":
+        return "secondary";
+      case "update":
+        return "outline";
+      case "event":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
 
   const getCategoryIcon = (category) => {
     switch (category) {
-      case "notice": return Bell;
-      case "announcement": return MessageSquare;
-      case "update": return FileText;
-      case "event": return Calendar;
-      default: return FileText;
+      case "notice":
+        return Bell;
+      case "announcement":
+        return MessageSquare;
+      case "update":
+        return FileText;
+      case "event":
+        return Calendar;
+      default:
+        return FileText;
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 overflow-hidden">
         <div className="absolute inset-0 opacity-20">
-          <img 
-            src="/uploads/images/0825ee8fe975553a161b23b57dd9773f_1750405130302.jpg" 
+          <img
+            src="/uploads/images/0825ee8fe975553a161b23b57dd9773f_1750405130302.jpg"
             alt="Notice Board"
             className="w-full h-full object-cover"
           />
@@ -89,7 +143,7 @@ export default function EnhancedNoticePage() {
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
               플랫폼의 최신 소식과 중요한 안내사항을 확인하세요.
             </p>
-            
+
             {/* Search Bar */}
             <div className="max-w-md mx-auto relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -118,14 +172,16 @@ export default function EnhancedNoticePage() {
             <CardContent>
               <div className="space-y-3">
                 {importantNotices.slice(0, 3).map((notice) => (
-                  <div 
-                    key={notice.id} 
+                  <div
+                    key={notice.id}
                     className="flex items-center justify-between p-3 bg-white rounded-lg border border-red-200 cursor-pointer hover:bg-red-50"
                     onClick={() => handleNoticeClick(notice)}
                   >
                     <div className="flex items-center space-x-3">
                       <Pin className="h-4 w-4 text-red-600" />
-                      <span className="font-medium text-red-800">{notice.title}</span>
+                      <span className="font-medium text-red-800">
+                        {notice.title}
+                      </span>
                     </div>
                     <span className="text-sm text-red-600">{notice.date}</span>
                   </div>
@@ -147,7 +203,9 @@ export default function EnhancedNoticePage() {
                   {categories.map((category) => (
                     <Button
                       key={category.id}
-                      variant={selectedCategory === category.id ? "default" : "ghost"}
+                      variant={
+                        selectedCategory === category.id ? "default" : "ghost"
+                      }
                       className="w-full justify-between"
                       onClick={() => setSelectedCategory(category.id)}
                     >
@@ -167,7 +225,11 @@ export default function EnhancedNoticePage() {
                 <CardTitle>빠른 메뉴</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full" onClick={() => setChatDialogOpen(true)}>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setChatDialogOpen(true)}
+                >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   1:1 문의
                 </Button>
@@ -187,7 +249,10 @@ export default function EnhancedNoticePage() {
           <div className="lg:col-span-3">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-4">
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <Select
+                  value={selectedCategory}
+                  onValueChange={setSelectedCategory}
+                >
                   <SelectTrigger className="w-40">
                     <SelectValue />
                   </SelectTrigger>
@@ -199,7 +264,7 @@ export default function EnhancedNoticePage() {
                     ))}
                   </SelectContent>
                 </Select>
-                
+
                 <div className="relative">
                   <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                   <Input
@@ -210,7 +275,7 @@ export default function EnhancedNoticePage() {
                   />
                 </div>
               </div>
-              
+
               <div className="text-sm text-gray-500">
                 총 {filteredNotices.length}개의 공지사항
               </div>
@@ -231,16 +296,20 @@ export default function EnhancedNoticePage() {
                 ) : filteredNotices.length === 0 ? (
                   <div className="text-center py-12">
                     <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">검색 결과가 없습니다</h3>
-                    <p className="text-gray-500">다른 검색어나 카테고리로 다시 시도해보세요.</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      검색 결과가 없습니다
+                    </h3>
+                    <p className="text-gray-500">
+                      다른 검색어나 카테고리로 다시 시도해보세요.
+                    </p>
                   </div>
                 ) : (
                   <div className="divide-y">
                     {filteredNotices.map((notice) => {
                       const CategoryIcon = getCategoryIcon(notice.category);
                       return (
-                        <div 
-                          key={notice.id} 
+                        <div
+                          key={notice.id}
                           className="p-6 hover:bg-gray-50 cursor-pointer transition-colors"
                           onClick={() => handleNoticeClick(notice)}
                         >
@@ -248,26 +317,33 @@ export default function EnhancedNoticePage() {
                             <div className="flex-1">
                               <div className="flex items-center space-x-3 mb-2">
                                 <CategoryIcon className="h-4 w-4 text-gray-500" />
-                                <Badge variant={getCategoryBadgeColor(notice.category)}>
+                                <Badge
+                                  variant={getCategoryBadgeColor(
+                                    notice.category,
+                                  )}
+                                >
                                   {notice.category}
                                 </Badge>
                                 {notice.isImportant && (
-                                  <Badge variant="destructive" className="text-xs">
+                                  <Badge
+                                    variant="destructive"
+                                    className="text-xs"
+                                  >
                                     중요
                                   </Badge>
                                 )}
                               </div>
-                              
+
                               <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-2">
                                 {notice.title}
                               </h3>
-                              
+
                               {notice.content && (
                                 <p className="text-gray-600 text-sm line-clamp-2 mb-3">
                                   {notice.content.substring(0, 150)}...
                                 </p>
                               )}
-                              
+
                               <div className="flex items-center space-x-4 text-sm text-gray-500">
                                 <div className="flex items-center space-x-1">
                                   <Calendar className="h-4 w-4" />
@@ -278,7 +354,7 @@ export default function EnhancedNoticePage() {
                                 )}
                               </div>
                             </div>
-                            
+
                             <div className="ml-4 text-right">
                               <Button variant="outline" size="sm">
                                 자세히 보기
@@ -303,45 +379,57 @@ export default function EnhancedNoticePage() {
             <>
               <DialogHeader>
                 <div className="flex items-center space-x-3 mb-4">
-                  <Badge variant={getCategoryBadgeColor(selectedNotice.category)}>
+                  <Badge
+                    variant={getCategoryBadgeColor(selectedNotice.category)}
+                  >
                     {selectedNotice.category}
                   </Badge>
                   {selectedNotice.isImportant && (
                     <Badge variant="destructive">중요</Badge>
                   )}
                 </div>
-                <DialogTitle className="text-xl">{selectedNotice.title}</DialogTitle>
+                <DialogTitle className="text-xl">
+                  {selectedNotice.title}
+                </DialogTitle>
                 <div className="flex items-center space-x-4 text-sm text-gray-500">
                   <span>작성일: {selectedNotice.date}</span>
-                  {selectedNotice.author && <span>작성자: {selectedNotice.author}</span>}
+                  {selectedNotice.author && (
+                    <span>작성자: {selectedNotice.author}</span>
+                  )}
                 </div>
               </DialogHeader>
-              
+
               <Separator className="my-4" />
-              
+
               <div className="prose max-w-none">
                 <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
                   {selectedNotice.content || "공지사항 내용이 없습니다."}
                 </div>
               </div>
-              
-              {selectedNotice.attachments && selectedNotice.attachments.length > 0 && (
-                <>
-                  <Separator className="my-4" />
-                  <div>
-                    <h4 className="font-medium mb-3">첨부파일</h4>
-                    <div className="space-y-2">
-                      {selectedNotice.attachments.map((file, index) => (
-                        <div key={index} className="flex items-center space-x-2 p-2 border rounded">
-                          <FileText className="h-4 w-4" />
-                          <span className="text-sm">{file.name}</span>
-                          <Button variant="outline" size="sm">다운로드</Button>
-                        </div>
-                      ))}
+
+              {selectedNotice.attachments &&
+                selectedNotice.attachments.length > 0 && (
+                  <>
+                    <Separator className="my-4" />
+                    <div>
+                      <h4 className="font-medium mb-3">첨부파일</h4>
+                      <div className="space-y-2">
+                        {selectedNotice.attachments.map((file, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center space-x-2 p-2 border rounded"
+                          >
+                            <FileText className="h-4 w-4" />
+                            <span className="text-sm">{file.name}</span>
+                            <Button variant="outline" size="sm">
+                              다운로드
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
             </>
           )}
         </DialogContent>
@@ -369,11 +457,13 @@ export default function EnhancedNoticePage() {
             <Button variant="outline" onClick={() => setChatDialogOpen(false)}>
               취소
             </Button>
-            <Button onClick={() => {
-              // Handle message submission
-              setChatDialogOpen(false);
-              setChatMessage("");
-            }}>
+            <Button
+              onClick={() => {
+                // Handle message submission
+                setChatDialogOpen(false);
+                setChatMessage("");
+              }}
+            >
               문의 제출
             </Button>
           </DialogFooter>

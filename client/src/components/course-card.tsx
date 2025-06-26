@@ -22,13 +22,15 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course }: CourseCardProps) {
-  const imageUrl = course.imageUrl || `https://images.unsplash.com/photo-${1522202176988 + course.id}-66273c2fd55f?w=400&h=250&fit=crop&crop=center`;
+  const imageUrl =
+    course.imageUrl ||
+    `https://images.unsplash.com/photo-${1522202176988 + course.id}-66273c2fd55f?w=400&h=250&fit=crop&crop=center`;
 
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div className="relative">
-        <img 
-          src={imageUrl} 
+        <img
+          src={imageUrl}
           alt={course.title}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -47,20 +49,22 @@ export default function CourseCard({ course }: CourseCardProps) {
           </div>
         )}
       </div>
-      
+
       <CardContent className="p-4">
         <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
           {course.title}
         </h3>
-        
+
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">
           {course.description}
         </p>
-        
+
         {course.instructor && (
-          <p className="text-sm text-gray-500 mb-3">강사: {course.instructor}</p>
+          <p className="text-sm text-gray-500 mb-3">
+            강사: {course.instructor}
+          </p>
         )}
-        
+
         <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
           <div className="flex items-center space-x-4">
             {course.duration && (
@@ -83,7 +87,7 @@ export default function CourseCard({ course }: CourseCardProps) {
             )}
           </div>
         </div>
-        
+
         <div className="flex space-x-2">
           <Link href={`/courses/${course.id}`} className="flex-1">
             <Button className="w-full">상세보기</Button>

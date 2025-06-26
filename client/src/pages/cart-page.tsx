@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { useCart } from '@/contexts/cart-context';
-import { useAuth } from '@/hooks/use-auth';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { Trash2, ShoppingCart, CreditCard, DollarSign } from 'lucide-react';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
-import { Link } from 'wouter';
+import React, { useState } from "react";
+import { useCart } from "@/contexts/cart-context";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { Trash2, ShoppingCart, CreditCard, DollarSign } from "lucide-react";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
+import { Link } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 
@@ -19,14 +19,15 @@ const CartPage: React.FC = () => {
   const [isRemoving, setIsRemoving] = useState<number | null>(null);
   const [isClearing, setIsClearing] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("신용카드");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState("신용카드");
   const [isProcessing, setIsProcessing] = useState(false);
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
 
   // 가격 포맷팅 함수
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('ko-KR').format(price);
+    return new Intl.NumberFormat("ko-KR").format(price);
   };
 
   // 아이템 삭제 핸들러
@@ -81,7 +82,10 @@ const CartPage: React.FC = () => {
   // 총 결제 금액 계산
   const calculateTotalAmount = () => {
     if (!items?.length) return 0;
-    return items.reduce((total, item) => total + (item.discountPrice || item.price), 0);
+    return items.reduce(
+      (total, item) => total + (item.discountPrice || item.price),
+      0,
+    );
   };
 
   // 결제 처리 함수
@@ -120,7 +124,7 @@ const CartPage: React.FC = () => {
 
       // 장바구니 비우기
       await fetch("/api/cart/clear", { method: "POST" });
-      
+
       // 캐시 갱신
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       queryClient.invalidateQueries({ queryKey: ["enrollments"] });
@@ -150,8 +154,12 @@ const CartPage: React.FC = () => {
           <Card className="w-full max-w-md">
             <CardContent className="p-8 text-center">
               <ShoppingCart className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-              <h2 className="text-xl font-semibold mb-2">로그인이 필요합니다</h2>
-              <p className="text-gray-600 mb-4">장바구니를 이용하려면 로그인해주세요.</p>
+              <h2 className="text-xl font-semibold mb-2">
+                로그인이 필요합니다
+              </h2>
+              <p className="text-gray-600 mb-4">
+                장바구니를 이용하려면 로그인해주세요.
+              </p>
               <Link href="/auth">
                 <Button className="w-full">로그인하기</Button>
               </Link>
@@ -171,9 +179,13 @@ const CartPage: React.FC = () => {
           <div className="max-w-6xl mx-auto">
             {/* 헤더 */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">장바구니</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                장바구니
+              </h1>
               <p className="text-gray-600">
-                {itemCount > 0 ? `${itemCount}개의 연수과정이 담겨있습니다.` : '장바구니가 비어있습니다.'}
+                {itemCount > 0
+                  ? `${itemCount}개의 연수과정이 담겨있습니다.`
+                  : "장바구니가 비어있습니다."}
               </p>
             </div>
 
@@ -182,12 +194,14 @@ const CartPage: React.FC = () => {
               <Card className="text-center py-16">
                 <CardContent>
                   <ShoppingCart className="h-24 w-24 mx-auto text-gray-400 mb-6" />
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">장바구니가 비어있습니다</h2>
-                  <p className="text-gray-600 mb-8">관심있는 연수과정을 장바구니에 담아보세요.</p>
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                    장바구니가 비어있습니다
+                  </h2>
+                  <p className="text-gray-600 mb-8">
+                    관심있는 연수과정을 장바구니에 담아보세요.
+                  </p>
                   <Link href="/courses">
-                    <Button size="lg">
-                      연수과정 둘러보기
-                    </Button>
+                    <Button size="lg">연수과정 둘러보기</Button>
                   </Link>
                 </CardContent>
               </Card>
@@ -211,11 +225,14 @@ const CartPage: React.FC = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {items.map((item) => (
-                        <div key={item.id} className="flex items-center space-x-4 p-4 border rounded-lg">
+                        <div
+                          key={item.id}
+                          className="flex items-center space-x-4 p-4 border rounded-lg"
+                        >
                           {/* 과정 이미지 */}
                           <div className="flex-shrink-0">
                             <img
-                              src={item.courseImage || '/uploads/images/1.jpg'}
+                              src={item.courseImage || "/uploads/images/1.jpg"}
                               alt={item.courseName}
                               className="w-20 h-20 object-cover rounded-lg"
                             />
@@ -230,7 +247,8 @@ const CartPage: React.FC = () => {
                               강사: {item.instructor}
                             </p>
                             <div className="flex items-center space-x-2">
-                              {item.discountPrice && item.discountPrice < item.price ? (
+                              {item.discountPrice &&
+                              item.discountPrice < item.price ? (
                                 <>
                                   <span className="text-lg font-bold text-indigo-600">
                                     {formatPrice(item.discountPrice)}원
@@ -239,7 +257,12 @@ const CartPage: React.FC = () => {
                                     {formatPrice(item.price)}원
                                   </span>
                                   <Badge className="bg-red-500 hover:bg-red-600">
-                                    {Math.round(((item.price - item.discountPrice) / item.price) * 100)}% 할인
+                                    {Math.round(
+                                      ((item.price - item.discountPrice) /
+                                        item.price) *
+                                        100,
+                                    )}
+                                    % 할인
                                   </Badge>
                                 </>
                               ) : (
@@ -287,7 +310,9 @@ const CartPage: React.FC = () => {
                         <div className="border-t pt-2">
                           <div className="flex justify-between font-semibold text-lg">
                             <span>총 결제 금액</span>
-                            <span className="text-indigo-600">{formatPrice(totalPrice)}원</span>
+                            <span className="text-indigo-600">
+                              {formatPrice(totalPrice)}원
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -302,7 +327,8 @@ const CartPage: React.FC = () => {
                       </Button>
 
                       <div className="text-xs text-gray-500 text-center">
-                        결제 시 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.
+                        결제 시 이용약관 및 개인정보처리방침에 동의한 것으로
+                        간주됩니다.
                       </div>
                     </CardContent>
                   </Card>
@@ -326,16 +352,20 @@ const CartPage: React.FC = () => {
                   {items?.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span className="text-gray-600">{item.courseName}</span>
-                      <span>{(item.discountPrice || item.price).toLocaleString()}원</span>
+                      <span>
+                        {(item.discountPrice || item.price).toLocaleString()}원
+                      </span>
                     </div>
                   ))}
                   <div className="border-t pt-2 mt-2 flex justify-between font-bold">
                     <span>총 결제금액</span>
-                    <span className="text-blue-600">{calculateTotalAmount().toLocaleString()}원</span>
+                    <span className="text-blue-600">
+                      {calculateTotalAmount().toLocaleString()}원
+                    </span>
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-3">
                 <h4 className="font-medium">결제 방법</h4>
                 <div className="space-y-2">
@@ -344,7 +374,9 @@ const CartPage: React.FC = () => {
                       key={method}
                       variant="outline"
                       className={`w-full justify-start ${
-                        selectedPaymentMethod === method ? "border-blue-600 bg-blue-50" : ""
+                        selectedPaymentMethod === method
+                          ? "border-blue-600 bg-blue-50"
+                          : ""
                       }`}
                       onClick={() => setSelectedPaymentMethod(method)}
                     >
@@ -355,7 +387,7 @@ const CartPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex space-x-3 mt-6">
               <Button
                 variant="outline"
@@ -379,4 +411,4 @@ const CartPage: React.FC = () => {
   );
 };
 
-export default CartPage; 
+export default CartPage;

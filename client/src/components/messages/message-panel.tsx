@@ -35,11 +35,15 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("received");
-  const [selectedMessage, setSelectedMessage] = useState<PrivateMessage | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<PrivateMessage | null>(
+    null,
+  );
   const [showCompose, setShowCompose] = useState(false);
 
   // 받은 쪽지 조회
-  const { data: receivedMessages, isLoading: receivedLoading } = useQuery<PrivateMessage[]>({
+  const { data: receivedMessages, isLoading: receivedLoading } = useQuery<
+    PrivateMessage[]
+  >({
     queryKey: ["/api/messages", "received"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/messages?type=received");
@@ -49,7 +53,9 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
   });
 
   // 보낸 쪽지 조회
-  const { data: sentMessages, isLoading: sentLoading } = useQuery<PrivateMessage[]>({
+  const { data: sentMessages, isLoading: sentLoading } = useQuery<
+    PrivateMessage[]
+  >({
     queryKey: ["/api/messages", "sent"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/messages?type=sent");
@@ -73,14 +79,25 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/messages/unread/count"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/messages/unread/count"],
+      });
     },
   });
 
   // 쪽지 삭제
   const deleteMessageMutation = useMutation({
-    mutationFn: async ({ messageId, type }: { messageId: number; type: 'sender' | 'receiver' }) => {
-      const res = await apiRequest("DELETE", `/api/messages/${messageId}?type=${type}`);
+    mutationFn: async ({
+      messageId,
+      type,
+    }: {
+      messageId: number;
+      type: "sender" | "receiver";
+    }) => {
+      const res = await apiRequest(
+        "DELETE",
+        `/api/messages/${messageId}?type=${type}`,
+      );
       return await res.json();
     },
     onSuccess: () => {
@@ -103,7 +120,9 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
   const formatTimeAgo = (dateString: string) => {
     const now = new Date();
     const date = new Date(dateString);
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    const diffInMinutes = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60),
+    );
 
     if (diffInMinutes < 60) {
       return `${diffInMinutes}분 전`;
@@ -116,7 +135,7 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
 
   const handleMessageClick = (message: PrivateMessage) => {
     setSelectedMessage(message);
-    
+
     // 받은 메시지이고 읽지 않았다면 읽음 처리
     if (message.receiverId === user?.id && !message.isRead) {
       markAsReadMutation.mutate(message.id);
@@ -125,14 +144,14 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
 
   const handleDeleteMessage = (messageId: number) => {
     if (!selectedMessage) return;
-    
-    const type = selectedMessage.senderId === user?.id ? 'sender' : 'receiver';
+
+    const type = selectedMessage.senderId === user?.id ? "sender" : "receiver";
     deleteMessageMutation.mutate({ messageId, type });
   };
 
   if (showCompose) {
     return (
-      <MessageCompose 
+      <MessageCompose
         onClose={() => setShowCompose(false)}
         onBack={() => setShowCompose(false)}
       />
@@ -178,9 +197,13 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
             </Button>
           </div>
         </CardHeader>
-        
+
         <CardContent className="flex-1 overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="h-full flex flex-col"
+          >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="received" className="flex items-center gap-2">
                 <MailOpen className="h-4 w-4" />
@@ -213,21 +236,25 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
                       <div
                         key={message.id}
                         className={`p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
-                          !message.isRead ? 'bg-blue-50 border-blue-200' : ''
+                          !message.isRead ? "bg-blue-50 border-blue-200" : ""
                         }`}
                         onClick={() => handleMessageClick(message)}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className={`text-sm font-medium ${!message.isRead ? 'font-semibold' : ''}`}>
+                              <span
+                                className={`text-sm font-medium ${!message.isRead ? "font-semibold" : ""}`}
+                              >
                                 {message.senderName}
                               </span>
                               {!message.isRead && (
                                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                               )}
                             </div>
-                            <h4 className={`text-sm ${!message.isRead ? 'font-semibold' : ''} truncate`}>
+                            <h4
+                              className={`text-sm ${!message.isRead ? "font-semibold" : ""} truncate`}
+                            >
                               {message.subject}
                             </h4>
                             <p className="text-xs text-gray-500 mt-1 truncate">
@@ -270,7 +297,9 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
                                 {message.receiverName}
                               </span>
                               {message.isRead && (
-                                <Badge variant="outline" className="text-xs">읽음</Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  읽음
+                                </Badge>
                               )}
                             </div>
                             <h4 className="text-sm truncate">
@@ -295,4 +324,4 @@ export default function MessagePanel({ onClose }: MessagePanelProps) {
       </Card>
     </div>
   );
-} 
+}

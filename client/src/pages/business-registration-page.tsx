@@ -5,10 +5,22 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Building2, FileText, CheckCircle, Clock, Upload } from "lucide-react";
@@ -20,7 +32,7 @@ export default function BusinessRegistrationPage() {
   const { user, registerMutation } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -44,7 +56,7 @@ export default function BusinessRegistrationPage() {
   const [documents, setDocuments] = useState([]);
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleNextStep = () => {
@@ -88,7 +100,8 @@ export default function BusinessRegistrationPage() {
       onSuccess: () => {
         toast({
           title: "기관 등록 신청 완료",
-          description: "관리자 승인 후 이용 가능합니다. 승인까지 1-2일 소요됩니다.",
+          description:
+            "관리자 승인 후 이용 가능합니다. 승인까지 1-2일 소요됩니다.",
         });
         setLocation("/");
       },
@@ -105,9 +118,20 @@ export default function BusinessRegistrationPage() {
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return formData.name && formData.email && formData.password && formData.confirmPassword && formData.username;
+        return (
+          formData.name &&
+          formData.email &&
+          formData.password &&
+          formData.confirmPassword &&
+          formData.username
+        );
       case 2:
-        return formData.organizationName && formData.businessNumber && formData.representativeName && formData.phone;
+        return (
+          formData.organizationName &&
+          formData.businessNumber &&
+          formData.representativeName &&
+          formData.phone
+        );
       case 3:
         return formData.agreeTerms && formData.agreePrivacy;
       default:
@@ -118,36 +142,51 @@ export default function BusinessRegistrationPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">기관/사업자 회원가입</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              기관/사업자 회원가입
+            </h1>
             <p className="text-gray-600">
-              강의를 제공하는 기관이나 사업자로 등록하여 연수 과정을 개설할 수 있습니다.
+              강의를 제공하는 기관이나 사업자로 등록하여 연수 과정을 개설할 수
+              있습니다.
             </p>
           </div>
 
           {/* Progress Steps */}
           <div className="flex items-center justify-center mb-8">
             <div className="flex items-center space-x-4">
-              <div className={`flex items-center space-x-2 ${step >= 1 ? "text-blue-600" : "text-gray-400"}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? "bg-blue-600 text-white" : "bg-gray-300"}`}>
+              <div
+                className={`flex items-center space-x-2 ${step >= 1 ? "text-blue-600" : "text-gray-400"}`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? "bg-blue-600 text-white" : "bg-gray-300"}`}
+                >
                   1
                 </div>
                 <span className="text-sm font-medium">기본 정보</span>
               </div>
               <div className="w-8 h-px bg-gray-300"></div>
-              <div className={`flex items-center space-x-2 ${step >= 2 ? "text-blue-600" : "text-gray-400"}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? "bg-blue-600 text-white" : "bg-gray-300"}`}>
+              <div
+                className={`flex items-center space-x-2 ${step >= 2 ? "text-blue-600" : "text-gray-400"}`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? "bg-blue-600 text-white" : "bg-gray-300"}`}
+                >
                   2
                 </div>
                 <span className="text-sm font-medium">기관 정보</span>
               </div>
               <div className="w-8 h-px bg-gray-300"></div>
-              <div className={`flex items-center space-x-2 ${step >= 3 ? "text-blue-600" : "text-gray-400"}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 3 ? "bg-blue-600 text-white" : "bg-gray-300"}`}>
+              <div
+                className={`flex items-center space-x-2 ${step >= 3 ? "text-blue-600" : "text-gray-400"}`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 3 ? "bg-blue-600 text-white" : "bg-gray-300"}`}
+                >
                   3
                 </div>
                 <span className="text-sm font-medium">약관 동의</span>
@@ -181,7 +220,9 @@ export default function BusinessRegistrationPage() {
                       <Input
                         id="name"
                         value={formData.name}
-                        onChange={(e) => handleInputChange("name", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("name", e.target.value)
+                        }
                         placeholder="실명을 입력하세요"
                       />
                     </div>
@@ -190,23 +231,27 @@ export default function BusinessRegistrationPage() {
                       <Input
                         id="username"
                         value={formData.username}
-                        onChange={(e) => handleInputChange("username", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("username", e.target.value)
+                        }
                         placeholder="로그인시 사용할 ID"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="email">이메일 *</Label>
                     <Input
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       placeholder="example@company.com"
                     />
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="password">비밀번호 *</Label>
@@ -214,7 +259,9 @@ export default function BusinessRegistrationPage() {
                         id="password"
                         type="password"
                         value={formData.password}
-                        onChange={(e) => handleInputChange("password", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("password", e.target.value)
+                        }
                         placeholder="8자 이상"
                       />
                     </div>
@@ -224,7 +271,9 @@ export default function BusinessRegistrationPage() {
                         id="confirmPassword"
                         type="password"
                         value={formData.confirmPassword}
-                        onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("confirmPassword", e.target.value)
+                        }
                         placeholder="비밀번호 재입력"
                       />
                     </div>
@@ -240,18 +289,22 @@ export default function BusinessRegistrationPage() {
                     <Input
                       id="organizationName"
                       value={formData.organizationName}
-                      onChange={(e) => handleInputChange("organizationName", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("organizationName", e.target.value)
+                      }
                       placeholder="기관 또는 회사 이름"
                     />
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="businessNumber">사업자등록번호 *</Label>
                       <Input
                         id="businessNumber"
                         value={formData.businessNumber}
-                        onChange={(e) => handleInputChange("businessNumber", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("businessNumber", e.target.value)
+                        }
                         placeholder="000-00-00000"
                       />
                     </div>
@@ -260,25 +313,37 @@ export default function BusinessRegistrationPage() {
                       <Input
                         id="representativeName"
                         value={formData.representativeName}
-                        onChange={(e) => handleInputChange("representativeName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "representativeName",
+                            e.target.value,
+                          )
+                        }
                         placeholder="대표자 이름"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="phone">연락처 *</Label>
                       <Input
                         id="phone"
                         value={formData.phone}
-                        onChange={(e) => handleInputChange("phone", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("phone", e.target.value)
+                        }
                         placeholder="010-0000-0000"
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="businessType">업종</Label>
-                      <Select value={formData.businessType} onValueChange={(value) => handleInputChange("businessType", value)}>
+                      <Select
+                        value={formData.businessType}
+                        onValueChange={(value) =>
+                          handleInputChange("businessType", value)
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="업종 선택" />
                         </SelectTrigger>
@@ -294,33 +359,39 @@ export default function BusinessRegistrationPage() {
                       </Select>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="address">주소</Label>
                     <Input
                       id="address"
                       value={formData.address}
-                      onChange={(e) => handleInputChange("address", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("address", e.target.value)
+                      }
                       placeholder="기관 주소"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="website">웹사이트</Label>
                     <Input
                       id="website"
                       value={formData.website}
-                      onChange={(e) => handleInputChange("website", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("website", e.target.value)
+                      }
                       placeholder="https://www.company.com"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="description">기관 소개</Label>
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) => handleInputChange("description", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("description", e.target.value)
+                      }
                       placeholder="기관의 주요 사업 영역과 특징을 간단히 소개해주세요"
                       rows={4}
                     />
@@ -332,10 +403,13 @@ export default function BusinessRegistrationPage() {
               {step === 3 && (
                 <div className="space-y-6">
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-blue-900 mb-2">기관 승인 안내</h3>
+                    <h3 className="font-medium text-blue-900 mb-2">
+                      기관 승인 안내
+                    </h3>
                     <p className="text-blue-800 text-sm">
-                      신청하신 정보를 바탕으로 관리자가 검토 후 승인합니다. 승인까지 1-2일 소요되며, 
-                      승인 완료 시 이메일로 안내드립니다.
+                      신청하신 정보를 바탕으로 관리자가 검토 후 승인합니다.
+                      승인까지 1-2일 소요되며, 승인 완료 시 이메일로
+                      안내드립니다.
                     </p>
                   </div>
 
@@ -344,36 +418,50 @@ export default function BusinessRegistrationPage() {
                       <Checkbox
                         id="agreeTerms"
                         checked={formData.agreeTerms}
-                        onCheckedChange={(checked) => handleInputChange("agreeTerms", checked)}
+                        onCheckedChange={(checked) =>
+                          handleInputChange("agreeTerms", checked)
+                        }
                         className="mt-1"
                       />
                       <div className="flex-1">
-                        <Label htmlFor="agreeTerms" className="text-sm font-medium">
+                        <Label
+                          htmlFor="agreeTerms"
+                          className="text-sm font-medium"
+                        >
                           서비스 이용약관에 동의합니다 (필수)
                         </Label>
                         <p className="text-xs text-gray-500 mt-1">
                           서비스 이용에 관한 기본 약관입니다.
                         </p>
                       </div>
-                      <Button variant="outline" size="sm">보기</Button>
+                      <Button variant="outline" size="sm">
+                        보기
+                      </Button>
                     </div>
 
                     <div className="flex items-start space-x-3">
                       <Checkbox
                         id="agreePrivacy"
                         checked={formData.agreePrivacy}
-                        onCheckedChange={(checked) => handleInputChange("agreePrivacy", checked)}
+                        onCheckedChange={(checked) =>
+                          handleInputChange("agreePrivacy", checked)
+                        }
                         className="mt-1"
                       />
                       <div className="flex-1">
-                        <Label htmlFor="agreePrivacy" className="text-sm font-medium">
+                        <Label
+                          htmlFor="agreePrivacy"
+                          className="text-sm font-medium"
+                        >
                           개인정보 처리방침에 동의합니다 (필수)
                         </Label>
                         <p className="text-xs text-gray-500 mt-1">
                           개인정보 수집 및 이용에 관한 동의입니다.
                         </p>
                       </div>
-                      <Button variant="outline" size="sm">보기</Button>
+                      <Button variant="outline" size="sm">
+                        보기
+                      </Button>
                     </div>
                   </div>
 
@@ -381,9 +469,13 @@ export default function BusinessRegistrationPage() {
                     <div className="flex items-start space-x-3">
                       <Clock className="h-5 w-5 text-yellow-600 mt-0.5" />
                       <div>
-                        <h4 className="font-medium text-yellow-900">승인 절차 안내</h4>
+                        <h4 className="font-medium text-yellow-900">
+                          승인 절차 안내
+                        </h4>
                         <ul className="text-sm text-yellow-800 mt-2 space-y-1">
-                          <li>• 제출된 정보 검토 (사업자등록증, 기관 정보 확인)</li>
+                          <li>
+                            • 제출된 정보 검토 (사업자등록증, 기관 정보 확인)
+                          </li>
                           <li>• 관리자 승인 처리 (1-2영업일)</li>
                           <li>• 승인 완료 시 이메일 및 SMS 알림</li>
                           <li>• 승인 후 강의 등록 및 관리 기능 이용 가능</li>
@@ -403,12 +495,9 @@ export default function BusinessRegistrationPage() {
                 >
                   이전
                 </Button>
-                
+
                 {step < 3 ? (
-                  <Button
-                    onClick={handleNextStep}
-                    disabled={!isStepValid()}
-                  >
+                  <Button onClick={handleNextStep} disabled={!isStepValid()}>
                     다음
                   </Button>
                 ) : (
@@ -416,7 +505,9 @@ export default function BusinessRegistrationPage() {
                     onClick={handleSubmit}
                     disabled={!isStepValid() || registerMutation.isPending}
                   >
-                    {registerMutation.isPending ? "처리 중..." : "기관 등록 신청"}
+                    {registerMutation.isPending
+                      ? "처리 중..."
+                      : "기관 등록 신청"}
                   </Button>
                 )}
               </div>

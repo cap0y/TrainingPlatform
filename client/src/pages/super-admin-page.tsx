@@ -6,14 +6,52 @@ import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { 
-  BarChart3, Users, BookOpen, Shield, CheckCircle, XCircle, Clock, 
-  Search, Filter, MoreHorizontal, Eye, UserCheck, UserX, Check, X 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  BarChart3,
+  Users,
+  BookOpen,
+  Shield,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Search,
+  Filter,
+  MoreHorizontal,
+  Eye,
+  UserCheck,
+  UserX,
+  Check,
+  X,
 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -56,11 +94,18 @@ export default function SuperAdminPage() {
       });
     },
     onSuccess: (_, { action }) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/pending-businesses"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/dashboard-stats"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/admin/pending-businesses"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/admin/dashboard-stats"],
+      });
       toast({
         title: action === "approve" ? "기관 승인 완료" : "기관 승인 거부",
-        description: action === "approve" ? "기관이 승인되었습니다." : "기관 승인이 거부되었습니다.",
+        description:
+          action === "approve"
+            ? "기관이 승인되었습니다."
+            : "기관 승인이 거부되었습니다.",
       });
       setShowApprovalDialog(false);
       setSelectedItem(null);
@@ -83,11 +128,18 @@ export default function SuperAdminPage() {
       });
     },
     onSuccess: (_, { action }) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/pending-courses"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/dashboard-stats"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/admin/pending-courses"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/admin/dashboard-stats"],
+      });
       toast({
         title: action === "approve" ? "강의 승인 완료" : "강의 승인 거부",
-        description: action === "approve" ? "강의가 승인되었습니다." : "강의 승인이 거부되었습니다.",
+        description:
+          action === "approve"
+            ? "강의가 승인되었습니다."
+            : "강의 승인이 거부되었습니다.",
       });
       setShowApprovalDialog(false);
       setSelectedItem(null);
@@ -131,8 +183,12 @@ export default function SuperAdminPage() {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">접근 권한이 없습니다</h1>
-          <p className="text-gray-600 mb-6">이 페이지는 관리자만 접근할 수 있습니다.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            접근 권한이 없습니다
+          </h1>
+          <p className="text-gray-600 mb-6">
+            이 페이지는 관리자만 접근할 수 있습니다.
+          </p>
           <Button onClick={() => window.history.back()}>이전 페이지로</Button>
         </div>
         <Footer />
@@ -152,11 +208,13 @@ export default function SuperAdminPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">슈퍼 관리자 대시보드</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              슈퍼 관리자 대시보드
+            </h1>
             <p className="text-gray-600">전체 플랫폼 관리 및 승인 업무</p>
           </div>
           <Badge variant="default" className="bg-red-600">
@@ -165,7 +223,11 @@ export default function SuperAdminPage() {
           </Badge>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="dashboard">대시보드</TabsTrigger>
             <TabsTrigger value="business-approval">기관 승인</TabsTrigger>
@@ -179,7 +241,9 @@ export default function SuperAdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">총 사용자</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    총 사용자
+                  </CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -190,22 +254,30 @@ export default function SuperAdminPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">기관 회원</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    기관 회원
+                  </CardTitle>
                   <Shield className="h-4 w-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.businessUsers}</div>
+                  <div className="text-2xl font-bold">
+                    {stats.businessUsers}
+                  </div>
                   <p className="text-xs text-muted-foreground">승인된 기관</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">기관 승인 대기</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    기관 승인 대기
+                  </CardTitle>
                   <Clock className="h-4 w-4 text-yellow-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.pendingBusinesses}</div>
+                  <div className="text-2xl font-bold">
+                    {stats.pendingBusinesses}
+                  </div>
                   <p className="text-xs text-muted-foreground">검토 필요</p>
                 </CardContent>
               </Card>
@@ -223,11 +295,15 @@ export default function SuperAdminPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">강의 승인 대기</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    강의 승인 대기
+                  </CardTitle>
                   <Clock className="h-4 w-4 text-yellow-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.pendingCourses}</div>
+                  <div className="text-2xl font-bold">
+                    {stats.pendingCourses}
+                  </div>
                   <p className="text-xs text-muted-foreground">검토 필요</p>
                 </CardContent>
               </Card>
@@ -238,7 +314,9 @@ export default function SuperAdminPage() {
                   <BarChart3 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">₩{(stats.monthlyRevenue / 1000000).toFixed(1)}M</div>
+                  <div className="text-2xl font-bold">
+                    ₩{(stats.monthlyRevenue / 1000000).toFixed(1)}M
+                  </div>
                   <p className="text-xs text-muted-foreground">이번 달</p>
                 </CardContent>
               </Card>
@@ -253,22 +331,33 @@ export default function SuperAdminPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {pendingBusinesses?.slice(0, 5).map((business) => (
-                      <div key={business.id} className="flex items-center justify-between">
+                      <div
+                        key={business.id}
+                        className="flex items-center justify-between"
+                      >
                         <div>
-                          <p className="font-medium">{business.organizationName}</p>
-                          <p className="text-sm text-gray-500">{business.email}</p>
+                          <p className="font-medium">
+                            {business.organizationName}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {business.email}
+                          </p>
                         </div>
                         <div className="flex space-x-2">
-                          <Button 
-                            size="sm" 
-                            onClick={() => handleApproval(business, "approve", "business")}
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              handleApproval(business, "approve", "business")
+                            }
                           >
                             승인
                           </Button>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="outline"
-                            onClick={() => handleApproval(business, "reject", "business")}
+                            onClick={() =>
+                              handleApproval(business, "reject", "business")
+                            }
                           >
                             거부
                           </Button>
@@ -276,7 +365,9 @@ export default function SuperAdminPage() {
                       </div>
                     ))}
                     {(!pendingBusinesses || pendingBusinesses.length === 0) && (
-                      <p className="text-center text-gray-500 py-4">승인 대기 중인 기관이 없습니다.</p>
+                      <p className="text-center text-gray-500 py-4">
+                        승인 대기 중인 기관이 없습니다.
+                      </p>
                     )}
                   </div>
                 </CardContent>
@@ -289,22 +380,31 @@ export default function SuperAdminPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {pendingCourses?.slice(0, 5).map((course) => (
-                      <div key={course.id} className="flex items-center justify-between">
+                      <div
+                        key={course.id}
+                        className="flex items-center justify-between"
+                      >
                         <div>
                           <p className="font-medium">{course.title}</p>
-                          <p className="text-sm text-gray-500">{course.providerName} • {course.category}</p>
+                          <p className="text-sm text-gray-500">
+                            {course.providerName} • {course.category}
+                          </p>
                         </div>
                         <div className="flex space-x-2">
-                          <Button 
-                            size="sm" 
-                            onClick={() => handleApproval(course, "approve", "course")}
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              handleApproval(course, "approve", "course")
+                            }
                           >
                             승인
                           </Button>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="outline"
-                            onClick={() => handleApproval(course, "reject", "course")}
+                            onClick={() =>
+                              handleApproval(course, "reject", "course")
+                            }
                           >
                             거부
                           </Button>
@@ -312,7 +412,9 @@ export default function SuperAdminPage() {
                       </div>
                     ))}
                     {(!pendingCourses || pendingCourses.length === 0) && (
-                      <p className="text-center text-gray-500 py-4">승인 대기 중인 강의가 없습니다.</p>
+                      <p className="text-center text-gray-500 py-4">
+                        승인 대기 중인 강의가 없습니다.
+                      </p>
                     )}
                   </div>
                 </CardContent>
@@ -349,50 +451,73 @@ export default function SuperAdminPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {businessesLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell colSpan={7}>
-                          <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    pendingBusinesses?.filter(business => 
-                      business.organizationName?.toLowerCase().includes(searchQuery.toLowerCase())
-                    ).map((business) => (
-                      <TableRow key={business.id}>
-                        <TableCell className="font-medium">{business.organizationName}</TableCell>
-                        <TableCell>{business.representativeName}</TableCell>
-                        <TableCell>{business.businessNumber}</TableCell>
-                        <TableCell>{business.email}</TableCell>
-                        <TableCell>{new Date(business.createdAt).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="text-yellow-600">
-                            <Clock className="h-3 w-3 mr-1" />
-                            승인 대기
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleApproval(business, "approve", "business")}
-                            >
-                              <Check className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => handleApproval(business, "reject", "business")}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                  {businessesLoading
+                    ? Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell colSpan={7}>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    : pendingBusinesses
+                        ?.filter((business) =>
+                          business.organizationName
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()),
+                        )
+                        .map((business) => (
+                          <TableRow key={business.id}>
+                            <TableCell className="font-medium">
+                              {business.organizationName}
+                            </TableCell>
+                            <TableCell>{business.representativeName}</TableCell>
+                            <TableCell>{business.businessNumber}</TableCell>
+                            <TableCell>{business.email}</TableCell>
+                            <TableCell>
+                              {new Date(
+                                business.createdAt,
+                              ).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className="text-yellow-600"
+                              >
+                                <Clock className="h-3 w-3 mr-1" />
+                                승인 대기
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex space-x-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    handleApproval(
+                                      business,
+                                      "approve",
+                                      "business",
+                                    )
+                                  }
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    handleApproval(
+                                      business,
+                                      "reject",
+                                      "business",
+                                    )
+                                  }
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                 </TableBody>
               </Table>
             </Card>
@@ -428,53 +553,68 @@ export default function SuperAdminPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {coursesLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell colSpan={8}>
-                          <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    pendingCourses?.filter(course => 
-                      course.title?.toLowerCase().includes(searchQuery.toLowerCase())
-                    ).map((course) => (
-                      <TableRow key={course.id}>
-                        <TableCell className="font-medium">{course.title}</TableCell>
-                        <TableCell>{course.providerName}</TableCell>
-                        <TableCell>{course.category}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{course.type}</Badge>
-                        </TableCell>
-                        <TableCell>{course.price?.toLocaleString()}원</TableCell>
-                        <TableCell>{new Date(course.createdAt).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="text-yellow-600">
-                            <Clock className="h-3 w-3 mr-1" />
-                            승인 대기
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleApproval(course, "approve", "course")}
-                            >
-                              <Check className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => handleApproval(course, "reject", "course")}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                  {coursesLoading
+                    ? Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell colSpan={8}>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    : pendingCourses
+                        ?.filter((course) =>
+                          course.title
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()),
+                        )
+                        .map((course) => (
+                          <TableRow key={course.id}>
+                            <TableCell className="font-medium">
+                              {course.title}
+                            </TableCell>
+                            <TableCell>{course.providerName}</TableCell>
+                            <TableCell>{course.category}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{course.type}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              {course.price?.toLocaleString()}원
+                            </TableCell>
+                            <TableCell>
+                              {new Date(course.createdAt).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className="text-yellow-600"
+                              >
+                                <Clock className="h-3 w-3 mr-1" />
+                                승인 대기
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex space-x-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    handleApproval(course, "approve", "course")
+                                  }
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    handleApproval(course, "reject", "course")
+                                  }
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                 </TableBody>
               </Table>
             </Card>
@@ -492,7 +632,9 @@ export default function SuperAdminPage() {
               <CardContent>
                 <div className="text-center py-8">
                   <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">사용자 관리</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    사용자 관리
+                  </h3>
                   <p className="text-gray-500">
                     사용자 목록, 권한 관리, 활동 내역 등을 확인할 수 있습니다.
                   </p>
@@ -513,7 +655,9 @@ export default function SuperAdminPage() {
               <CardContent>
                 <div className="text-center py-8">
                   <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">통계 대시보드</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    통계 대시보드
+                  </h3>
                   <p className="text-gray-500">
                     사용자 증가율, 매출 분석, 강의 성과 등을 확인할 수 있습니다.
                   </p>
@@ -534,25 +678,38 @@ export default function SuperAdminPage() {
             <DialogDescription>
               {selectedItem?.type === "business" ? (
                 <>
-                  기관 "{selectedItem?.organizationName}"을(를) {approvalAction === "approve" ? "승인" : "거부"}하시겠습니까?
+                  기관 "{selectedItem?.organizationName}"을(를){" "}
+                  {approvalAction === "approve" ? "승인" : "거부"}하시겠습니까?
                 </>
               ) : (
                 <>
-                  강의 "{selectedItem?.title}"을(를) {approvalAction === "approve" ? "승인" : "거부"}하시겠습니까?
+                  강의 "{selectedItem?.title}"을(를){" "}
+                  {approvalAction === "approve" ? "승인" : "거부"}하시겠습니까?
                 </>
               )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowApprovalDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowApprovalDialog(false)}
+            >
               취소
             </Button>
-            <Button 
+            <Button
               variant={approvalAction === "approve" ? "default" : "destructive"}
               onClick={confirmApproval}
-              disabled={businessApprovalMutation.isPending || courseApprovalMutation.isPending}
+              disabled={
+                businessApprovalMutation.isPending ||
+                courseApprovalMutation.isPending
+              }
             >
-              {businessApprovalMutation.isPending || courseApprovalMutation.isPending ? "처리 중..." : (approvalAction === "approve" ? "승인" : "거부")}
+              {businessApprovalMutation.isPending ||
+              courseApprovalMutation.isPending
+                ? "처리 중..."
+                : approvalAction === "approve"
+                  ? "승인"
+                  : "거부"}
             </Button>
           </DialogFooter>
         </DialogContent>

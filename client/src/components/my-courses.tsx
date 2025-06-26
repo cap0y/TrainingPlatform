@@ -12,7 +12,7 @@ interface MyCoursesProps {
   enrollments: Enrollment[];
   seminarRegistrations: {
     id: string;
-    status: 'enrolled' | 'completed' | 'cancelled' | 'pending';
+    status: "enrolled" | "completed" | "cancelled" | "pending";
     createdAt: string;
     seminarId: string;
     title: string;
@@ -27,11 +27,11 @@ interface MyCoursesProps {
 
 const getStatusBadge = (status: string) => {
   switch (status) {
-    case 'enrolled':
+    case "enrolled":
       return <Badge className="bg-blue-500">수강중</Badge>;
-    case 'completed':
+    case "completed":
       return <Badge className="bg-green-500">수료</Badge>;
-    case 'cancelled':
+    case "cancelled":
       return <Badge variant="secondary">취소</Badge>;
     default:
       return <Badge variant="outline">대기</Badge>;
@@ -40,11 +40,11 @@ const getStatusBadge = (status: string) => {
 
 const getCourseTypeIcon = (type: string) => {
   switch (type) {
-    case 'course':
+    case "course":
       return <BookOpen className="w-6 h-6 text-blue-600" />;
-    case 'seminar':
+    case "seminar":
       return <Presentation className="w-6 h-6 text-purple-600" />;
-    case 'overseas':
+    case "overseas":
       return <Plane className="w-6 h-6 text-orange-600" />;
     default:
       return <BookOpen className="w-6 h-6 text-gray-600" />;
@@ -53,18 +53,22 @@ const getCourseTypeIcon = (type: string) => {
 
 const getTypeLabel = (type: string) => {
   switch (type) {
-    case 'course':
-      return '연수과정';
-    case 'seminar':
-      return '세미나';
-    case 'overseas':
-      return '해외연수';
+    case "course":
+      return "연수과정";
+    case "seminar":
+      return "세미나";
+    case "overseas":
+      return "해외연수";
     default:
-      return '기타';
+      return "기타";
   }
 };
 
-export default function MyCourses({ enrollments, seminarRegistrations, isLoading }: MyCoursesProps) {
+export default function MyCourses({
+  enrollments,
+  seminarRegistrations,
+  isLoading,
+}: MyCoursesProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -100,203 +104,258 @@ export default function MyCourses({ enrollments, seminarRegistrations, isLoading
         <TabsTrigger value="overseas">해외연수</TabsTrigger>
       </TabsList>
 
-      {['all', 'course', 'seminar', 'overseas'].map((type) => (
+      {["all", "course", "seminar", "overseas"].map((type) => (
         <TabsContent key={type} value={type}>
           <div className="space-y-4">
-            {(type === 'all' || type === 'course') && enrollments
-              .filter(e => e.course.type === 'course')
-              .map((enrollment) => (
-                <div key={enrollment.id} className="border rounded-lg p-4">
+            {(type === "all" || type === "course") &&
+              enrollments
+                .filter((e) => e.course.type === "course")
+                .map((enrollment) => (
+                  <div key={enrollment.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-start space-x-3">
+                        {getCourseTypeIcon(enrollment.course.type)}
+                        <div>
+                          <h3 className="font-semibold text-lg">
+                            {enrollment.course.title}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {getTypeLabel(enrollment.course.type)}
+                            {enrollment.course.category &&
+                              ` • ${enrollment.course.category}`}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge
+                        className={cn(
+                          enrollment.status === "enrolled" && "bg-blue-500",
+                          enrollment.status === "completed" && "bg-green-500",
+                          enrollment.status === "cancelled" && "bg-gray-500",
+                        )}
+                      >
+                        {enrollment.status === "enrolled" && "수강중"}
+                        {enrollment.status === "completed" && "수료"}
+                        {enrollment.status === "cancelled" && "취소됨"}
+                      </Badge>
+                    </div>
+
+                    {enrollment.course.type === "course" && (
+                      <>
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="text-sm text-gray-600">
+                            학습 진행률
+                          </span>
+                          <span className="text-sm font-medium">
+                            {enrollment.progress || 0}%
+                          </span>
+                        </div>
+                        <Progress
+                          value={enrollment.progress || 0}
+                          className="mb-3"
+                        />
+                      </>
+                    )}
+
+                    {(enrollment.course.type === "seminar" ||
+                      enrollment.course.type === "overseas") && (
+                      <div className="mb-3 text-sm text-gray-600">
+                        {enrollment.course.location && (
+                          <div className="mb-1">
+                            장소: {enrollment.course.location}
+                          </div>
+                        )}
+                        {enrollment.course.startDate &&
+                          enrollment.course.endDate && (
+                            <div>
+                              일정:{" "}
+                              {new Date(
+                                enrollment.course.startDate,
+                              ).toLocaleDateString()}{" "}
+                              ~
+                              {new Date(
+                                enrollment.course.endDate,
+                              ).toLocaleDateString()}
+                            </div>
+                          )}
+                      </div>
+                    )}
+
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm text-gray-500">
+                        신청일:{" "}
+                        {new Date(enrollment.createdAt).toLocaleDateString(
+                          "ko-KR",
+                        )}
+                      </div>
+                      <div className="space-x-2">
+                        {enrollment.status === "enrolled" && (
+                          <Button size="sm" asChild>
+                            <Link href={`/courses/${enrollment.course.id}`}>
+                              {enrollment.course.type === "course"
+                                ? "학습하기"
+                                : "상세보기"}
+                            </Link>
+                          </Button>
+                        )}
+                        {enrollment.status === "completed" && (
+                          <Button size="sm" variant="outline">
+                            수료증 보기
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+            {(type === "all" || type === "seminar") &&
+              seminarRegistrations.map((seminar) => (
+                <div key={seminar.id} className="border rounded-lg p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-start space-x-3">
-                      {getCourseTypeIcon(enrollment.course.type)}
+                      <Presentation className="w-6 h-6 text-purple-600" />
                       <div>
-                        <h3 className="font-semibold text-lg">{enrollment.course.title}</h3>
+                        <h3 className="font-semibold text-lg">
+                          {seminar.title}
+                        </h3>
                         <p className="text-sm text-gray-600">
-                          {getTypeLabel(enrollment.course.type)}
-                          {enrollment.course.category && ` • ${enrollment.course.category}`}
+                          세미나
+                          {seminar.category && ` • ${seminar.category}`}
                         </p>
                       </div>
                     </div>
-                    <Badge 
+                    <Badge
                       className={cn(
-                        enrollment.status === 'enrolled' && 'bg-blue-500',
-                        enrollment.status === 'completed' && 'bg-green-500',
-                        enrollment.status === 'cancelled' && 'bg-gray-500'
+                        seminar.status === "enrolled" && "bg-blue-500",
+                        seminar.status === "completed" && "bg-green-500",
+                        seminar.status === "cancelled" && "bg-gray-500",
                       )}
                     >
-                      {enrollment.status === 'enrolled' && '수강중'}
-                      {enrollment.status === 'completed' && '수료'}
-                      {enrollment.status === 'cancelled' && '취소됨'}
+                      {seminar.status === "enrolled" && "신청완료"}
+                      {seminar.status === "completed" && "참석완료"}
+                      {seminar.status === "cancelled" && "취소됨"}
                     </Badge>
                   </div>
 
-                  {enrollment.course.type === 'course' && (
-                    <>
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-sm text-gray-600">학습 진행률</span>
-                        <span className="text-sm font-medium">{enrollment.progress || 0}%</span>
+                  <div className="mb-3 text-sm text-gray-600">
+                    {seminar.location && (
+                      <div className="mb-1">장소: {seminar.location}</div>
+                    )}
+                    {seminar.startDate && seminar.endDate && (
+                      <div>
+                        일정: {new Date(seminar.startDate).toLocaleDateString()}{" "}
+                        ~{new Date(seminar.endDate).toLocaleDateString()}
                       </div>
-                      <Progress value={enrollment.progress || 0} className="mb-3" />
-                    </>
-                  )}
-
-                  {(enrollment.course.type === 'seminar' || enrollment.course.type === 'overseas') && (
-                    <div className="mb-3 text-sm text-gray-600">
-                      {enrollment.course.location && (
-                        <div className="mb-1">장소: {enrollment.course.location}</div>
-                      )}
-                      {enrollment.course.startDate && enrollment.course.endDate && (
-                        <div>
-                          일정: {new Date(enrollment.course.startDate).toLocaleDateString()} ~ 
-                          {new Date(enrollment.course.endDate).toLocaleDateString()}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   <div className="flex justify-between items-center">
                     <div className="text-sm text-gray-500">
-                      신청일: {new Date(enrollment.createdAt).toLocaleDateString('ko-KR')}
+                      신청일:{" "}
+                      {new Date(seminar.createdAt).toLocaleDateString("ko-KR")}
                     </div>
                     <div className="space-x-2">
-                      {enrollment.status === 'enrolled' && (
+                      {seminar.status === "enrolled" && (
                         <Button size="sm" asChild>
-                          <Link href={`/courses/${enrollment.course.id}`}>
-                            {enrollment.course.type === 'course' ? '학습하기' : '상세보기'}
+                          <Link href={`/seminars/${seminar.seminarId}`}>
+                            상세보기
                           </Link>
                         </Button>
                       )}
-                      {enrollment.status === 'completed' && (
-                        <Button size="sm" variant="outline">수료증 보기</Button>
+                      {seminar.status === "completed" && (
+                        <Button size="sm" variant="outline">
+                          수료증 보기
+                        </Button>
                       )}
                     </div>
                   </div>
                 </div>
               ))}
 
-            {(type === 'all' || type === 'seminar') && seminarRegistrations.map((seminar) => (
-              <div key={seminar.id} className="border rounded-lg p-4">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex items-start space-x-3">
-                    <Presentation className="w-6 h-6 text-purple-600" />
-                    <div>
-                      <h3 className="font-semibold text-lg">{seminar.title}</h3>
-                      <p className="text-sm text-gray-600">
-                        세미나
-                        {seminar.category && ` • ${seminar.category}`}
-                      </p>
+            {(type === "all" || type === "overseas") &&
+              enrollments
+                .filter((e) => e.course.type === "overseas")
+                .map((enrollment) => (
+                  <div key={enrollment.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-start space-x-3">
+                        {getCourseTypeIcon(enrollment.course.type)}
+                        <div>
+                          <h3 className="font-semibold text-lg">
+                            {enrollment.course.title}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {getTypeLabel(enrollment.course.type)}
+                            {enrollment.course.category &&
+                              ` • ${enrollment.course.category}`}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge
+                        className={cn(
+                          enrollment.status === "enrolled" && "bg-blue-500",
+                          enrollment.status === "completed" && "bg-green-500",
+                          enrollment.status === "cancelled" && "bg-gray-500",
+                        )}
+                      >
+                        {enrollment.status === "enrolled" && "수강중"}
+                        {enrollment.status === "completed" && "수료"}
+                        {enrollment.status === "cancelled" && "취소됨"}
+                      </Badge>
                     </div>
-                  </div>
-                  <Badge 
-                    className={cn(
-                      seminar.status === 'enrolled' && 'bg-blue-500',
-                      seminar.status === 'completed' && 'bg-green-500',
-                      seminar.status === 'cancelled' && 'bg-gray-500'
-                    )}
-                  >
-                    {seminar.status === 'enrolled' && '신청완료'}
-                    {seminar.status === 'completed' && '참석완료'}
-                    {seminar.status === 'cancelled' && '취소됨'}
-                  </Badge>
-                </div>
 
-                <div className="mb-3 text-sm text-gray-600">
-                  {seminar.location && (
-                    <div className="mb-1">장소: {seminar.location}</div>
-                  )}
-                  {seminar.startDate && seminar.endDate && (
-                    <div>
-                      일정: {new Date(seminar.startDate).toLocaleDateString()} ~ 
-                      {new Date(seminar.endDate).toLocaleDateString()}
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-500">
-                    신청일: {new Date(seminar.createdAt).toLocaleDateString('ko-KR')}
-                  </div>
-                  <div className="space-x-2">
-                    {seminar.status === 'enrolled' && (
-                      <Button size="sm" asChild>
-                        <Link href={`/seminars/${seminar.seminarId}`}>
-                          상세보기
-                        </Link>
-                      </Button>
+                    {(enrollment.course.type === "seminar" ||
+                      enrollment.course.type === "overseas") && (
+                      <div className="mb-3 text-sm text-gray-600">
+                        {enrollment.course.location && (
+                          <div className="mb-1">
+                            장소: {enrollment.course.location}
+                          </div>
+                        )}
+                        {enrollment.course.startDate &&
+                          enrollment.course.endDate && (
+                            <div>
+                              일정:{" "}
+                              {new Date(
+                                enrollment.course.startDate,
+                              ).toLocaleDateString()}{" "}
+                              ~
+                              {new Date(
+                                enrollment.course.endDate,
+                              ).toLocaleDateString()}
+                            </div>
+                          )}
+                      </div>
                     )}
-                    {seminar.status === 'completed' && (
-                      <Button size="sm" variant="outline">수료증 보기</Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
 
-            {(type === 'all' || type === 'overseas') && enrollments
-              .filter(e => e.course.type === 'overseas')
-              .map((enrollment) => (
-                <div key={enrollment.id} className="border rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-start space-x-3">
-                      {getCourseTypeIcon(enrollment.course.type)}
-                      <div>
-                        <h3 className="font-semibold text-lg">{enrollment.course.title}</h3>
-                        <p className="text-sm text-gray-600">
-                          {getTypeLabel(enrollment.course.type)}
-                          {enrollment.course.category && ` • ${enrollment.course.category}`}
-                        </p>
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm text-gray-500">
+                        신청일:{" "}
+                        {new Date(enrollment.createdAt).toLocaleDateString(
+                          "ko-KR",
+                        )}
+                      </div>
+                      <div className="space-x-2">
+                        {enrollment.status === "enrolled" && (
+                          <Button size="sm" asChild>
+                            <Link href={`/courses/${enrollment.course.id}`}>
+                              {enrollment.course.type === "course"
+                                ? "학습하기"
+                                : "상세보기"}
+                            </Link>
+                          </Button>
+                        )}
+                        {enrollment.status === "completed" && (
+                          <Button size="sm" variant="outline">
+                            수료증 보기
+                          </Button>
+                        )}
                       </div>
                     </div>
-                    <Badge 
-                      className={cn(
-                        enrollment.status === 'enrolled' && 'bg-blue-500',
-                        enrollment.status === 'completed' && 'bg-green-500',
-                        enrollment.status === 'cancelled' && 'bg-gray-500'
-                      )}
-                    >
-                      {enrollment.status === 'enrolled' && '수강중'}
-                      {enrollment.status === 'completed' && '수료'}
-                      {enrollment.status === 'cancelled' && '취소됨'}
-                    </Badge>
                   </div>
-
-                  {(enrollment.course.type === 'seminar' || enrollment.course.type === 'overseas') && (
-                    <div className="mb-3 text-sm text-gray-600">
-                      {enrollment.course.location && (
-                        <div className="mb-1">장소: {enrollment.course.location}</div>
-                      )}
-                      {enrollment.course.startDate && enrollment.course.endDate && (
-                        <div>
-                          일정: {new Date(enrollment.course.startDate).toLocaleDateString()} ~ 
-                          {new Date(enrollment.course.endDate).toLocaleDateString()}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-500">
-                      신청일: {new Date(enrollment.createdAt).toLocaleDateString('ko-KR')}
-                    </div>
-                    <div className="space-x-2">
-                      {enrollment.status === 'enrolled' && (
-                        <Button size="sm" asChild>
-                          <Link href={`/courses/${enrollment.course.id}`}>
-                            {enrollment.course.type === 'course' ? '학습하기' : '상세보기'}
-                          </Link>
-                        </Button>
-                      )}
-                      {enrollment.status === 'completed' && (
-                        <Button size="sm" variant="outline">수료증 보기</Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
+                ))}
           </div>
         </TabsContent>
       ))}
     </Tabs>
   );
-} 
+}

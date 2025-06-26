@@ -1,6 +1,17 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, json } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  timestamp,
+  decimal,
+  json,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Remove duplicate type definitions
 
 // Users table
 export const users = pgTable("users", {
@@ -91,8 +102,12 @@ export const instructors = pgTable("instructors", {
 // Enrollments table
 export const enrollments = pgTable("enrollments", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  courseId: integer("course_id").references(() => courses.id).notNull(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
+  courseId: integer("course_id")
+    .references(() => courses.id)
+    .notNull(),
   status: text("status").notNull().default("enrolled"), // enrolled, completed, cancelled
   progress: integer("progress").default(0),
   grade: decimal("grade", { precision: 3, scale: 1 }),
@@ -118,8 +133,12 @@ export const seminars = pgTable("seminars", {
 // Seminar Registrations table
 export const seminarRegistrations = pgTable("seminar_registrations", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  seminarId: integer("seminar_id").references(() => seminars.id).notNull(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
+  seminarId: integer("seminar_id")
+    .references(() => seminars.id)
+    .notNull(),
   status: text("status").notNull().default("registered"),
   registeredAt: timestamp("registered_at").defaultNow(),
 });
@@ -140,8 +159,12 @@ export const notices = pgTable("notices", {
 // Reviews table
 export const reviews = pgTable("reviews", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  courseId: integer("course_id").references(() => courses.id).notNull(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
+  courseId: integer("course_id")
+    .references(() => courses.id)
+    .notNull(),
   rating: integer("rating").notNull(),
   comment: text("comment"),
   isActive: boolean("is_active").default(true),
@@ -160,7 +183,9 @@ export const chatMessages = pgTable("chat_messages", {
 // Payments table
 export const payments = pgTable("payments", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
   courseId: integer("course_id").references(() => courses.id),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   status: text("status").notNull().default("pending"), // pending, completed, failed, refunded

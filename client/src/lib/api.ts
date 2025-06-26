@@ -1,6 +1,10 @@
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-export async function apiRequest(method: HttpMethod, endpoint: string, data?: any) {
+export async function apiRequest(
+  method: HttpMethod,
+  endpoint: string,
+  data?: any,
+) {
   const response = await fetch(endpoint, {
     method,
     headers: {
@@ -15,4 +19,4 @@ export async function apiRequest(method: HttpMethod, endpoint: string, data?: an
   }
 
   return response.json();
-} 
+}

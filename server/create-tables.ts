@@ -1,12 +1,12 @@
-import { storage } from './storage';
+import { storage } from "./storage";
 
 async function createTables() {
   try {
-    console.log('Creating enrollment_progress table...');
-    
+    console.log("Creating enrollment_progress table...");
+
     // 기존 테이블이 있다면 삭제
     await storage.query(`DROP TABLE IF EXISTS enrollment_progress CASCADE;`);
-    
+
     // 테이블 생성
     await storage.query(`
       CREATE TABLE enrollment_progress (
@@ -30,12 +30,12 @@ async function createTables() {
       CREATE INDEX idx_enrollment_progress_type ON enrollment_progress(type);
     `);
 
-    console.log('Tables created successfully!');
+    console.log("Tables created successfully!");
     process.exit(0);
   } catch (error) {
-    console.error('Error creating tables:', error);
+    console.error("Error creating tables:", error);
     process.exit(1);
   }
 }
 
-createTables(); 
+createTables();

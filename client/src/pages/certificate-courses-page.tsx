@@ -8,7 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function CertificateCoursesPage() {
@@ -27,18 +33,23 @@ export default function CertificateCoursesPage() {
     { id: "quality", name: "품질관리", icon: "fas fa-award", count: 8 },
     { id: "information", name: "정보보안", icon: "fas fa-lock", count: 10 },
     { id: "construction", name: "건설관리", icon: "fas fa-hard-hat", count: 6 },
-    { id: "fire", name: "소방안전", icon: "fas fa-fire-extinguisher", count: 9 }
+    {
+      id: "fire",
+      name: "소방안전",
+      icon: "fas fa-fire-extinguisher",
+      count: 9,
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-green-600 to-green-800 text-white py-16 overflow-hidden">
         <div className="absolute inset-0 opacity-25">
-          <img 
-            src="/uploads/images/4901b8c8f6c3cdb40238ce25968be771_1750405130302.jpg" 
+          <img
+            src="/uploads/images/4901b8c8f6c3cdb40238ce25968be771_1750405130302.jpg"
             alt="Certificate of Completion"
             className="w-full h-full object-cover"
           />
@@ -47,13 +58,22 @@ export default function CertificateCoursesPage() {
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">자격증 취득 과정</h1>
             <p className="text-xl text-green-100 mb-6">
-              국가공인 자격증 취득을 위한 체계적이고 전문적인 교육과정을 제공합니다.
+              국가공인 자격증 취득을 위한 체계적이고 전문적인 교육과정을
+              제공합니다.
             </p>
             <div className="flex space-x-4">
-              <Button size="lg" variant="secondary" className="bg-white text-green-600 hover:bg-gray-100">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="bg-white text-green-600 hover:bg-gray-100"
+              >
                 인기 자격증 보기
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-green-600">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-green-600"
+              >
                 수강 문의
               </Button>
             </div>
@@ -61,32 +81,36 @@ export default function CertificateCoursesPage() {
         </div>
       </section>
 
-
-
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {/* Category Navigation */}
         <section className="py-12 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">자격증 분야별 과정</h2>
+            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+              자격증 분야별 과정
+            </h2>
             <div className="flex justify-center">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-4xl">
                 {certificateCategories.map((category) => (
-                  <Link key={category.id} href={`/certificate-courses?category=${category.id}`}>
+                  <Link
+                    key={category.id}
+                    href={`/certificate-courses?category=${category.id}`}
+                  >
                     <div className="text-center group cursor-pointer">
                       <div className="relative w-16 h-16 mx-auto mb-3 overflow-hidden rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                        <img 
-                          src={category.id === "safety" 
-                            ? "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=120&h=120&fit=crop&crop=center"
-                            : category.id === "environment" 
-                              ? "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=120&fit=crop&crop=center"
-                              : category.id === "quality"
-                                ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=center"
-                                : category.id === "information"
-                                  ? "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=120&h=120&fit=crop&crop=center"
-                                  : category.id === "construction"
-                                    ? "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=120&h=120&fit=crop&crop=center"
-                                    : "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=120&h=120&fit=crop&crop=center"
+                        <img
+                          src={
+                            category.id === "safety"
+                              ? "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=120&h=120&fit=crop&crop=center"
+                              : category.id === "environment"
+                                ? "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=120&fit=crop&crop=center"
+                                : category.id === "quality"
+                                  ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=center"
+                                  : category.id === "information"
+                                    ? "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=120&h=120&fit=crop&crop=center"
+                                    : category.id === "construction"
+                                      ? "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=120&h=120&fit=crop&crop=center"
+                                      : "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=120&h=120&fit=crop&crop=center"
                           }
                           alt={category.name}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
@@ -96,7 +120,9 @@ export default function CertificateCoursesPage() {
                       <div className="font-medium text-sm text-gray-800 group-hover:text-green-600 transition-colors">
                         {category.name}
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">{category.count}개 과정</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {category.count}개 과정
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -118,8 +144,11 @@ export default function CertificateCoursesPage() {
               />
               <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
-            
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="자격증 분야" />
               </SelectTrigger>
@@ -132,7 +161,10 @@ export default function CertificateCoursesPage() {
               </SelectContent>
             </Select>
 
-            <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+            <Select
+              value={selectedDifficulty}
+              onValueChange={setSelectedDifficulty}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="난이도" />
               </SelectTrigger>
@@ -153,7 +185,9 @@ export default function CertificateCoursesPage() {
 
         {/* Featured Certificates */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">인기 자격증 과정</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            인기 자격증 과정
+          </h2>
           <Tabs defaultValue="popular" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="popular">인기 과정</TabsTrigger>
@@ -161,12 +195,15 @@ export default function CertificateCoursesPage() {
               <TabsTrigger value="upcoming">시험 예정</TabsTrigger>
               <TabsTrigger value="recommendation">추천 과정</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="popular" className="mt-6">
               {isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="bg-white rounded-lg shadow-sm border animate-pulse">
+                    <div
+                      key={i}
+                      className="bg-white rounded-lg shadow-sm border animate-pulse"
+                    >
                       <div className="w-full h-48 bg-gray-200"></div>
                       <div className="p-6 space-y-4">
                         <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -178,21 +215,27 @@ export default function CertificateCoursesPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {coursesData?.courses?.slice(0, 6).map((course) => (
-                    <CourseCard key={course.id} course={course} />
-                  ))}
+                  {coursesData?.courses
+                    ?.slice(0, 6)
+                    .map((course) => (
+                      <CourseCard key={course.id} course={course} />
+                    ))}
                 </div>
               )}
             </TabsContent>
-            
+
             <TabsContent value="new" className="mt-6">
               <div className="text-center py-12">
                 <i className="fas fa-plus-circle text-4xl text-gray-300 mb-4"></i>
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">새로운 자격증 과정</h3>
-                <p className="text-gray-500">곧 새로운 자격증 과정이 추가될 예정입니다.</p>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                  새로운 자격증 과정
+                </h3>
+                <p className="text-gray-500">
+                  곧 새로운 자격증 과정이 추가될 예정입니다.
+                </p>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="upcoming" className="mt-6">
               <div className="bg-blue-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-blue-800 mb-4">
@@ -202,34 +245,46 @@ export default function CertificateCoursesPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center bg-white p-4 rounded-lg">
                     <div>
-                      <div className="font-medium text-gray-800">화학물질관리사</div>
+                      <div className="font-medium text-gray-800">
+                        화학물질관리사
+                      </div>
                       <div className="text-sm text-gray-500">필기시험</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-blue-600 font-semibold">2025.07.15</div>
+                      <div className="text-blue-600 font-semibold">
+                        2025.07.15
+                      </div>
                       <div className="text-xs text-gray-500">D-25</div>
                     </div>
                   </div>
                   <div className="flex justify-between items-center bg-white p-4 rounded-lg">
                     <div>
-                      <div className="font-medium text-gray-800">산업안전지도사</div>
+                      <div className="font-medium text-gray-800">
+                        산업안전지도사
+                      </div>
                       <div className="text-sm text-gray-500">필기시험</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-blue-600 font-semibold">2025.08.10</div>
+                      <div className="text-blue-600 font-semibold">
+                        2025.08.10
+                      </div>
                       <div className="text-xs text-gray-500">D-51</div>
                     </div>
                   </div>
                 </div>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="recommendation" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="p-6 bg-gradient-to-r from-green-50 to-blue-50">
                   <CardContent className="p-0">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">초보자 추천</h3>
-                    <p className="text-gray-600 mb-4">자격증이 처음이신 분들께 추천하는 입문 과정</p>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                      초보자 추천
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      자격증이 처음이신 분들께 추천하는 입문 과정
+                    </p>
                     <ul className="space-y-2 text-sm text-gray-600">
                       <li>• 화학물질관리사 (3급)</li>
                       <li>• 산업안전지도사 (3급)</li>
@@ -239,8 +294,12 @@ export default function CertificateCoursesPage() {
                 </Card>
                 <Card className="p-6 bg-gradient-to-r from-purple-50 to-pink-50">
                   <CardContent className="p-0">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">경력자 추천</h3>
-                    <p className="text-gray-600 mb-4">실무 경험이 있는 분들께 추천하는 고급 과정</p>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                      경력자 추천
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      실무 경험이 있는 분들께 추천하는 고급 과정
+                    </p>
                     <ul className="space-y-2 text-sm text-gray-600">
                       <li>• 화학물질관리사 (1급)</li>
                       <li>• 산업안전지도사 (1급)</li>
@@ -256,28 +315,38 @@ export default function CertificateCoursesPage() {
         {/* Study Guide Section */}
         <section className="mb-12">
           <div className="bg-green-50 rounded-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">자격증 취득 가이드</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              자격증 취득 가이드
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                   <span className="text-2xl font-bold text-green-600">1</span>
                 </div>
                 <h3 className="font-semibold text-gray-800 mb-2">과정 선택</h3>
-                <p className="text-gray-600 text-sm">자신의 경력과 목표에 맞는 자격증 과정을 선택하세요.</p>
+                <p className="text-gray-600 text-sm">
+                  자신의 경력과 목표에 맞는 자격증 과정을 선택하세요.
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                   <span className="text-2xl font-bold text-green-600">2</span>
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-2">체계적 학습</h3>
-                <p className="text-gray-600 text-sm">전문 강사진의 체계적인 커리큘럼으로 학습하세요.</p>
+                <h3 className="font-semibold text-gray-800 mb-2">
+                  체계적 학습
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  전문 강사진의 체계적인 커리큘럼으로 학습하세요.
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                   <span className="text-2xl font-bold text-green-600">3</span>
                 </div>
                 <h3 className="font-semibold text-gray-800 mb-2">시험 준비</h3>
-                <p className="text-gray-600 text-sm">모의고사와 실전 문제로 시험에 완벽하게 대비하세요.</p>
+                <p className="text-gray-600 text-sm">
+                  모의고사와 실전 문제로 시험에 완벽하게 대비하세요.
+                </p>
               </div>
             </div>
           </div>

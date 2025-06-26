@@ -4,15 +4,60 @@ import Header from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { BarChart3, Users, BookOpen, Calendar, TrendingUp, Settings, Plus, Search, Filter, MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  BarChart3,
+  Users,
+  BookOpen,
+  Calendar,
+  TrendingUp,
+  Settings,
+  Plus,
+  Search,
+  Filter,
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -191,8 +236,12 @@ export default function EnhancedAdminPage() {
       discountPrice: course.discountPrice || "",
       duration: course.duration,
       maxStudents: course.maxStudents || "",
-      startDate: course.startDate ? new Date(course.startDate).toISOString().split('T')[0] : "",
-      endDate: course.endDate ? new Date(course.endDate).toISOString().split('T')[0] : "",
+      startDate: course.startDate
+        ? new Date(course.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: course.endDate
+        ? new Date(course.endDate).toISOString().split("T")[0]
+        : "",
       instructorId: course.instructorId || "",
     });
     setShowCourseDialog(true);
@@ -223,7 +272,7 @@ export default function EnhancedAdminPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-900">관리자 대시보드</h1>
@@ -235,7 +284,11 @@ export default function EnhancedAdminPage() {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="dashboard">대시보드</TabsTrigger>
             <TabsTrigger value="courses">과정 관리</TabsTrigger>
@@ -249,11 +302,15 @@ export default function EnhancedAdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">총 회원 수</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    총 회원 수
+                  </CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
+                  <div className="text-2xl font-bold">
+                    {stats.totalUsers.toLocaleString()}
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     +12% from last month
                   </p>
@@ -262,7 +319,9 @@ export default function EnhancedAdminPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">총 과정 수</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    총 과정 수
+                  </CardTitle>
                   <BookOpen className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -275,11 +334,15 @@ export default function EnhancedAdminPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">총 수강생</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    총 수강생
+                  </CardTitle>
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.totalEnrollments.toLocaleString()}</div>
+                  <div className="text-2xl font-bold">
+                    {stats.totalEnrollments.toLocaleString()}
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     +8% from last month
                   </p>
@@ -292,7 +355,9 @@ export default function EnhancedAdminPage() {
                   <BarChart3 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">₩{(stats.monthlyRevenue / 1000000).toFixed(1)}M</div>
+                  <div className="text-2xl font-bold">
+                    ₩{(stats.monthlyRevenue / 1000000).toFixed(1)}M
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     +15% from last month
                   </p>
@@ -308,12 +373,21 @@ export default function EnhancedAdminPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {courses?.courses?.slice(0, 5).map((course) => (
-                      <div key={course.id} className="flex items-center justify-between">
+                      <div
+                        key={course.id}
+                        className="flex items-center justify-between"
+                      >
                         <div>
                           <p className="font-medium">{course.title}</p>
-                          <p className="text-sm text-gray-500">{course.instructor}</p>
+                          <p className="text-sm text-gray-500">
+                            {course.instructor}
+                          </p>
                         </div>
-                        <Badge variant={course.status === "active" ? "default" : "secondary"}>
+                        <Badge
+                          variant={
+                            course.status === "active" ? "default" : "secondary"
+                          }
+                        >
                           {course.status || "active"}
                         </Badge>
                       </div>
@@ -329,12 +403,19 @@ export default function EnhancedAdminPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {notices?.notices?.slice(0, 5).map((notice) => (
-                      <div key={notice.id} className="flex items-center justify-between">
+                      <div
+                        key={notice.id}
+                        className="flex items-center justify-between"
+                      >
                         <div>
                           <p className="font-medium">{notice.title}</p>
                           <p className="text-sm text-gray-500">{notice.date}</p>
                         </div>
-                        <Badge variant={notice.isImportant ? "destructive" : "outline"}>
+                        <Badge
+                          variant={
+                            notice.isImportant ? "destructive" : "outline"
+                          }
+                        >
                           {notice.category}
                         </Badge>
                       </div>
@@ -364,8 +445,7 @@ export default function EnhancedAdminPage() {
                 </Button>
               </div>
               <Button onClick={() => setShowCourseDialog(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                새 과정 추가
+                <Plus className="h-4 w-4 mr-2" />새 과정 추가
               </Button>
             </div>
 
@@ -383,60 +463,81 @@ export default function EnhancedAdminPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {coursesLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell colSpan={7}>
-                          <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    courses?.courses?.filter(course => 
-                      course.title.toLowerCase().includes(searchQuery.toLowerCase())
-                    ).map((course) => (
-                      <TableRow key={course.id}>
-                        <TableCell className="font-medium">{course.title}</TableCell>
-                        <TableCell>{course.category}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{course.type}</Badge>
-                        </TableCell>
-                        <TableCell>{course.students || 0}명</TableCell>
-                        <TableCell>★ {course.rating || "N/A"}</TableCell>
-                        <TableCell>
-                          <Badge variant={course.status === "active" ? "default" : "secondary"}>
-                            {course.status || "active"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
-                                <Eye className="mr-2 h-4 w-4" />
-                                보기
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleEditCourse(course)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                수정
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => handleDelete("courses", course.id, course.title)}
-                                className="text-red-600"
+                  {coursesLoading
+                    ? Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell colSpan={7}>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    : courses?.courses
+                        ?.filter((course) =>
+                          course.title
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase()),
+                        )
+                        .map((course) => (
+                          <TableRow key={course.id}>
+                            <TableCell className="font-medium">
+                              {course.title}
+                            </TableCell>
+                            <TableCell>{course.category}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{course.type}</Badge>
+                            </TableCell>
+                            <TableCell>{course.students || 0}명</TableCell>
+                            <TableCell>★ {course.rating || "N/A"}</TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  course.status === "active"
+                                    ? "default"
+                                    : "secondary"
+                                }
                               >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                삭제
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                                {course.status || "active"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    보기
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleEditCourse(course)}
+                                  >
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    수정
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleDelete(
+                                        "courses",
+                                        course.id,
+                                        course.title,
+                                      )
+                                    }
+                                    className="text-red-600"
+                                  >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    삭제
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                 </TableBody>
               </Table>
             </Card>
@@ -454,7 +555,9 @@ export default function EnhancedAdminPage() {
               <CardContent>
                 <div className="text-center py-8">
                   <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">회원 관리 기능</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    회원 관리 기능
+                  </h3>
                   <p className="text-gray-500">
                     회원 목록, 권한 관리, 활동 내역 등을 확인할 수 있습니다.
                   </p>
@@ -468,8 +571,7 @@ export default function EnhancedAdminPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">공지사항 관리</h2>
               <Button onClick={() => setShowNoticeDialog(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                새 공지 작성
+                <Plus className="h-4 w-4 mr-2" />새 공지 작성
               </Button>
             </div>
 
@@ -485,48 +587,54 @@ export default function EnhancedAdminPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {noticesLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell colSpan={5}>
-                          <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    notices?.notices?.map((notice) => (
-                      <TableRow key={notice.id}>
-                        <TableCell className="font-medium">{notice.title}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{notice.category}</Badge>
-                        </TableCell>
-                        <TableCell>{notice.date}</TableCell>
-                        <TableCell>
-                          {notice.isImportant && (
-                            <Badge variant="destructive">중요</Badge>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => handleEditNotice(notice)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => handleDelete("notices", notice.id, notice.title)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                  {noticesLoading
+                    ? Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell colSpan={5}>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    : notices?.notices?.map((notice) => (
+                        <TableRow key={notice.id}>
+                          <TableCell className="font-medium">
+                            {notice.title}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{notice.category}</Badge>
+                          </TableCell>
+                          <TableCell>{notice.date}</TableCell>
+                          <TableCell>
+                            {notice.isImportant && (
+                              <Badge variant="destructive">중요</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditNotice(notice)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  handleDelete(
+                                    "notices",
+                                    notice.id,
+                                    notice.title,
+                                  )
+                                }
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                 </TableBody>
               </Table>
             </Card>
@@ -544,9 +652,12 @@ export default function EnhancedAdminPage() {
               <CardContent>
                 <div className="text-center py-8">
                   <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">분석 대시보드</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    분석 대시보드
+                  </h3>
                   <p className="text-gray-500">
-                    수강 통계, 매출 분석, 사용자 활동 패턴 등을 확인할 수 있습니다.
+                    수강 통계, 매출 분석, 사용자 활동 패턴 등을 확인할 수
+                    있습니다.
                   </p>
                 </div>
               </CardContent>
@@ -569,7 +680,9 @@ export default function EnhancedAdminPage() {
               <Input
                 id="title"
                 value={courseForm.title}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setCourseForm((prev) => ({ ...prev, title: e.target.value }))
+                }
                 placeholder="과정명을 입력하세요"
               />
             </div>
@@ -578,15 +691,22 @@ export default function EnhancedAdminPage() {
               <Input
                 id="category"
                 value={courseForm.category}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, category: e.target.value }))}
+                onChange={(e) =>
+                  setCourseForm((prev) => ({
+                    ...prev,
+                    category: e.target.value,
+                  }))
+                }
                 placeholder="분야를 입력하세요"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="type">형태</Label>
-              <Select 
-                value={courseForm.type} 
-                onValueChange={(value) => setCourseForm(prev => ({ ...prev, type: value }))}
+              <Select
+                value={courseForm.type}
+                onValueChange={(value) =>
+                  setCourseForm((prev) => ({ ...prev, type: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -600,9 +720,11 @@ export default function EnhancedAdminPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="level">난이도</Label>
-              <Select 
-                value={courseForm.level} 
-                onValueChange={(value) => setCourseForm(prev => ({ ...prev, level: value }))}
+              <Select
+                value={courseForm.level}
+                onValueChange={(value) =>
+                  setCourseForm((prev) => ({ ...prev, level: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -620,7 +742,9 @@ export default function EnhancedAdminPage() {
                 id="price"
                 type="number"
                 value={courseForm.price}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, price: e.target.value }))}
+                onChange={(e) =>
+                  setCourseForm((prev) => ({ ...prev, price: e.target.value }))
+                }
                 placeholder="가격을 입력하세요"
               />
             </div>
@@ -629,7 +753,12 @@ export default function EnhancedAdminPage() {
               <Input
                 id="duration"
                 value={courseForm.duration}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, duration: e.target.value }))}
+                onChange={(e) =>
+                  setCourseForm((prev) => ({
+                    ...prev,
+                    duration: e.target.value,
+                  }))
+                }
                 placeholder="예: 4주, 16시간"
               />
             </div>
@@ -638,21 +767,33 @@ export default function EnhancedAdminPage() {
               <Textarea
                 id="description"
                 value={courseForm.description}
-                onChange={(e) => setCourseForm(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setCourseForm((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 placeholder="과정 설명을 입력하세요"
                 rows={3}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCourseDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowCourseDialog(false)}
+            >
               취소
             </Button>
-            <Button 
+            <Button
               onClick={() => courseMutation.mutate(courseForm)}
               disabled={courseMutation.isPending}
             >
-              {courseMutation.isPending ? "처리 중..." : (editingCourse ? "수정" : "생성")}
+              {courseMutation.isPending
+                ? "처리 중..."
+                : editingCourse
+                  ? "수정"
+                  : "생성"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -672,15 +813,19 @@ export default function EnhancedAdminPage() {
               <Input
                 id="notice-title"
                 value={noticeForm.title}
-                onChange={(e) => setNoticeForm(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setNoticeForm((prev) => ({ ...prev, title: e.target.value }))
+                }
                 placeholder="공지 제목을 입력하세요"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="notice-category">카테고리</Label>
-              <Select 
-                value={noticeForm.category} 
-                onValueChange={(value) => setNoticeForm(prev => ({ ...prev, category: value }))}
+              <Select
+                value={noticeForm.category}
+                onValueChange={(value) =>
+                  setNoticeForm((prev) => ({ ...prev, category: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -698,21 +843,33 @@ export default function EnhancedAdminPage() {
               <Textarea
                 id="notice-content"
                 value={noticeForm.content}
-                onChange={(e) => setNoticeForm(prev => ({ ...prev, content: e.target.value }))}
+                onChange={(e) =>
+                  setNoticeForm((prev) => ({
+                    ...prev,
+                    content: e.target.value,
+                  }))
+                }
                 placeholder="공지 내용을 입력하세요"
                 rows={6}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNoticeDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowNoticeDialog(false)}
+            >
               취소
             </Button>
-            <Button 
+            <Button
               onClick={() => noticeMutation.mutate(noticeForm)}
               disabled={noticeMutation.isPending}
             >
-              {noticeMutation.isPending ? "처리 중..." : (editingNotice ? "수정" : "작성")}
+              {noticeMutation.isPending
+                ? "처리 중..."
+                : editingNotice
+                  ? "수정"
+                  : "작성"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -724,15 +881,19 @@ export default function EnhancedAdminPage() {
           <DialogHeader>
             <DialogTitle>삭제 확인</DialogTitle>
             <DialogDescription>
-              "{deleteTarget?.title}"을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+              "{deleteTarget?.title}"을(를) 정말 삭제하시겠습니까? 이 작업은
+              되돌릴 수 없습니다.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
               취소
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               onClick={confirmDelete}
               disabled={deleteMutation.isPending}
             >

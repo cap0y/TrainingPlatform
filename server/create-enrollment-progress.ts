@@ -1,10 +1,10 @@
-import { db } from './db';
-import { sql } from 'drizzle-orm';
+import { db } from "./db";
+import { sql } from "drizzle-orm";
 
 async function createEnrollmentProgressTable() {
   try {
-    console.log('Creating enrollment_progress table...');
-    
+    console.log("Creating enrollment_progress table...");
+
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS enrollment_progress (
         id SERIAL PRIMARY KEY,
@@ -24,12 +24,12 @@ async function createEnrollmentProgressTable() {
       CREATE INDEX IF NOT EXISTS idx_enrollment_progress_type ON enrollment_progress(type);
     `);
 
-    console.log('✅ enrollment_progress table created successfully');
+    console.log("✅ enrollment_progress table created successfully");
   } catch (error) {
-    console.error('Error creating enrollment_progress table:', error);
+    console.error("Error creating enrollment_progress table:", error);
     throw error;
   }
 }
 
 // 스크립트 실행
-createEnrollmentProgressTable().catch(console.error); 
+createEnrollmentProgressTable().catch(console.error);

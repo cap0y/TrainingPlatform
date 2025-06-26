@@ -27,31 +27,31 @@ interface MessageDetailProps {
   currentUserId: number;
 }
 
-export default function MessageDetail({ 
-  message, 
-  onClose, 
-  onBack, 
-  onDelete, 
-  currentUserId 
+export default function MessageDetail({
+  message,
+  onClose,
+  onBack,
+  onDelete,
+  currentUserId,
 }: MessageDetailProps) {
   const [showReply, setShowReply] = useState(false);
-  
+
   const isReceived = message.receiverId === currentUserId;
   const isSent = message.senderId === currentUserId;
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const handleDelete = () => {
-    if (confirm('이 쪽지를 삭제하시겠습니까?')) {
+    if (confirm("이 쪽지를 삭제하시겠습니까?")) {
       onDelete(message.id);
     }
   };
@@ -105,20 +105,26 @@ export default function MessageDetail({
             </Button>
           </div>
         </CardHeader>
-        
+
         <CardContent className="flex-1 overflow-hidden">
           <div className="h-full flex flex-col">
             {/* 메시지 헤더 */}
             <div className="space-y-4 pb-4 border-b">
               {/* 제목 */}
               <div>
-                <h2 className="text-xl font-semibold mb-2">{message.subject}</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  {message.subject}
+                </h2>
                 <div className="flex items-center gap-2">
                   {!message.isRead && isReceived && (
-                    <Badge variant="destructive" className="text-xs">새 메시지</Badge>
+                    <Badge variant="destructive" className="text-xs">
+                      새 메시지
+                    </Badge>
                   )}
                   {message.isRead && isSent && (
-                    <Badge variant="outline" className="text-xs">읽음</Badge>
+                    <Badge variant="outline" className="text-xs">
+                      읽음
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -143,7 +149,9 @@ export default function MessageDetail({
                 </div>
 
                 <div>
-                  <div className="font-medium text-gray-600 mb-1">전송 시간</div>
+                  <div className="font-medium text-gray-600 mb-1">
+                    전송 시간
+                  </div>
                   <div className="pl-0">
                     <div>{formatDateTime(message.createdAt)}</div>
                     {message.readAt && (
@@ -169,9 +177,7 @@ export default function MessageDetail({
 
             {/* 하단 액션 버튼 */}
             <div className="flex justify-between items-center pt-4 border-t">
-              <div className="text-xs text-gray-500">
-                쪽지 ID: {message.id}
-              </div>
+              <div className="text-xs text-gray-500">쪽지 ID: {message.id}</div>
               <div className="flex gap-2">
                 {isReceived && (
                   <Button
@@ -190,4 +196,4 @@ export default function MessageDetail({
       </Card>
     </div>
   );
-} 
+}

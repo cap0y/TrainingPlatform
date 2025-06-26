@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { setupWebSocket, sendAdminNotification } from "./websocket";
 import { registerAdminRoutes } from "./routes/admin";
+import { registerBusinessRoutes } from "./routes/business";
 import { insertCourseSchema, insertInstructorSchema, insertEnrollmentSchema, insertSeminarSchema, insertNoticeSchema, insertReviewSchema, insertPaymentSchema } from "../shared/schema.js";
 import multer from "multer";
 import path from "path";
@@ -33,6 +34,9 @@ export function registerRoutes(app: Express): Server {
   
   // Setup admin routes
   registerAdminRoutes(app);
+  
+  // Setup business routes
+  registerBusinessRoutes(app);
 
   // Course routes
   app.get("/api/courses", async (req, res) => {
@@ -87,7 +91,6 @@ export function registerRoutes(app: Express): Server {
       
       // Send notification to admins about new course pending approval
       sendAdminNotification({
-        type: 'course_pending',
         title: '새로운 강의 승인 요청',
         message: `"${course.title}" 강의가 승인을 기다리고 있습니다.`,
         data: { courseId: course.id, courseName: course.title }

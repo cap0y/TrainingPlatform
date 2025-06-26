@@ -1,9 +1,9 @@
-import { storage } from './storage';
+import { storage } from "./storage";
 
 async function createTable() {
   try {
-    console.log('Creating enrollment_progress table...');
-    
+    console.log("Creating enrollment_progress table...");
+
     // 테이블 생성
     await storage.query(`
       CREATE TABLE IF NOT EXISTS enrollment_progress (
@@ -20,27 +20,27 @@ async function createTable() {
       )
     `);
 
-    console.log('Creating indexes...');
-    
+    console.log("Creating indexes...");
+
     // 인덱스 생성
     await storage.query(`
       CREATE INDEX IF NOT EXISTS idx_enrollment_progress_enrollment_id ON enrollment_progress(enrollment_id)
     `);
-    
+
     await storage.query(`
       CREATE INDEX IF NOT EXISTS idx_enrollment_progress_user_id ON enrollment_progress(user_id)
     `);
-    
+
     await storage.query(`
       CREATE INDEX IF NOT EXISTS idx_enrollment_progress_type ON enrollment_progress(type)
     `);
-    
-    console.log('Table and indexes created successfully!');
+
+    console.log("Table and indexes created successfully!");
     process.exit(0);
   } catch (error) {
-    console.error('Error creating table:', error);
+    console.error("Error creating table:", error);
     process.exit(1);
   }
 }
 
-createTable(); 
+createTable();

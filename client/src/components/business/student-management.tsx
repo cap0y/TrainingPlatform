@@ -25,13 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Search,
-  Filter,
-  MoreHorizontal,
-  Award,
-  FileText
-} from "lucide-react";
+import { Search, Filter, MoreHorizontal, Award, FileText } from "lucide-react";
 import { apiRequest } from "@/lib/api";
 
 interface StudentManagementProps {
@@ -47,7 +41,10 @@ export default function StudentManagement({ user }: StudentManagementProps) {
   const { data: enrollments, isLoading: enrollmentsLoading } = useQuery({
     queryKey: ["/api/business/enrollments", user?.id],
     queryFn: async () => {
-      const response = await apiRequest("GET", `/api/business/enrollments/${user?.id}`);
+      const response = await apiRequest(
+        "GET",
+        `/api/business/enrollments/${user?.id}`,
+      );
       return response;
     },
     enabled: !!user?.id,
@@ -58,7 +55,7 @@ export default function StudentManagement({ user }: StudentManagementProps) {
     mutationFn: async (enrollmentId: number) => {
       const response = await apiRequest(
         "POST",
-        `/api/business/issue-certificate/${enrollmentId}`
+        `/api/business/issue-certificate/${enrollmentId}`,
       );
       return response;
     },
@@ -68,7 +65,9 @@ export default function StudentManagement({ user }: StudentManagementProps) {
         description: "수료증이 성공적으로 발급되었습니다.",
       });
       // 수강생 목록 새로고침
-      queryClient.invalidateQueries({ queryKey: ["/api/business/enrollments", user?.id] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/business/enrollments", user?.id],
+      });
     },
     onError: (error: any) => {
       toast({
@@ -92,7 +91,10 @@ export default function StudentManagement({ user }: StudentManagementProps) {
   const handleShowCertificate = async (enrollment: any) => {
     try {
       // 새 창에서 수료증 열기
-      window.open(`/api/business/enrollments/${enrollment.id}/certificate`, '_blank');
+      window.open(
+        `/api/business/enrollments/${enrollment.id}/certificate`,
+        "_blank",
+      );
     } catch (error) {
       console.error("Error fetching certificate:", error);
       toast({
@@ -105,7 +107,8 @@ export default function StudentManagement({ user }: StudentManagementProps) {
 
   // 진도율에 따른 배지 색상
   const getProgressBadge = (progress: number) => {
-    if (progress >= 80) return <Badge className="bg-green-600">수료 가능</Badge>;
+    if (progress >= 80)
+      return <Badge className="bg-green-600">수료 가능</Badge>;
     if (progress >= 50) return <Badge className="bg-yellow-600">진행중</Badge>;
     return <Badge variant="outline">시작</Badge>;
   };
@@ -189,12 +192,16 @@ export default function StudentManagement({ user }: StudentManagementProps) {
                     <TableCell>
                       <div>
                         <p className="font-medium">{enrollment.user.name}</p>
-                        <p className="text-sm text-gray-500">{enrollment.user.email}</p>
+                        <p className="text-sm text-gray-500">
+                          {enrollment.user.email}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell>{enrollment.course.title}</TableCell>
                     <TableCell>
-                      {new Date(enrollment.enrolledAt).toLocaleDateString("ko-KR")}
+                      {new Date(enrollment.enrolledAt).toLocaleDateString(
+                        "ko-KR",
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
@@ -205,7 +212,9 @@ export default function StudentManagement({ user }: StudentManagementProps) {
                     <TableCell>{getStatusBadge(enrollment.status)}</TableCell>
                     <TableCell>
                       {enrollment.lastAccessAt
-                        ? new Date(enrollment.lastAccessAt).toLocaleDateString("ko-KR")
+                        ? new Date(enrollment.lastAccessAt).toLocaleDateString(
+                            "ko-KR",
+                          )
                         : "-"}
                     </TableCell>
                     <TableCell>
@@ -219,17 +228,24 @@ export default function StudentManagement({ user }: StudentManagementProps) {
                           <FileText className="mr-2 h-4 w-4" />
                           수료증 확인
                         </Button>
-                      ) : enrollment.progress >= 80 && enrollment.status !== "completed" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleIssueCertificate(enrollment.id)}
-                          disabled={issueCertificateMutation.isPending}
-                          className="w-24"
-                        >
-                          <Award className="mr-2 h-4 w-4" />
-                          {issueCertificateMutation.isPending ? "처리 중..." : "수료증 발급"}
-                        </Button>
+                      ) : (
+                        enrollment.progress >= 80 &&
+                        enrollment.status !== "completed" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              handleIssueCertificate(enrollment.id)
+                            }
+                            disabled={issueCertificateMutation.isPending}
+                            className="w-24"
+                          >
+                            <Award className="mr-2 h-4 w-4" />
+                            {issueCertificateMutation.isPending
+                              ? "처리 중..."
+                              : "수료증 발급"}
+                          </Button>
+                        )
                       )}
                     </TableCell>
                   </TableRow>
@@ -241,4 +257,4 @@ export default function StudentManagement({ user }: StudentManagementProps) {
       </Card>
     </div>
   );
-} 
+}

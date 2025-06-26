@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -15,15 +21,18 @@ const NoticesPage: React.FC = () => {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [showChatDialog, setShowChatDialog] = useState(false);
-  const [chatMessage, setChatMessage] = useState('');
+  const [chatMessage, setChatMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([
     {
-      type: 'assistant',
-      message: '안녕하세요! 무엇을 도와드릴까요?',
-      time: '09:00'
-    }
+      type: "assistant",
+      message: "안녕하세요! 무엇을 도와드릴까요?",
+      time: "09:00",
+    },
   ]);
-  const [adminCredentials, setAdminCredentials] = useState({ username: '', password: '' });
+  const [adminCredentials, setAdminCredentials] = useState({
+    username: "",
+    password: "",
+  });
   const [noticeData, setNoticeData] = useState({
     title: "2025년 하계 연수 일정 안내",
     date: "2025.06.15",
@@ -32,92 +41,100 @@ const NoticesPage: React.FC = () => {
     overview: {
       period: "2025년 7월 15일(월) ~ 7월 26일(금), 2주간",
       time: "오전 9시 ~ 오후 5시 (일일 7시간, 점심시간 포함)",
-      location: "서울특별시 강남구 테헤란로 123 에듀플랫폼 연수원 (지하철 2호선 강남역 3번 출구에서 도보 5분)",
+      location:
+        "서울특별시 강남구 테헤란로 123 에듀플랫폼 연수원 (지하철 2호선 강남역 3번 출구에서 도보 5분)",
       target: "초·중·고 교원, 교육 행정직, 교육 관련 종사자",
-      completion: "총 연수 시간의 80% 이상 참석 시 수료증 발급 (교원 직무연수 60시간 인정)"
+      completion:
+        "총 연수 시간의 80% 이상 참석 시 수료증 발급 (교원 직무연수 60시간 인정)",
     },
     applicationInfo: {
       period: "2025년 6월 20일(목) 오전 10시 ~ 7월 5일(금) 오후 6시까지",
-      method: "에듀플랫폼 홈페이지 로그인 후 [연수과정] - [하계 연수] 메뉴에서 신청",
+      method:
+        "에듀플랫폼 홈페이지 로그인 후 [연수과정] - [하계 연수] 메뉴에서 신청",
       selection: "선착순 200명 (정원 초과 시 대기자 등록 가능)",
-      result: "2025년 7월 8일(월) 개별 이메일 및 문자 통보"
+      result: "2025년 7월 8일(월) 개별 이메일 및 문자 통보",
     },
     feeInfo: {
       fee: "450,000원 (교재, 중식, 간식 포함)",
       discount: [
         "단체 신청 (5인 이상): 1인당 400,000원 (50,000원 할인)",
         "에듀플랫폼 프리미엄 회원: 380,000원 (70,000원 할인)",
-        "이전 연수 참가자: 420,000원 (30,000원 할인)"
+        "이전 연수 참가자: 420,000원 (30,000원 할인)",
       ],
       payment: "신용카드, 계좌이체, 카카오페이, 네이버페이",
       refund: [
         "연수 시작 7일 전까지: 100% 환불",
         "연수 시작 3일 전까지: 70% 환불",
         "연수 시작 1일 전까지: 50% 환불",
-        "연수 당일 취소: 환불 불가"
-      ]
+        "연수 당일 취소: 환불 불가",
+      ],
     },
     contact: {
       phone: "02-1234-5678 (평일 오전 9시 ~ 오후 6시)",
       email: "summer@eduplatform.kr",
-      kakao: "@에듀플랫폼"
+      kakao: "@에듀플랫폼",
     },
-    signature: "많은 관심과 참여 부탁드립니다.\n감사합니다.\n\n에듀플랫폼 연수 운영팀 드림",
+    signature:
+      "많은 관심과 참여 부탁드립니다.\n감사합니다.\n\n에듀플랫폼 연수 운영팀 드림",
     attachments: [
       { name: "2025년_하계연수_상세일정.pdf", type: "pdf" },
       { name: "2025년_하계연수_신청서양식.xlsx", type: "excel" },
-      { name: "연수원_오시는길.jpg", type: "image" }
-    ]
+      { name: "연수원_오시는길.jpg", type: "image" },
+    ],
   });
 
   const handleSendMessage = () => {
     if (!chatMessage.trim()) return;
 
     const now = new Date();
-    const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const timeString = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
     const newMessage = {
-      type: 'user',
+      type: "user",
       message: chatMessage.trim(),
-      time: timeString
+      time: timeString,
     };
 
-    setChatMessages(prev => [...prev, newMessage]);
-    setChatMessage('');
+    setChatMessages((prev) => [...prev, newMessage]);
+    setChatMessage("");
 
     // Simulate assistant response
     setTimeout(() => {
       const responses = [
-        '네, 어떤 도움이 필요하신가요?',
-        '자세한 내용을 알려주시면 도와드리겠습니다.',
-        '잠시만 기다려주시면 확인 후 답변 드리겠습니다.',
-        '연수 관련 문의사항이신가요?'
+        "네, 어떤 도움이 필요하신가요?",
+        "자세한 내용을 알려주시면 도와드리겠습니다.",
+        "잠시만 기다려주시면 확인 후 답변 드리겠습니다.",
+        "연수 관련 문의사항이신가요?",
       ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
+      const randomResponse =
+        responses[Math.floor(Math.random() * responses.length)];
+
       const assistantMessage = {
-        type: 'assistant',
+        type: "assistant",
         message: randomResponse,
-        time: timeString
+        time: timeString,
       };
-      
-      setChatMessages(prev => [...prev, assistantMessage]);
+
+      setChatMessages((prev) => [...prev, assistantMessage]);
     }, 1000);
   };
 
   const handleAdminLogin = () => {
-    if (adminCredentials.username === 'admin' && adminCredentials.password === 'admin123') {
+    if (
+      adminCredentials.username === "admin" &&
+      adminCredentials.password === "admin123"
+    ) {
       setIsAdminLoggedIn(true);
       setShowLoginDialog(false);
-      setAdminCredentials({ username: '', password: '' });
+      setAdminCredentials({ username: "", password: "" });
     } else {
-      alert('로그인 정보가 올바르지 않습니다.');
+      alert("로그인 정보가 올바르지 않습니다.");
     }
   };
 
   const handleSaveNotice = () => {
     setIsEditing(false);
-    alert('공지사항이 저장되었습니다.');
+    alert("공지사항이 저장되었습니다.");
   };
 
   return (
@@ -129,17 +146,39 @@ const NoticesPage: React.FC = () => {
             <div className="flex items-center space-x-8">
               <h1 className="text-2xl font-bold text-blue-600">에듀플랫폼</h1>
               <nav className="hidden md:flex space-x-6">
-                <a href="/" className="text-gray-600 hover:text-blue-600">홈</a>
-                <a href="/training" className="text-gray-600 hover:text-blue-600">연수 프로그램</a>
-                <a href="/courses" className="text-gray-600 hover:text-blue-600">교육과정</a>
-                <a href="/seminars" className="text-gray-600 hover:text-blue-600">세미나</a>
-                <a href="/notices" className="text-blue-600 font-medium">공지사항</a>
+                <a href="/" className="text-gray-600 hover:text-blue-600">
+                  홈
+                </a>
+                <a
+                  href="/training"
+                  className="text-gray-600 hover:text-blue-600"
+                >
+                  연수 프로그램
+                </a>
+                <a
+                  href="/courses"
+                  className="text-gray-600 hover:text-blue-600"
+                >
+                  교육과정
+                </a>
+                <a
+                  href="/seminars"
+                  className="text-gray-600 hover:text-blue-600"
+                >
+                  세미나
+                </a>
+                <a href="/notices" className="text-blue-600 font-medium">
+                  공지사항
+                </a>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
               {!isAdminLoggedIn ? (
                 <>
-                  <Button variant="outline" onClick={() => setShowLoginDialog(true)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowLoginDialog(true)}
+                  >
                     관리자 로그인
                   </Button>
                   <Button>로그인</Button>
@@ -176,15 +215,19 @@ const NoticesPage: React.FC = () => {
             </div>
             <span className="text-gray-500">{noticeData.date}</span>
           </div>
-          
+
           {isEditing ? (
             <Input
               value={noticeData.title}
-              onChange={(e) => setNoticeData({...noticeData, title: e.target.value})}
+              onChange={(e) =>
+                setNoticeData({ ...noticeData, title: e.target.value })
+              }
               className="text-2xl font-bold border-none p-0 focus:ring-0"
             />
           ) : (
-            <h1 className="text-2xl font-bold text-gray-800">{noticeData.title}</h1>
+            <h1 className="text-2xl font-bold text-gray-800">
+              {noticeData.title}
+            </h1>
           )}
         </div>
 
@@ -202,7 +245,9 @@ const NoticesPage: React.FC = () => {
               {isEditing ? (
                 <Textarea
                   value={noticeData.content}
-                  onChange={(e) => setNoticeData({...noticeData, content: e.target.value})}
+                  onChange={(e) =>
+                    setNoticeData({ ...noticeData, content: e.target.value })
+                  }
                   className="min-h-[200px]"
                 />
               ) : (
@@ -219,12 +264,19 @@ const NoticesPage: React.FC = () => {
                 <h3 className="text-lg font-semibold mb-4">첨부파일</h3>
                 <div className="space-y-2">
                   {noticeData.attachments.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <i className={`fas ${
-                        file.type === 'pdf' ? 'fa-file-pdf text-red-500' :
-                        file.type === 'excel' ? 'fa-file-excel text-green-500' :
-                        'fa-file-image text-blue-500'
-                      }`}></i>
+                    <div
+                      key={index}
+                      className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
+                    >
+                      <i
+                        className={`fas ${
+                          file.type === "pdf"
+                            ? "fa-file-pdf text-red-500"
+                            : file.type === "excel"
+                              ? "fa-file-excel text-green-500"
+                              : "fa-file-image text-blue-500"
+                        }`}
+                      ></i>
                       <span className="flex-1">{file.name}</span>
                       <Button variant="outline" size="sm">
                         <i className="fas fa-download mr-2"></i>
@@ -241,23 +293,33 @@ const NoticesPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="font-semibold">연수 기간</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.overview.period}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.overview.period}
+                    </p>
                   </div>
                   <div>
                     <Label className="font-semibold">연수 시간</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.overview.time}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.overview.time}
+                    </p>
                   </div>
                   <div className="md:col-span-2">
                     <Label className="font-semibold">연수 장소</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.overview.location}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.overview.location}
+                    </p>
                   </div>
                   <div>
                     <Label className="font-semibold">연수 대상</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.overview.target}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.overview.target}
+                    </p>
                   </div>
                   <div>
                     <Label className="font-semibold">이수 조건</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.overview.completion}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.overview.completion}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -268,19 +330,27 @@ const NoticesPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="font-semibold">신청 기간</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.applicationInfo.period}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.applicationInfo.period}
+                    </p>
                   </div>
                   <div>
                     <Label className="font-semibold">신청 방법</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.applicationInfo.method}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.applicationInfo.method}
+                    </p>
                   </div>
                   <div>
                     <Label className="font-semibold">선발 방법</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.applicationInfo.selection}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.applicationInfo.selection}
+                    </p>
                   </div>
                   <div>
                     <Label className="font-semibold">결과 발표</Label>
-                    <p className="text-gray-700 mt-1">{noticeData.applicationInfo.result}</p>
+                    <p className="text-gray-700 mt-1">
+                      {noticeData.applicationInfo.result}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -290,28 +360,36 @@ const NoticesPage: React.FC = () => {
               <div className="space-y-6">
                 <div>
                   <Label className="font-semibold text-lg">수강료</Label>
-                  <p className="text-2xl font-bold text-blue-600 mt-2">{noticeData.feeInfo.fee}</p>
+                  <p className="text-2xl font-bold text-blue-600 mt-2">
+                    {noticeData.feeInfo.fee}
+                  </p>
                 </div>
 
                 <div>
                   <Label className="font-semibold">할인 혜택</Label>
                   <ul className="mt-2 space-y-1">
                     {noticeData.feeInfo.discount.map((item, index) => (
-                      <li key={index} className="text-gray-700">• {item}</li>
+                      <li key={index} className="text-gray-700">
+                        • {item}
+                      </li>
                     ))}
                   </ul>
                 </div>
 
                 <div>
                   <Label className="font-semibold">결제 방법</Label>
-                  <p className="text-gray-700 mt-1">{noticeData.feeInfo.payment}</p>
+                  <p className="text-gray-700 mt-1">
+                    {noticeData.feeInfo.payment}
+                  </p>
                 </div>
 
                 <div>
                   <Label className="font-semibold">환불 정책</Label>
                   <ul className="mt-2 space-y-1">
                     {noticeData.feeInfo.refund.map((item, index) => (
-                      <li key={index} className="text-gray-700">• {item}</li>
+                      <li key={index} className="text-gray-700">
+                        • {item}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -340,7 +418,9 @@ const NoticesPage: React.FC = () => {
           </div>
 
           <div className="mt-6 text-right">
-            <p className="whitespace-pre-line text-gray-600">{noticeData.signature}</p>
+            <p className="whitespace-pre-line text-gray-600">
+              {noticeData.signature}
+            </p>
           </div>
 
           {isEditing && (
@@ -348,9 +428,7 @@ const NoticesPage: React.FC = () => {
               <Button variant="outline" onClick={() => setIsEditing(false)}>
                 취소
               </Button>
-              <Button onClick={handleSaveNotice}>
-                저장
-              </Button>
+              <Button onClick={handleSaveNotice}>저장</Button>
             </div>
           )}
         </div>
@@ -368,7 +446,12 @@ const NoticesPage: React.FC = () => {
               <Input
                 id="admin-username"
                 value={adminCredentials.username}
-                onChange={(e) => setAdminCredentials({...adminCredentials, username: e.target.value})}
+                onChange={(e) =>
+                  setAdminCredentials({
+                    ...adminCredentials,
+                    username: e.target.value,
+                  })
+                }
                 placeholder="관리자 아이디"
               />
             </div>
@@ -378,7 +461,12 @@ const NoticesPage: React.FC = () => {
                 id="admin-password"
                 type="password"
                 value={adminCredentials.password}
-                onChange={(e) => setAdminCredentials({...adminCredentials, password: e.target.value})}
+                onChange={(e) =>
+                  setAdminCredentials({
+                    ...adminCredentials,
+                    password: e.target.value,
+                  })
+                }
                 placeholder="관리자 비밀번호"
               />
             </div>
@@ -387,9 +475,7 @@ const NoticesPage: React.FC = () => {
             <Button variant="outline" onClick={() => setShowLoginDialog(false)}>
               취소
             </Button>
-            <Button onClick={handleAdminLogin}>
-              로그인
-            </Button>
+            <Button onClick={handleAdminLogin}>로그인</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -415,13 +501,13 @@ const NoticesPage: React.FC = () => {
               {chatMessages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
                     className={`max-w-[80%] p-3 rounded-lg ${
-                      msg.type === 'user'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-800'
+                      msg.type === "user"
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-800"
                     }`}
                   >
                     <p className="text-sm">{msg.message}</p>
@@ -435,7 +521,7 @@ const NoticesPage: React.FC = () => {
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
                 placeholder="메시지를 입력하세요..."
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
               />
               <Button onClick={handleSendMessage}>
                 <i className="fas fa-paper-plane"></i>

@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Card } from "@/components/ui/card";
 
 interface Notice {
@@ -14,50 +22,178 @@ interface Notice {
 }
 
 const AllAnnouncementsPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('전체');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("전체");
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditing, setIsEditing] = useState<number | null>(null);
-  const [editTitle, setEditTitle] = useState('');
+  const [editTitle, setEditTitle] = useState("");
   const [notices, setNotices] = useState<Notice[]>([
-    { id: 1, title: '2025년 하계 연수 일정 안내', date: '2025.06.15', category: '공지' },
-    { id: 2, title: '교육부 인정 연수 과정 업데이트 안내', date: '2025.06.10', category: '안내' },
-    { id: 3, title: '연수 플랫폼 서비스 개선 안내', date: '2025.06.05', category: '공지' },
-    { id: 4, title: '하계 학회 참가 신청 마감 연장', date: '2025.06.01', category: '안내' },
-    { id: 5, title: '2025년 교원 자격 연수 신청 안내', date: '2025.05.28', category: '공지' },
-    { id: 6, title: '플랫폼 이용 가이드 업데이트 안내', date: '2025.05.25', category: '안내' },
-    { id: 7, title: '교육부 주관 세미나 참가자 모집', date: '2025.05.20', category: '공지' },
-    { id: 8, title: '온라인 연수 신규 과정 오픈 안내', date: '2025.05.15', category: '안내' },
-    { id: 9, title: '시스템 점검에 따른 서비스 일시 중단 안내', date: '2025.05.10', category: '공지' },
-    { id: 10, title: '교육 연구 공모전 참가자 모집', date: '2025.05.05', category: '기타' },
-    { id: 11, title: '2025년 2학기 학점 인정 연수 안내', date: '2025.05.01', category: '공지' },
-    { id: 12, title: '교육 콘텐츠 개발자 모집 공고', date: '2025.04.28', category: '기타' },
-    { id: 13, title: '교원 평가 관련 워크숍 개최 안내', date: '2025.04.25', category: '안내' },
-    { id: 14, title: '연수 플랫폼 모바일 앱 출시 안내', date: '2025.04.20', category: '공지' },
-    { id: 15, title: '교육 혁신 포럼 참가자 모집', date: '2025.04.15', category: '안내' },
-    { id: 16, title: '2025년 교육 트렌드 보고서 발간 안내', date: '2025.04.10', category: '기타' },
-    { id: 17, title: '신규 회원 가입 혜택 안내', date: '2025.04.05', category: '공지' },
-    { id: 18, title: '연수 수료증 발급 절차 변경 안내', date: '2025.04.01', category: '안내' },
-    { id: 19, title: '교육 콘텐츠 품질 향상을 위한 설문조사 참여 안내', date: '2025.03.28', category: '기타' },
-    { id: 20, title: '2025년 봄학기 연수 과정 안내', date: '2025.03.25', category: '공지' },
-    { id: 21, title: '결제 시스템 업데이트 안내', date: '2025.03.20', category: '안내' },
-    { id: 22, title: '교육 전문가 초청 특강 안내', date: '2025.03.15', category: '공지' },
-    { id: 23, title: '학습자 커뮤니티 오픈 안내', date: '2025.03.10', category: '안내' },
-    { id: 24, title: '연수 플랫폼 이용 만족도 조사 결과 발표', date: '2025.03.05', category: '기타' },
-    { id: 25, title: '2025년 교육 정책 설명회 개최 안내', date: '2025.03.01', category: '공지' }
+    {
+      id: 1,
+      title: "2025년 하계 연수 일정 안내",
+      date: "2025.06.15",
+      category: "공지",
+    },
+    {
+      id: 2,
+      title: "교육부 인정 연수 과정 업데이트 안내",
+      date: "2025.06.10",
+      category: "안내",
+    },
+    {
+      id: 3,
+      title: "연수 플랫폼 서비스 개선 안내",
+      date: "2025.06.05",
+      category: "공지",
+    },
+    {
+      id: 4,
+      title: "하계 학회 참가 신청 마감 연장",
+      date: "2025.06.01",
+      category: "안내",
+    },
+    {
+      id: 5,
+      title: "2025년 교원 자격 연수 신청 안내",
+      date: "2025.05.28",
+      category: "공지",
+    },
+    {
+      id: 6,
+      title: "플랫폼 이용 가이드 업데이트 안내",
+      date: "2025.05.25",
+      category: "안내",
+    },
+    {
+      id: 7,
+      title: "교육부 주관 세미나 참가자 모집",
+      date: "2025.05.20",
+      category: "공지",
+    },
+    {
+      id: 8,
+      title: "온라인 연수 신규 과정 오픈 안내",
+      date: "2025.05.15",
+      category: "안내",
+    },
+    {
+      id: 9,
+      title: "시스템 점검에 따른 서비스 일시 중단 안내",
+      date: "2025.05.10",
+      category: "공지",
+    },
+    {
+      id: 10,
+      title: "교육 연구 공모전 참가자 모집",
+      date: "2025.05.05",
+      category: "기타",
+    },
+    {
+      id: 11,
+      title: "2025년 2학기 학점 인정 연수 안내",
+      date: "2025.05.01",
+      category: "공지",
+    },
+    {
+      id: 12,
+      title: "교육 콘텐츠 개발자 모집 공고",
+      date: "2025.04.28",
+      category: "기타",
+    },
+    {
+      id: 13,
+      title: "교원 평가 관련 워크숍 개최 안내",
+      date: "2025.04.25",
+      category: "안내",
+    },
+    {
+      id: 14,
+      title: "연수 플랫폼 모바일 앱 출시 안내",
+      date: "2025.04.20",
+      category: "공지",
+    },
+    {
+      id: 15,
+      title: "교육 혁신 포럼 참가자 모집",
+      date: "2025.04.15",
+      category: "안내",
+    },
+    {
+      id: 16,
+      title: "2025년 교육 트렌드 보고서 발간 안내",
+      date: "2025.04.10",
+      category: "기타",
+    },
+    {
+      id: 17,
+      title: "신규 회원 가입 혜택 안내",
+      date: "2025.04.05",
+      category: "공지",
+    },
+    {
+      id: 18,
+      title: "연수 수료증 발급 절차 변경 안내",
+      date: "2025.04.01",
+      category: "안내",
+    },
+    {
+      id: 19,
+      title: "교육 콘텐츠 품질 향상을 위한 설문조사 참여 안내",
+      date: "2025.03.28",
+      category: "기타",
+    },
+    {
+      id: 20,
+      title: "2025년 봄학기 연수 과정 안내",
+      date: "2025.03.25",
+      category: "공지",
+    },
+    {
+      id: 21,
+      title: "결제 시스템 업데이트 안내",
+      date: "2025.03.20",
+      category: "안내",
+    },
+    {
+      id: 22,
+      title: "교육 전문가 초청 특강 안내",
+      date: "2025.03.15",
+      category: "공지",
+    },
+    {
+      id: 23,
+      title: "학습자 커뮤니티 오픈 안내",
+      date: "2025.03.10",
+      category: "안내",
+    },
+    {
+      id: 24,
+      title: "연수 플랫폼 이용 만족도 조사 결과 발표",
+      date: "2025.03.05",
+      category: "기타",
+    },
+    {
+      id: 25,
+      title: "2025년 교육 정책 설명회 개최 안내",
+      date: "2025.03.01",
+      category: "공지",
+    },
   ]);
 
   const itemsPerPage = 10;
-  const filteredNotices = notices.filter(notice => {
-    const matchesCategory = activeCategory === '전체' || notice.category === activeCategory;
-    const matchesSearch = notice.title.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredNotices = notices.filter((notice) => {
+    const matchesCategory =
+      activeCategory === "전체" || notice.category === activeCategory;
+    const matchesSearch = notice.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   const totalPages = Math.ceil(filteredNotices.length / itemsPerPage);
   const currentNotices = filteredNotices.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   useEffect(() => {
@@ -66,7 +202,7 @@ const AllAnnouncementsPage: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleEdit = (id: number, currentTitle: string) => {
@@ -75,44 +211,47 @@ const AllAnnouncementsPage: React.FC = () => {
   };
 
   const handleSaveEdit = (id: number) => {
-    setNotices(prev => 
-      prev.map(notice => 
-        notice.id === id ? { ...notice, title: editTitle } : notice
-      )
+    setNotices((prev) =>
+      prev.map((notice) =>
+        notice.id === id ? { ...notice, title: editTitle } : notice,
+      ),
     );
     setIsEditing(null);
-    setEditTitle('');
+    setEditTitle("");
   };
 
   const handleCancelEdit = () => {
     setIsEditing(null);
-    setEditTitle('');
+    setEditTitle("");
   };
 
   const handleAddNotice = () => {
-    const newId = Math.max(...notices.map(n => n.id)) + 1;
+    const newId = Math.max(...notices.map((n) => n.id)) + 1;
     const newNotice: Notice = {
       id: newId,
-      title: '새 공지사항',
-      date: new Date().toLocaleDateString('ko-KR', { 
-        year: 'numeric', 
-        month: '2-digit', 
-        day: '2-digit' 
-      }).replace(/\. /g, '.').replace('.', ''),
-      category: '공지'
+      title: "새 공지사항",
+      date: new Date()
+        .toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\. /g, ".")
+        .replace(".", ""),
+      category: "공지",
     };
-    setNotices(prev => [newNotice, ...prev]);
+    setNotices((prev) => [newNotice, ...prev]);
     setIsEditing(newId);
-    setEditTitle('새 공지사항');
+    setEditTitle("새 공지사항");
   };
 
   const handleDelete = (id: number) => {
-    if (confirm('정말 삭제하시겠습니까?')) {
-      setNotices(prev => prev.filter(notice => notice.id !== id));
+    if (confirm("정말 삭제하시겠습니까?")) {
+      setNotices((prev) => prev.filter((notice) => notice.id !== id));
     }
   };
 
-  const categories = ['전체', '공지', '안내', '기타'];
+  const categories = ["전체", "공지", "안내", "기타"];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -123,11 +262,30 @@ const AllAnnouncementsPage: React.FC = () => {
             <div className="flex items-center space-x-8">
               <h1 className="text-2xl font-bold text-blue-600">에듀플랫폼</h1>
               <nav className="hidden md:flex space-x-6">
-                <a href="/" className="text-gray-600 hover:text-blue-600">홈</a>
-                <a href="/training" className="text-gray-600 hover:text-blue-600">연수 프로그램</a>
-                <a href="/courses" className="text-gray-600 hover:text-blue-600">교육과정</a>
-                <a href="/seminars" className="text-gray-600 hover:text-blue-600">세미나</a>
-                <a href="/notices" className="text-blue-600 font-medium">공지사항</a>
+                <a href="/" className="text-gray-600 hover:text-blue-600">
+                  홈
+                </a>
+                <a
+                  href="/training"
+                  className="text-gray-600 hover:text-blue-600"
+                >
+                  연수 프로그램
+                </a>
+                <a
+                  href="/courses"
+                  className="text-gray-600 hover:text-blue-600"
+                >
+                  교육과정
+                </a>
+                <a
+                  href="/seminars"
+                  className="text-gray-600 hover:text-blue-600"
+                >
+                  세미나
+                </a>
+                <a href="/notices" className="text-blue-600 font-medium">
+                  공지사항
+                </a>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
@@ -142,7 +300,9 @@ const AllAnnouncementsPage: React.FC = () => {
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-4">공지사항</h2>
-          <p className="text-xl mb-8">최신 소식과 중요한 안내사항을 확인하세요</p>
+          <p className="text-xl mb-8">
+            최신 소식과 중요한 안내사항을 확인하세요
+          </p>
         </div>
       </section>
 
@@ -160,14 +320,20 @@ const AllAnnouncementsPage: React.FC = () => {
                 className="w-full"
               />
             </div>
-            <Button onClick={handleAddNotice} className="bg-blue-600 hover:bg-blue-700">
-              <i className="fas fa-plus mr-2"></i>
-              새 공지 작성
+            <Button
+              onClick={handleAddNotice}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <i className="fas fa-plus mr-2"></i>새 공지 작성
             </Button>
           </div>
 
           {/* Category Tabs */}
-          <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+          <Tabs
+            value={activeCategory}
+            onValueChange={setActiveCategory}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-4">
               {categories.map((category) => (
                 <TabsTrigger key={category} value={category}>
@@ -201,15 +367,21 @@ const AllAnnouncementsPage: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
-                        <Badge 
-                          variant={notice.category === '공지' ? 'default' : 'secondary'}
-                          className={notice.category === '공지' ? 'bg-blue-600' : ''}
+                        <Badge
+                          variant={
+                            notice.category === "공지" ? "default" : "secondary"
+                          }
+                          className={
+                            notice.category === "공지" ? "bg-blue-600" : ""
+                          }
                         >
                           {notice.category}
                         </Badge>
-                        <span className="text-sm text-gray-500">{notice.date}</span>
+                        <span className="text-sm text-gray-500">
+                          {notice.date}
+                        </span>
                       </div>
-                      
+
                       {isEditing === notice.id ? (
                         <div className="flex items-center space-x-2">
                           <Input
@@ -217,7 +389,7 @@ const AllAnnouncementsPage: React.FC = () => {
                             onChange={(e) => setEditTitle(e.target.value)}
                             className="flex-1"
                             onKeyPress={(e) => {
-                              if (e.key === 'Enter') {
+                              if (e.key === "Enter") {
                                 handleSaveEdit(notice.id);
                               }
                             }}
@@ -242,7 +414,7 @@ const AllAnnouncementsPage: React.FC = () => {
                         </h4>
                       )}
                     </div>
-                    
+
                     <div className="flex items-center space-x-2 ml-4">
                       {isEditing !== notice.id && (
                         <>
@@ -289,12 +461,18 @@ const AllAnnouncementsPage: React.FC = () => {
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                      className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    <PaginationPrevious
+                      onClick={() =>
+                        currentPage > 1 && handlePageChange(currentPage - 1)
+                      }
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
                     />
                   </PaginationItem>
-                  
+
                   {[...Array(Math.min(5, totalPages))].map((_, i) => {
                     const pageNum = i + 1;
                     return (
@@ -309,7 +487,7 @@ const AllAnnouncementsPage: React.FC = () => {
                       </PaginationItem>
                     );
                   })}
-                  
+
                   {totalPages > 5 && (
                     <>
                       <PaginationItem>
@@ -326,11 +504,18 @@ const AllAnnouncementsPage: React.FC = () => {
                       </PaginationItem>
                     </>
                   )}
-                  
+
                   <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-                      className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    <PaginationNext
+                      onClick={() =>
+                        currentPage < totalPages &&
+                        handlePageChange(currentPage + 1)
+                      }
+                      className={
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
                     />
                   </PaginationItem>
                 </PaginationContent>
@@ -374,14 +559,28 @@ const AllAnnouncementsPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h4 className="font-semibold mb-4">에듀플랫폼</h4>
-              <p className="text-gray-400">전문적인 교육 서비스를 제공하는 온라인 플랫폼입니다.</p>
+              <p className="text-gray-400">
+                전문적인 교육 서비스를 제공하는 온라인 플랫폼입니다.
+              </p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">바로가기</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="/courses" className="hover:text-white">교육과정</a></li>
-                <li><a href="/seminars" className="hover:text-white">세미나</a></li>
-                <li><a href="/notices" className="hover:text-white">공지사항</a></li>
+                <li>
+                  <a href="/courses" className="hover:text-white">
+                    교육과정
+                  </a>
+                </li>
+                <li>
+                  <a href="/seminars" className="hover:text-white">
+                    세미나
+                  </a>
+                </li>
+                <li>
+                  <a href="/notices" className="hover:text-white">
+                    공지사항
+                  </a>
+                </li>
               </ul>
             </div>
             <div>

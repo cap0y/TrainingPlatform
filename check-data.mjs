@@ -15,7 +15,7 @@ const client = new Client({
 async function checkData() {
   try {
     await client.connect();
-    
+
     // 수강 정보 조회
     console.log('=== 수강 정보 ===');
     const enrollment = await client.query('SELECT * FROM enrollments WHERE id = 5');

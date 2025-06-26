@@ -64,7 +64,12 @@
     font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Noto Sans KR', sans-serif;
     font-weight: 600;
   }
@@ -122,21 +127,65 @@
   }
 
   @keyframes slide {
-    0% { transform: translateX(0); }
-    10% { transform: translateX(0); }
-    15% { transform: translateX(-100%); }
-    25% { transform: translateX(-100%); }
-    30% { transform: translateX(-200%); }
-    40% { transform: translateX(-200%); }
-    45% { transform: translateX(-300%); }
-    55% { transform: translateX(-300%); }
-    60% { transform: translateX(-400%); }
-    70% { transform: translateX(-400%); }
-    75% { transform: translateX(-500%); }
-    85% { transform: translateX(-500%); }
-    90% { transform: translateX(-600%); }
-    95% { transform: translateX(-600%); }
-    100% { transform: translateX(-700%); }
+    0% {
+      transform: translateX(0);
+    }
+
+    10% {
+      transform: translateX(0);
+    }
+
+    15% {
+      transform: translateX(-100%);
+    }
+
+    25% {
+      transform: translateX(-100%);
+    }
+
+    30% {
+      transform: translateX(-200%);
+    }
+
+    40% {
+      transform: translateX(-200%);
+    }
+
+    45% {
+      transform: translateX(-300%);
+    }
+
+    55% {
+      transform: translateX(-300%);
+    }
+
+    60% {
+      transform: translateX(-400%);
+    }
+
+    70% {
+      transform: translateX(-400%);
+    }
+
+    75% {
+      transform: translateX(-500%);
+    }
+
+    85% {
+      transform: translateX(-500%);
+    }
+
+    90% {
+      transform: translateX(-600%);
+    }
+
+    95% {
+      transform: translateX(-600%);
+    }
+
+    100% {
+      transform: translateX(-700%);
+    }
   }
 
   .animate-slide {
@@ -149,6 +198,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -183,6 +233,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -198,6 +249,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 interface VideoPlayerProps {
   src: string;
@@ -6,7 +6,11 @@ interface VideoPlayerProps {
   onProgress: (progress: number) => void;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, title, onProgress }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  src,
+  title,
+  onProgress,
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [progress, setProgress] = useState(0);
 
@@ -20,10 +24,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, title, onProgress }) => 
       onProgress(currentProgress);
     };
 
-    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener("timeupdate", handleTimeUpdate);
     };
   }, [onProgress]);
 
@@ -52,4 +56,4 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, title, onProgress }) => 
   );
 };
 
-export default VideoPlayer; 
+export default VideoPlayer;

@@ -1,17 +1,49 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
 } from "recharts";
 import {
-  TrendingUp, TrendingDown, Users, BookOpen, DollarSign, 
-  Award, Target, Calendar, BarChart3
+  TrendingUp,
+  TrendingDown,
+  Users,
+  BookOpen,
+  DollarSign,
+  Award,
+  Target,
+  Calendar,
+  BarChart3,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -57,12 +89,19 @@ interface AnalyticsData {
   };
 }
 
-const COLORS = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
+const COLORS = [
+  "#3B82F6",
+  "#EF4444",
+  "#10B981",
+  "#F59E0B",
+  "#8B5CF6",
+  "#EC4899",
+];
 
 export default function AnalyticsDashboard({ user }: AnalyticsProps) {
   const [timeRange, setTimeRange] = useState("12months");
   const { toast } = useToast();
-  
+
   // 분석 데이터 조회
   const { data: analyticsData, isLoading } = useQuery<AnalyticsData>({
     queryKey: [`/api/business/analytics/${user?.id}`, user?.id, timeRange],
@@ -70,15 +109,15 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
   });
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ko-KR', {
-      style: 'currency',
-      currency: 'KRW',
+    return new Intl.NumberFormat("ko-KR", {
+      style: "currency",
+      currency: "KRW",
       minimumFractionDigits: 0,
     }).format(amount);
   };
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('ko-KR').format(num);
+    return new Intl.NumberFormat("ko-KR").format(num);
   };
 
   if (isLoading) {
@@ -98,9 +137,12 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
         <Card>
           <CardContent className="text-center py-8">
             <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">분석 데이터 없음</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              분석 데이터 없음
+            </h3>
             <p className="text-gray-500">
-              아직 분석할 수 있는 데이터가 없습니다.<br />
+              아직 분석할 수 있는 데이터가 없습니다.
+              <br />
               강의를 등록하고 수강생이 생기면 통계를 확인할 수 있습니다.
             </p>
           </CardContent>
@@ -109,15 +151,25 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
     );
   }
 
-  const { monthlyData, courseStats, categoryStats, topPerformingCourses, summary } = analyticsData;
+  const {
+    monthlyData,
+    courseStats,
+    categoryStats,
+    topPerformingCourses,
+    summary,
+  } = analyticsData;
 
   return (
     <div className="space-y-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">매출 및 수강 통계</h2>
-          <p className="text-gray-600">기관의 성과와 트렌드를 한눈에 확인하세요</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            매출 및 수강 통계
+          </h2>
+          <p className="text-gray-600">
+            기관의 성과와 트렌드를 한눈에 확인하세요
+          </p>
         </div>
         <div className="flex items-center gap-4">
           <Select value={timeRange} onValueChange={setTimeRange}>
@@ -141,17 +193,23 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(summary.totalEnrollments)}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(summary.totalEnrollments)}
+            </div>
             <div className="flex items-center text-xs text-muted-foreground">
               {summary.thisMonthGrowth > 0 ? (
                 <>
                   <TrendingUp className="h-3 w-3 mr-1 text-green-600" />
-                  <span className="text-green-600">+{summary.thisMonthGrowth}%</span>
+                  <span className="text-green-600">
+                    +{summary.thisMonthGrowth}%
+                  </span>
                 </>
               ) : summary.thisMonthGrowth < 0 ? (
                 <>
                   <TrendingDown className="h-3 w-3 mr-1 text-red-600" />
-                  <span className="text-red-600">{summary.thisMonthGrowth}%</span>
+                  <span className="text-red-600">
+                    {summary.thisMonthGrowth}%
+                  </span>
                 </>
               ) : (
                 <span>변화 없음</span>
@@ -167,7 +225,9 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(summary.totalRevenue)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(summary.totalRevenue)}
+            </div>
             <p className="text-xs text-muted-foreground">누적 매출액</p>
           </CardContent>
         </Card>
@@ -178,7 +238,9 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(summary.totalCourses)}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(summary.totalCourses)}
+            </div>
             <p className="text-xs text-muted-foreground">등록된 강의 수</p>
           </CardContent>
         </Card>
@@ -189,7 +251,9 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(summary.averageEnrollmentPerCourse)}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(summary.averageEnrollmentPerCourse)}
+            </div>
             <p className="text-xs text-muted-foreground">강의당 평균</p>
           </CardContent>
         </Card>
@@ -201,9 +265,13 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {summary.totalEnrollments > 100 ? "A+" : 
-               summary.totalEnrollments > 50 ? "A" : 
-               summary.totalEnrollments > 20 ? "B" : "C"}
+              {summary.totalEnrollments > 100
+                ? "A+"
+                : summary.totalEnrollments > 50
+                  ? "A"
+                  : summary.totalEnrollments > 20
+                    ? "B"
+                    : "C"}
             </div>
             <p className="text-xs text-muted-foreground">전체 등급</p>
           </CardContent>
@@ -226,7 +294,9 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
             <Card>
               <CardHeader>
                 <CardTitle>월별 수강생 추이</CardTitle>
-                <CardDescription>최근 12개월간 수강생 등록 현황</CardDescription>
+                <CardDescription>
+                  최근 12개월간 수강생 등록 현황
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -234,16 +304,16 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value, name) => [
-                        `${formatNumber(value as number)}명`, 
-                        name === 'enrollments' ? '수강생' : '매출'
+                        `${formatNumber(value as number)}명`,
+                        name === "enrollments" ? "수강생" : "매출",
                       ]}
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="enrollments" 
-                      stroke="#3B82F6" 
+                    <Area
+                      type="monotone"
+                      dataKey="enrollments"
+                      stroke="#3B82F6"
                       fill="#3B82F6"
                       fillOpacity={0.3}
                     />
@@ -260,15 +330,23 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <BarChart
+                    data={monthlyData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
-                    <YAxis 
-                      tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+                    <YAxis
+                      tickFormatter={(value) =>
+                        `${(value / 1000000).toFixed(1)}M`
+                      }
                       width={80}
                     />
-                    <Tooltip 
-                      formatter={(value) => [formatCurrency(value as number), '매출']}
+                    <Tooltip
+                      formatter={(value) => [
+                        formatCurrency(value as number),
+                        "매출",
+                      ]}
                     />
                     <Bar dataKey="revenue" fill="#10B981" />
                   </BarChart>
@@ -285,30 +363,51 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <LineChart
+                  data={monthlyData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis yAxisId="left" width={60} />
-                  <YAxis 
-                    yAxisId="right" 
-                    orientation="right" 
-                    tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    tickFormatter={(value) =>
+                      `${(value / 1000000).toFixed(1)}M`
+                    }
                     width={80}
                   />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
-                      name === 'enrollments' ? `${formatNumber(value as number)}명` : formatCurrency(value as number),
-                      name === 'enrollments' ? '수강생' : '매출'
+                      name === "enrollments"
+                        ? `${formatNumber(value as number)}명`
+                        : formatCurrency(value as number),
+                      name === "enrollments" ? "수강생" : "매출",
                     ]}
                   />
-                  <Legend 
+                  <Legend
                     payload={[
-                      { value: '수강생', type: 'line', color: '#3B82F6' },
-                      { value: '매출', type: 'line', color: '#10B981' }
+                      { value: "수강생", type: "line", color: "#3B82F6" },
+                      { value: "매출", type: "line", color: "#10B981" },
                     ]}
                   />
-                  <Line yAxisId="left" type="monotone" dataKey="enrollments" stroke="#3B82F6" strokeWidth={2} name="수강생" />
-                  <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={2} name="매출" />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="enrollments"
+                    stroke="#3B82F6"
+                    strokeWidth={2}
+                    name="수강생"
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    name="매출"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -320,38 +419,58 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
           <Card>
             <CardHeader>
               <CardTitle>강의별 상세 성과</CardTitle>
-              <CardDescription>각 강의의 수강생, 매출, 완료율 분석</CardDescription>
+              <CardDescription>
+                각 강의의 수강생, 매출, 완료율 분석
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {courseStats.slice(0, 10).map((course, index) => (
-                  <div key={course.courseId} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={course.courseId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-500">#{index + 1}</span>
+                        <span className="text-sm text-gray-500">
+                          #{index + 1}
+                        </span>
                         <div>
                           <h4 className="font-medium">{course.title}</h4>
-                          <p className="text-sm text-gray-600">{course.category}</p>
+                          <p className="text-sm text-gray-600">
+                            {course.category}
+                          </p>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-6">
                       <div className="text-center">
-                        <div className="text-lg font-semibold text-blue-600">{formatNumber(course.enrollments)}</div>
+                        <div className="text-lg font-semibold text-blue-600">
+                          {formatNumber(course.enrollments)}
+                        </div>
                         <div className="text-xs text-gray-500">수강생</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-lg font-semibold text-green-600">{formatCurrency(course.revenue)}</div>
+                        <div className="text-lg font-semibold text-green-600">
+                          {formatCurrency(course.revenue)}
+                        </div>
                         <div className="text-xs text-gray-500">매출</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-lg font-semibold text-purple-600">{course.completionRate}%</div>
+                        <div className="text-lg font-semibold text-purple-600">
+                          {course.completionRate}%
+                        </div>
                         <div className="text-xs text-gray-500">완료율</div>
                       </div>
                       <div className="text-center">
                         <div className="flex items-center">
                           {[...Array(5)].map((_, i) => (
-                            <span key={i} className={`text-xs ${i < Math.floor(course.averageRating) ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
+                            <span
+                              key={i}
+                              className={`text-xs ${i < Math.floor(course.averageRating) ? "text-yellow-400" : "text-gray-300"}`}
+                            >
+                              ★
+                            </span>
                           ))}
                         </div>
                         <div className="text-xs text-gray-500">평점</div>
@@ -381,7 +500,7 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ category, enrollments, percent }) => 
+                      label={({ category, enrollments, percent }) =>
                         `${category}\n${enrollments}명 (${(percent * 100).toFixed(1)}%)`
                       }
                       outerRadius={60}
@@ -390,10 +509,18 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
                       fontSize={11}
                     >
                       {categoryStats.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => [`${formatNumber(value as number)}명`, '수강생']} />
+                    <Tooltip
+                      formatter={(value) => [
+                        `${formatNumber(value as number)}명`,
+                        "수강생",
+                      ]}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -413,7 +540,7 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ category, revenue, percent }) => 
+                      label={({ category, revenue, percent }) =>
                         `${category}\n${formatCurrency(revenue)} (${(percent * 100).toFixed(1)}%)`
                       }
                       outerRadius={60}
@@ -422,10 +549,18 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
                       fontSize={11}
                     >
                       {categoryStats.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => [formatCurrency(value as number), '매출']} />
+                    <Tooltip
+                      formatter={(value) => [
+                        formatCurrency(value as number),
+                        "매출",
+                      ]}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -440,30 +575,46 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categoryStats.map((category, index) => (
-                  <div key={category.category} className="p-4 border rounded-lg">
+                  <div
+                    key={category.category}
+                    className="p-4 border rounded-lg"
+                  >
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-medium">{category.category}</h4>
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{
+                          backgroundColor: COLORS[index % COLORS.length],
+                        }}
                       />
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">강의 수</span>
-                        <span className="font-medium">{category.courses}개</span>
+                        <span className="font-medium">
+                          {category.courses}개
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">수강생</span>
-                        <span className="font-medium">{formatNumber(category.enrollments)}명</span>
+                        <span className="font-medium">
+                          {formatNumber(category.enrollments)}명
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">매출</span>
-                        <span className="font-medium">{formatCurrency(category.revenue)}</span>
+                        <span className="font-medium">
+                          {formatCurrency(category.revenue)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">강의당 평균</span>
-                        <span className="font-medium">{Math.round(category.enrollments / category.courses)}명</span>
+                        <span className="text-sm text-gray-600">
+                          강의당 평균
+                        </span>
+                        <span className="font-medium">
+                          {Math.round(category.enrollments / category.courses)}
+                          명
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -485,22 +636,37 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
               <CardContent>
                 <div className="space-y-4">
                   {topPerformingCourses.map((course, index) => (
-                    <div key={course.courseId} className="flex items-center justify-between">
+                    <div
+                      key={course.courseId}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold ${
-                          index === 0 ? 'bg-yellow-500' : 
-                          index === 1 ? 'bg-gray-400' : 
-                          index === 2 ? 'bg-amber-600' : 'bg-blue-500'
-                        }`}>
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold ${
+                            index === 0
+                              ? "bg-yellow-500"
+                              : index === 1
+                                ? "bg-gray-400"
+                                : index === 2
+                                  ? "bg-amber-600"
+                                  : "bg-blue-500"
+                          }`}
+                        >
                           {index + 1}
                         </div>
                         <div>
-                          <h4 className="font-medium text-sm">{course.title}</h4>
+                          <h4 className="font-medium text-sm">
+                            {course.title}
+                          </h4>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-blue-600">{formatNumber(course.enrollments)}명</div>
-                        <div className="text-xs text-gray-500">{formatCurrency(course.revenue)}</div>
+                        <div className="font-semibold text-blue-600">
+                          {formatNumber(course.enrollments)}명
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {formatCurrency(course.revenue)}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -520,25 +686,40 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
                     .sort((a, b) => b.revenue - a.revenue)
                     .slice(0, 5)
                     .map((course, index) => (
-                    <div key={course.courseId} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold ${
-                          index === 0 ? 'bg-green-500' : 
-                          index === 1 ? 'bg-emerald-400' : 
-                          index === 2 ? 'bg-teal-600' : 'bg-cyan-500'
-                        }`}>
-                          {index + 1}
+                      <div
+                        key={course.courseId}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold ${
+                              index === 0
+                                ? "bg-green-500"
+                                : index === 1
+                                  ? "bg-emerald-400"
+                                  : index === 2
+                                    ? "bg-teal-600"
+                                    : "bg-cyan-500"
+                            }`}
+                          >
+                            {index + 1}
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm">
+                              {course.title}
+                            </h4>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-medium text-sm">{course.title}</h4>
+                        <div className="text-right">
+                          <div className="font-semibold text-green-600">
+                            {formatCurrency(course.revenue)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {formatNumber(course.enrollments)}명
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-semibold text-green-600">{formatCurrency(course.revenue)}</div>
-                        <div className="text-xs text-gray-500">{formatNumber(course.enrollments)}명</div>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </CardContent>
             </Card>
@@ -552,31 +733,48 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={courseStats.slice(0, 10)} margin={{ top: 20, right: 30, left: 20, bottom: 100 }}>
+                <BarChart
+                  data={courseStats.slice(0, 10)}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="title" 
+                  <XAxis
+                    dataKey="title"
                     angle={-45}
                     textAnchor="end"
                     height={100}
                     fontSize={12}
                   />
                   <YAxis yAxisId="left" width={60} />
-                  <YAxis 
-                    yAxisId="right" 
-                    orientation="right" 
-                    tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    tickFormatter={(value) =>
+                      `${(value / 1000000).toFixed(1)}M`
+                    }
                     width={80}
                   />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
-                      name === 'enrollments' ? `${formatNumber(value as number)}명` : formatCurrency(value as number),
-                      name === 'enrollments' ? '수강생' : '매출'
+                      name === "enrollments"
+                        ? `${formatNumber(value as number)}명`
+                        : formatCurrency(value as number),
+                      name === "enrollments" ? "수강생" : "매출",
                     ]}
                   />
                   <Legend />
-                  <Bar yAxisId="left" dataKey="enrollments" fill="#3B82F6" name="수강생" />
-                  <Bar yAxisId="right" dataKey="revenue" fill="#10B981" name="매출" />
+                  <Bar
+                    yAxisId="left"
+                    dataKey="enrollments"
+                    fill="#3B82F6"
+                    name="수강생"
+                  />
+                  <Bar
+                    yAxisId="right"
+                    dataKey="revenue"
+                    fill="#10B981"
+                    name="매출"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -585,4 +783,4 @@ export default function AnalyticsDashboard({ user }: AnalyticsProps) {
       </Tabs>
     </div>
   );
-} 
+}

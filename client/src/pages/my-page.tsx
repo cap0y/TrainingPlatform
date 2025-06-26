@@ -12,8 +12,23 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { BookOpen, Calendar, CreditCard, User, Settings, Award, Clock, CheckCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  BookOpen,
+  Calendar,
+  CreditCard,
+  User,
+  Settings,
+  Award,
+  Clock,
+  CheckCircle,
+} from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -82,11 +97,11 @@ export default function MyPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'enrolled':
+      case "enrolled":
         return <Badge className="bg-blue-500">수강중</Badge>;
-      case 'completed':
+      case "completed":
         return <Badge className="bg-green-500">수료</Badge>;
-      case 'cancelled':
+      case "cancelled":
         return <Badge variant="secondary">취소</Badge>;
       default:
         return <Badge variant="outline">대기</Badge>;
@@ -95,11 +110,11 @@ export default function MyPage() {
 
   const getPaymentStatusBadge = (status: string) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return <Badge className="bg-green-500">완료</Badge>;
-      case 'pending':
+      case "pending":
         return <Badge className="bg-yellow-500">대기</Badge>;
-      case 'failed':
+      case "failed":
         return <Badge variant="destructive">실패</Badge>;
       default:
         return <Badge variant="outline">알 수 없음</Badge>;
@@ -107,13 +122,18 @@ export default function MyPage() {
   };
 
   const calculateStats = () => {
-    if (!enrollments) return { total: 0, completed: 0, inProgress: 0, totalCredits: 0 };
-    
+    if (!enrollments)
+      return { total: 0, completed: 0, inProgress: 0, totalCredits: 0 };
+
     const total = enrollments.length;
-    const completed = enrollments.filter(e => e.status === 'completed').length;
-    const inProgress = enrollments.filter(e => e.status === 'enrolled').length;
+    const completed = enrollments.filter(
+      (e) => e.status === "completed",
+    ).length;
+    const inProgress = enrollments.filter(
+      (e) => e.status === "enrolled",
+    ).length;
     const totalCredits = enrollments
-      .filter(e => e.status === 'completed')
+      .filter((e) => e.status === "completed")
       .reduce((sum, e) => sum + (e.course?.credit || 0), 0);
 
     return { total, completed, inProgress, totalCredits };
@@ -124,24 +144,26 @@ export default function MyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         {/* Profile Header */}
         <div className="bg-gradient-to-r from-primary to-secondary text-white rounded-2xl p-8 mb-8">
           <div className="flex items-center space-x-6">
             <Avatar className="h-20 w-20">
               <AvatarFallback className="text-2xl bg-white text-primary">
-                {user?.name?.charAt(0) || 'U'}
+                {user?.name?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">{user?.name || '사용자'}님</h1>
+              <h1 className="text-3xl font-bold mb-2">
+                {user?.name || "사용자"}님
+              </h1>
               <p className="text-blue-100 mb-4">{user?.email}</p>
               <div className="flex space-x-6 text-sm">
                 <div>
                   <span className="text-blue-200">가입 유형</span>
                   <div className="font-medium">
-                    {user?.userType === 'individual' ? '개인회원' : '기관회원'}
+                    {user?.userType === "individual" ? "개인회원" : "기관회원"}
                   </div>
                 </div>
                 <div>
@@ -154,7 +176,10 @@ export default function MyPage() {
                 </div>
               </div>
             </div>
-            <Button variant="secondary" onClick={() => setShowProfileDialog(true)}>
+            <Button
+              variant="secondary"
+              onClick={() => setShowProfileDialog(true)}
+            >
               프로필 수정
             </Button>
           </div>
@@ -162,23 +187,38 @@ export default function MyPage() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="dashboard" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="dashboard"
+              className="flex items-center space-x-2"
+            >
               <User className="h-4 w-4" />
               <span>대시보드</span>
             </TabsTrigger>
-            <TabsTrigger value="courses" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="courses"
+              className="flex items-center space-x-2"
+            >
               <BookOpen className="h-4 w-4" />
               <span>수강 과정</span>
             </TabsTrigger>
-            <TabsTrigger value="certificates" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="certificates"
+              className="flex items-center space-x-2"
+            >
               <Award className="h-4 w-4" />
               <span>수료증</span>
             </TabsTrigger>
-            <TabsTrigger value="payments" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="payments"
+              className="flex items-center space-x-2"
+            >
               <CreditCard className="h-4 w-4" />
               <span>결제 내역</span>
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="settings"
+              className="flex items-center space-x-2"
+            >
               <Settings className="h-4 w-4" />
               <span>설정</span>
             </TabsTrigger>
@@ -189,12 +229,16 @@ export default function MyPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">총 수강 과정</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    총 수강 과정
+                  </CardTitle>
                   <BookOpen className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.total}</div>
-                  <p className="text-xs text-muted-foreground">누적 수강 과정</p>
+                  <p className="text-xs text-muted-foreground">
+                    누적 수강 과정
+                  </p>
                 </CardContent>
               </Card>
 
@@ -204,29 +248,39 @@ export default function MyPage() {
                   <Clock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {stats.inProgress}
+                  </div>
                   <p className="text-xs text-muted-foreground">진행중인 과정</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">수료 완료</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    수료 완료
+                  </CardTitle>
                   <CheckCircle className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{stats.completed}</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {stats.completed}
+                  </div>
                   <p className="text-xs text-muted-foreground">완료된 과정</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">취득 학점</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    취득 학점
+                  </CardTitle>
                   <Award className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-purple-600">{stats.totalCredits}</div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {stats.totalCredits}
+                  </div>
                   <p className="text-xs text-muted-foreground">총 학점</p>
                 </CardContent>
               </Card>
@@ -240,24 +294,29 @@ export default function MyPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {enrollmentsLoading ? (
-                      Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="animate-pulse">
-                          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                        </div>
-                      ))
-                    ) : enrollments?.slice(0, 3).map((enrollment) => (
-                      <div key={enrollment.id} className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">{enrollment.course?.title}</p>
-                          <p className="text-sm text-gray-500">
-                            진행률: {enrollment.progress || 0}%
-                          </p>
-                        </div>
-                        {getStatusBadge(enrollment.status)}
-                      </div>
-                    ))}
+                    {enrollmentsLoading
+                      ? Array.from({ length: 3 }).map((_, i) => (
+                          <div key={i} className="animate-pulse">
+                            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                          </div>
+                        ))
+                      : enrollments?.slice(0, 3).map((enrollment) => (
+                          <div
+                            key={enrollment.id}
+                            className="flex justify-between items-center"
+                          >
+                            <div>
+                              <p className="font-medium">
+                                {enrollment.course?.title}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                진행률: {enrollment.progress || 0}%
+                              </p>
+                            </div>
+                            {getStatusBadge(enrollment.status)}
+                          </div>
+                        ))}
                   </div>
                 </CardContent>
               </Card>
@@ -268,15 +327,25 @@ export default function MyPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {enrollments?.filter(e => e.status === 'enrolled').slice(0, 3).map((enrollment) => (
-                      <div key={enrollment.id}>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium">{enrollment.course?.title}</span>
-                          <span className="text-sm text-gray-500">{enrollment.progress || 0}%</span>
+                    {enrollments
+                      ?.filter((e) => e.status === "enrolled")
+                      .slice(0, 3)
+                      .map((enrollment) => (
+                        <div key={enrollment.id}>
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-medium">
+                              {enrollment.course?.title}
+                            </span>
+                            <span className="text-sm text-gray-500">
+                              {enrollment.progress || 0}%
+                            </span>
+                          </div>
+                          <Progress
+                            value={enrollment.progress || 0}
+                            className="h-2"
+                          />
                         </div>
-                        <Progress value={enrollment.progress || 0} className="h-2" />
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </CardContent>
               </Card>
@@ -293,7 +362,10 @@ export default function MyPage() {
                 {enrollmentsLoading ? (
                   <div className="space-y-4">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="border rounded-lg p-4 animate-pulse">
+                      <div
+                        key={i}
+                        className="border rounded-lg p-4 animate-pulse"
+                      >
                         <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                         <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
                         <div className="h-2 bg-gray-200 rounded w-full"></div>
@@ -304,38 +376,55 @@ export default function MyPage() {
                   <div className="text-center py-8">
                     <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500">수강 중인 과정이 없습니다.</p>
-                    <Button className="mt-4">
-                      과정 둘러보기
-                    </Button>
+                    <Button className="mt-4">과정 둘러보기</Button>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {enrollments?.map((enrollment) => (
-                      <div key={enrollment.id} className="border rounded-lg p-4">
+                      <div
+                        key={enrollment.id}
+                        className="border rounded-lg p-4"
+                      >
                         <div className="flex justify-between items-start mb-3">
                           <div>
-                            <h3 className="font-semibold text-lg">{enrollment.course?.title}</h3>
-                            <p className="text-sm text-gray-600">{enrollment.course?.category}</p>
+                            <h3 className="font-semibold text-lg">
+                              {enrollment.course?.title}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {enrollment.course?.category}
+                            </p>
                           </div>
                           {getStatusBadge(enrollment.status)}
                         </div>
-                        
+
                         <div className="flex justify-between items-center mb-3">
-                          <span className="text-sm text-gray-600">학습 진행률</span>
-                          <span className="text-sm font-medium">{enrollment.progress || 0}%</span>
+                          <span className="text-sm text-gray-600">
+                            학습 진행률
+                          </span>
+                          <span className="text-sm font-medium">
+                            {enrollment.progress || 0}%
+                          </span>
                         </div>
-                        <Progress value={enrollment.progress || 0} className="mb-3" />
-                        
+                        <Progress
+                          value={enrollment.progress || 0}
+                          className="mb-3"
+                        />
+
                         <div className="flex justify-between items-center">
                           <div className="text-sm text-gray-500">
-                            신청일: {new Date(enrollment.enrolledAt).toLocaleDateString('ko-KR')}
+                            신청일:{" "}
+                            {new Date(enrollment.enrolledAt).toLocaleDateString(
+                              "ko-KR",
+                            )}
                           </div>
                           <div className="space-x-2">
-                            {enrollment.status === 'enrolled' && (
+                            {enrollment.status === "enrolled" && (
                               <Button size="sm">학습하기</Button>
                             )}
-                            {enrollment.status === 'completed' && (
-                              <Button size="sm" variant="outline">수료증 보기</Button>
+                            {enrollment.status === "completed" && (
+                              <Button size="sm" variant="outline">
+                                수료증 보기
+                              </Button>
                             )}
                           </div>
                         </div>
@@ -355,18 +444,27 @@ export default function MyPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {enrollments?.filter(e => e.status === 'completed').map((enrollment) => (
-                    <Card key={enrollment.id} className="border-2 border-dashed border-gray-200 hover:border-primary transition-colors">
-                      <CardContent className="p-6 text-center">
-                        <Award className="h-12 w-12 text-primary mx-auto mb-4" />
-                        <h3 className="font-semibold mb-2">{enrollment.course?.title}</h3>
-                        <p className="text-sm text-gray-600 mb-4">{enrollment.course?.credit}학점</p>
-                        <Button size="sm" variant="outline">
-                          수료증 다운로드
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {enrollments
+                    ?.filter((e) => e.status === "completed")
+                    .map((enrollment) => (
+                      <Card
+                        key={enrollment.id}
+                        className="border-2 border-dashed border-gray-200 hover:border-primary transition-colors"
+                      >
+                        <CardContent className="p-6 text-center">
+                          <Award className="h-12 w-12 text-primary mx-auto mb-4" />
+                          <h3 className="font-semibold mb-2">
+                            {enrollment.course?.title}
+                          </h3>
+                          <p className="text-sm text-gray-600 mb-4">
+                            {enrollment.course?.credit}학점
+                          </p>
+                          <Button size="sm" variant="outline">
+                            수료증 다운로드
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
                 </div>
               </CardContent>
             </Card>
@@ -382,7 +480,10 @@ export default function MyPage() {
                 {paymentsLoading ? (
                   <div className="space-y-4">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="border rounded-lg p-4 animate-pulse">
+                      <div
+                        key={i}
+                        className="border rounded-lg p-4 animate-pulse"
+                      >
                         <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                         <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                       </div>
@@ -399,13 +500,19 @@ export default function MyPage() {
                       <div key={payment.id} className="border rounded-lg p-4">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="font-semibold">{payment.course?.title || '과정명 없음'}</h3>
+                            <h3 className="font-semibold">
+                              {payment.course?.title || "과정명 없음"}
+                            </h3>
                             <p className="text-sm text-gray-600">
-                              {new Date(payment.createdAt).toLocaleDateString('ko-KR')}
+                              {new Date(payment.createdAt).toLocaleDateString(
+                                "ko-KR",
+                              )}
                             </p>
                           </div>
                           <div className="text-right">
-                            <div className="font-semibold">{Number(payment.amount).toLocaleString()}원</div>
+                            <div className="font-semibold">
+                              {Number(payment.amount).toLocaleString()}원
+                            </div>
                             {getPaymentStatusBadge(payment.status)}
                           </div>
                         </div>
@@ -427,17 +534,21 @@ export default function MyPage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label>이름</Label>
-                    <Input value={user?.name || ''} disabled />
+                    <Input value={user?.name || ""} disabled />
                   </div>
                   <div>
                     <Label>이메일</Label>
-                    <Input value={user?.email || ''} disabled />
+                    <Input value={user?.email || ""} disabled />
                   </div>
                   <div>
                     <Label>회원 유형</Label>
-                    <Input 
-                      value={user?.userType === 'individual' ? '개인회원' : '기관회원'} 
-                      disabled 
+                    <Input
+                      value={
+                        user?.userType === "individual"
+                          ? "개인회원"
+                          : "기관회원"
+                      }
+                      disabled
                     />
                   </div>
                   <Button onClick={() => setShowProfileDialog(true)}>
@@ -482,7 +593,9 @@ export default function MyPage() {
               <Input
                 id="name"
                 value={profileForm.name}
-                onChange={(e) => setProfileForm(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((prev) => ({ ...prev, name: e.target.value }))
+                }
               />
             </div>
             <div>
@@ -491,7 +604,9 @@ export default function MyPage() {
                 id="email"
                 type="email"
                 value={profileForm.email}
-                onChange={(e) => setProfileForm(prev => ({ ...prev, email: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((prev) => ({ ...prev, email: e.target.value }))
+                }
               />
             </div>
             <div>
@@ -499,15 +614,20 @@ export default function MyPage() {
               <Input
                 id="phone"
                 value={profileForm.phone}
-                onChange={(e) => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((prev) => ({ ...prev, phone: e.target.value }))
+                }
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowProfileDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowProfileDialog(false)}
+            >
               취소
             </Button>
-            <Button 
+            <Button
               onClick={() => updateProfileMutation.mutate(profileForm)}
               disabled={updateProfileMutation.isPending}
             >

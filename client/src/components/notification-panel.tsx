@@ -14,7 +14,7 @@ export default function NotificationPanel({ onClose }: NotificationPanelProps) {
       title: "새로운 연수과정이 개설되었습니다",
       message: "AI 시대의 교육 혁신 과정이 8월 15일에 시작됩니다.",
       time: "2시간 전",
-      unread: true
+      unread: true,
     },
     {
       id: 2,
@@ -22,16 +22,17 @@ export default function NotificationPanel({ onClose }: NotificationPanelProps) {
       title: "세미나 신청 마감 안내",
       message: "디지털 교육혁신 컨퍼런스 신청이 내일 마감됩니다.",
       time: "1일 전",
-      unread: true
+      unread: true,
     },
     {
       id: 3,
       type: "system",
       title: "수료증 발급 완료",
-      message: "2025 교육과정 개정안 이해와 적용 과정의 수료증이 발급되었습니다.",
+      message:
+        "2025 교육과정 개정안 이해와 적용 과정의 수료증이 발급되었습니다.",
       time: "3일 전",
-      unread: false
-    }
+      unread: false,
+    },
   ];
 
   return (
@@ -76,9 +77,15 @@ export default function NotificationPanel({ onClose }: NotificationPanelProps) {
                     )}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-medium text-sm mb-1">{notification.title}</h4>
-                    <p className="text-sm text-gray-600 mb-2">{notification.message}</p>
-                    <span className="text-xs text-gray-400">{notification.time}</span>
+                    <h4 className="font-medium text-sm mb-1">
+                      {notification.title}
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {notification.message}
+                    </p>
+                    <span className="text-xs text-gray-400">
+                      {notification.time}
+                    </span>
                   </div>
                   {notification.unread && (
                     <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 mt-2"></div>

@@ -4,11 +4,24 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Star, Users, Clock, Calendar } from "lucide-react";
 import { Link } from "wouter";
 
@@ -27,7 +40,7 @@ export default function AllTrainingProgramsPage() {
   });
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
       page: 1,
@@ -35,7 +48,7 @@ export default function AllTrainingProgramsPage() {
   };
 
   const handlePageChange = (page: number) => {
-    setFilters(prev => ({ ...prev, page }));
+    setFilters((prev) => ({ ...prev, page }));
   };
 
   const totalPages = Math.ceil((programsData?.total || 0) / filters.limit);
@@ -43,12 +56,12 @@ export default function AllTrainingProgramsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-indigo-600 to-indigo-800 text-white py-16 overflow-hidden">
         <div className="absolute inset-0 opacity-20">
-          <img 
-            src="/uploads/images/793162f170a23aca2107c017272194c2_1750405130303.jpg" 
+          <img
+            src="/uploads/images/793162f170a23aca2107c017272194c2_1750405130303.jpg"
             alt="All Training Programs"
             className="w-full h-full object-cover"
           />
@@ -57,7 +70,8 @@ export default function AllTrainingProgramsPage() {
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">전체 연수 프로그램</h1>
             <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
-              모든 분야의 전문 연수 프로그램을 한 곳에서 찾아보세요. 체계적인 학습 과정으로 전문성을 향상시키실 수 있습니다.
+              모든 분야의 전문 연수 프로그램을 한 곳에서 찾아보세요. 체계적인
+              학습 과정으로 전문성을 향상시키실 수 있습니다.
             </p>
             <div className="text-lg font-medium">
               총 {programsData?.total || 0}개 프로그램
@@ -75,7 +89,12 @@ export default function AllTrainingProgramsPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   분야
                 </label>
-                <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
+                <Select
+                  value={filters.category}
+                  onValueChange={(value) =>
+                    handleFilterChange("category", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
@@ -96,7 +115,10 @@ export default function AllTrainingProgramsPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   프로그램 형태
                 </label>
-                <Select value={filters.type} onValueChange={(value) => handleFilterChange("type", value)}>
+                <Select
+                  value={filters.type}
+                  onValueChange={(value) => handleFilterChange("type", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
@@ -115,7 +137,10 @@ export default function AllTrainingProgramsPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   난이도
                 </label>
-                <Select value={filters.level} onValueChange={(value) => handleFilterChange("level", value)}>
+                <Select
+                  value={filters.level}
+                  onValueChange={(value) => handleFilterChange("level", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
@@ -136,9 +161,16 @@ export default function AllTrainingProgramsPage() {
                   <Input
                     placeholder="프로그램명, 강사명 검색"
                     value={filters.search}
-                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        search: e.target.value,
+                      }))
+                    }
                   />
-                  <Button onClick={() => handleFilterChange("search", filters.search)}>
+                  <Button
+                    onClick={() => handleFilterChange("search", filters.search)}
+                  >
                     검색
                   </Button>
                 </div>
@@ -173,11 +205,24 @@ export default function AllTrainingProgramsPage() {
               </div>
             ) : programsData?.courses?.length === 0 ? (
               <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">검색 결과가 없습니다</h3>
-                <p className="text-gray-500 mb-4">검색 조건을 변경해서 다시 시도해보세요.</p>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setFilters({ category: "all", type: "all", level: "all", search: "", page: 1, limit: 12 })}
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  검색 결과가 없습니다
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  검색 조건을 변경해서 다시 시도해보세요.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setFilters({
+                      category: "all",
+                      type: "all",
+                      level: "all",
+                      search: "",
+                      page: 1,
+                      limit: 12,
+                    })
+                  }
                 >
                   전체 프로그램 보기
                 </Button>
@@ -185,15 +230,25 @@ export default function AllTrainingProgramsPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {programsData?.courses?.map((program) => (
-                  <Card key={program.id} className="group hover:shadow-lg transition-shadow">
+                  <Card
+                    key={program.id}
+                    className="group hover:shadow-lg transition-shadow"
+                  >
                     <div className="relative overflow-hidden rounded-t-lg">
-                      <img 
-                        src={program.imageUrl || "/uploads/images/5c3b6edcb4dc90068fe0fa39e6431805_1750405130302.jpg"}
+                      <img
+                        src={
+                          program.imageUrl ||
+                          "/uploads/images/5c3b6edcb4dc90068fe0fa39e6431805_1750405130302.jpg"
+                        }
                         alt={program.title}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
                       />
                       <div className="absolute top-2 left-2">
-                        <Badge variant={program.type === "online" ? "default" : "secondary"}>
+                        <Badge
+                          variant={
+                            program.type === "online" ? "default" : "secondary"
+                          }
+                        >
                           {program.type}
                         </Badge>
                       </div>
@@ -204,31 +259,41 @@ export default function AllTrainingProgramsPage() {
                       </div>
                     </div>
                     <CardContent className="p-6">
-                      <h3 className="font-semibold text-lg mb-2 line-clamp-2">{program.title}</h3>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{program.description}</p>
-                      
+                      <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+                        {program.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {program.description}
+                      </p>
+
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-1">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">{program.rating}</span>
-                          <span className="text-sm text-gray-500">({program.students}명)</span>
+                          <span className="text-sm font-medium">
+                            {program.rating}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            ({program.students}명)
+                          </span>
                         </div>
                         <div className="flex items-center text-sm text-gray-500">
                           <Clock className="h-4 w-4 mr-1" />
                           {program.duration}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center text-sm text-gray-500">
                           <Users className="h-4 w-4 mr-1" />
-                          {program.maxStudents ? `${program.students}/${program.maxStudents}명` : `${program.students}명 수강`}
+                          {program.maxStudents
+                            ? `${program.students}/${program.maxStudents}명`
+                            : `${program.students}명 수강`}
                         </div>
                         {program.credit && (
                           <Badge variant="outline">{program.credit}학점</Badge>
                         )}
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div>
                           {program.discountPrice ? (
@@ -259,8 +324,12 @@ export default function AllTrainingProgramsPage() {
 
           <TabsContent value="mandatory">
             <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">법정 의무교육 프로그램</h3>
-              <p className="text-gray-500 mb-4">법령에 의해 의무적으로 이수해야 하는 교육 과정들입니다.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                법정 의무교육 프로그램
+              </h3>
+              <p className="text-gray-500 mb-4">
+                법령에 의해 의무적으로 이수해야 하는 교육 과정들입니다.
+              </p>
               <Link href="/training-courses">
                 <Button>법정 의무교육 보기</Button>
               </Link>
@@ -269,8 +338,12 @@ export default function AllTrainingProgramsPage() {
 
           <TabsContent value="professional">
             <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">전문성 강화교육</h3>
-              <p className="text-gray-500 mb-4">업무 전문성 향상과 역량 개발을 위한 심화 교육과정입니다.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                전문성 강화교육
+              </h3>
+              <p className="text-gray-500 mb-4">
+                업무 전문성 향상과 역량 개발을 위한 심화 교육과정입니다.
+              </p>
               <Link href="/professional-development">
                 <Button>전문성 강화교육 보기</Button>
               </Link>
@@ -279,8 +352,12 @@ export default function AllTrainingProgramsPage() {
 
           <TabsContent value="certificate">
             <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">자격증 취득 과정</h3>
-              <p className="text-gray-500 mb-4">국가공인 자격증 취득을 위한 체계적인 교육과정입니다.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                자격증 취득 과정
+              </h3>
+              <p className="text-gray-500 mb-4">
+                국가공인 자격증 취득을 위한 체계적인 교육과정입니다.
+              </p>
               <Link href="/certificate-courses">
                 <Button>자격증 과정 보기</Button>
               </Link>
@@ -293,11 +370,17 @@ export default function AllTrainingProgramsPage() {
           <div className="mt-8 flex justify-center">
             <Pagination>
               <PaginationContent>
-                <PaginationPrevious 
-                  onClick={() => handlePageChange(Math.max(1, filters.page - 1))}
-                  className={filters.page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                <PaginationPrevious
+                  onClick={() =>
+                    handlePageChange(Math.max(1, filters.page - 1))
+                  }
+                  className={
+                    filters.page === 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
                 />
-                
+
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   const page = i + 1;
                   return (
@@ -312,10 +395,16 @@ export default function AllTrainingProgramsPage() {
                     </PaginationItem>
                   );
                 })}
-                
-                <PaginationNext 
-                  onClick={() => handlePageChange(Math.min(totalPages, filters.page + 1))}
-                  className={filters.page === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+
+                <PaginationNext
+                  onClick={() =>
+                    handlePageChange(Math.min(totalPages, filters.page + 1))
+                  }
+                  className={
+                    filters.page === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
                 />
               </PaginationContent>
             </Pagination>

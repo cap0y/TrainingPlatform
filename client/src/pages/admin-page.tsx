@@ -10,11 +10,49 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Users, BookOpen, Calendar, CreditCard, Settings, Plus, Edit, Trash2, Check, X, Shield, ShieldOff, RefreshCw, DollarSign, TrendingUp, AlertCircle, Bell } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  BarChart,
+  Users,
+  BookOpen,
+  Calendar,
+  CreditCard,
+  Settings,
+  Plus,
+  Edit,
+  Trash2,
+  Check,
+  X,
+  Shield,
+  ShieldOff,
+  RefreshCw,
+  DollarSign,
+  TrendingUp,
+  AlertCircle,
+  Bell,
+} from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
@@ -175,8 +213,16 @@ export default function AdminPage() {
 
   // Update user status mutation
   const updateUserStatus = useMutation({
-    mutationFn: async ({ userId, isActive }: { userId: number; isActive: boolean }) => {
-      return apiRequest("PUT", `/api/admin/users/${userId}/status`, { isActive });
+    mutationFn: async ({
+      userId,
+      isActive,
+    }: {
+      userId: number;
+      isActive: boolean;
+    }) => {
+      return apiRequest("PUT", `/api/admin/users/${userId}/status`, {
+        isActive,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
@@ -196,8 +242,19 @@ export default function AdminPage() {
 
   // Update user role mutation
   const updateUserRole = useMutation({
-    mutationFn: async ({ userId, role, isAdmin }: { userId: number; role: string; isAdmin: boolean }) => {
-      return apiRequest("PUT", `/api/admin/users/${userId}/role`, { role, isAdmin });
+    mutationFn: async ({
+      userId,
+      role,
+      isAdmin,
+    }: {
+      userId: number;
+      role: string;
+      isAdmin: boolean;
+    }) => {
+      return apiRequest("PUT", `/api/admin/users/${userId}/role`, {
+        role,
+        isAdmin,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
@@ -217,8 +274,16 @@ export default function AdminPage() {
 
   // Update payment status mutation
   const updatePaymentStatus = useMutation({
-    mutationFn: async ({ paymentId, status }: { paymentId: number; status: string }) => {
-      return apiRequest("PUT", `/api/admin/payments/${paymentId}/status`, { status });
+    mutationFn: async ({
+      paymentId,
+      status,
+    }: {
+      paymentId: number;
+      status: string;
+    }) => {
+      return apiRequest("PUT", `/api/admin/payments/${paymentId}/status`, {
+        status,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/payments"] });
@@ -238,8 +303,16 @@ export default function AdminPage() {
 
   // Process refund mutation
   const processRefund = useMutation({
-    mutationFn: async ({ paymentId, reason }: { paymentId: number; reason: string }) => {
-      return apiRequest("POST", `/api/admin/payments/${paymentId}/refund`, { reason });
+    mutationFn: async ({
+      paymentId,
+      reason,
+    }: {
+      paymentId: number;
+      reason: string;
+    }) => {
+      return apiRequest("POST", `/api/admin/payments/${paymentId}/refund`, {
+        reason,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/payments"] });
@@ -274,9 +347,11 @@ export default function AdminPage() {
       discountPrice: course.discountPrice || 0,
       duration: course.duration || "",
       maxStudents: course.maxStudents || 0,
-      startDate: course.startDate ? course.startDate.split('T')[0] : "",
-      endDate: course.endDate ? course.endDate.split('T')[0] : "",
-      applicationDeadline: course.applicationDeadline ? course.applicationDeadline.split('T')[0] : "",
+      startDate: course.startDate ? course.startDate.split("T")[0] : "",
+      endDate: course.endDate ? course.endDate.split("T")[0] : "",
+      applicationDeadline: course.applicationDeadline
+        ? course.applicationDeadline.split("T")[0]
+        : "",
       instructorId: course.instructorId || "",
       isActive: course.isActive || false,
     });
@@ -294,10 +369,6 @@ export default function AdminPage() {
     });
     setShowNoticeDialog(true);
   };
-
-
-
-
 
   // Delete notice mutation
   const deleteNotice = useMutation({
@@ -365,57 +436,65 @@ export default function AdminPage() {
   };
 
   // Filter users
-  const filteredUsers = usersData?.filter((user: any) => {
-    if (userFilter === "all") return true;
-    if (userFilter === "individual") return user.userType === "individual";
-    if (userFilter === "business") return user.userType === "business";
-    if (userFilter === "admin") return user.isAdmin;
-    if (userFilter === "active") return user.isActive;
-    if (userFilter === "inactive") return !user.isActive;
-    return true;
-  }) || [];
+  const filteredUsers =
+    usersData?.filter((user: any) => {
+      if (userFilter === "all") return true;
+      if (userFilter === "individual") return user.userType === "individual";
+      if (userFilter === "business") return user.userType === "business";
+      if (userFilter === "admin") return user.isAdmin;
+      if (userFilter === "active") return user.isActive;
+      if (userFilter === "inactive") return !user.isActive;
+      return true;
+    }) || [];
 
   // Filter payments
-  const filteredPayments = paymentsData?.payments?.filter((payment: any) => {
-    if (paymentFilter === "all") return true;
-    if (paymentFilter === "pending") return payment.status === "pending";
-    if (paymentFilter === "completed") return payment.status === "completed";
-    if (paymentFilter === "failed") return payment.status === "failed";
-    if (paymentFilter === "refunded") return payment.status === "refunded";
-    return true;
-  }) || [];
+  const filteredPayments =
+    paymentsData?.payments?.filter((payment: any) => {
+      if (paymentFilter === "all") return true;
+      if (paymentFilter === "pending") return payment.status === "pending";
+      if (paymentFilter === "completed") return payment.status === "completed";
+      if (paymentFilter === "failed") return payment.status === "failed";
+      if (paymentFilter === "refunded") return payment.status === "refunded";
+      return true;
+    }) || [];
 
   // Payment statistics
-  const paymentStats = paymentsData?.payments ? {
-    total: paymentsData.payments.length,
-    completed: paymentsData.payments.filter((p: any) => p.status === "completed").length,
-    pending: paymentsData.payments.filter((p: any) => p.status === "pending").length,
-    failed: paymentsData.payments.filter((p: any) => p.status === "failed").length,
-    refunded: paymentsData.payments.filter((p: any) => p.status === "refunded").length,
-    totalRevenue: paymentsData.payments
-      .filter((p: any) => p.status === "completed")
-      .reduce((sum: number, p: any) => sum + Number(p.amount), 0)
-  } : {
-    total: 0,
-    completed: 0,
-    pending: 0,
-    failed: 0,
-    refunded: 0,
-    totalRevenue: 0
-  };
+  const paymentStats = paymentsData?.payments
+    ? {
+        total: paymentsData.payments.length,
+        completed: paymentsData.payments.filter(
+          (p: any) => p.status === "completed",
+        ).length,
+        pending: paymentsData.payments.filter(
+          (p: any) => p.status === "pending",
+        ).length,
+        failed: paymentsData.payments.filter((p: any) => p.status === "failed")
+          .length,
+        refunded: paymentsData.payments.filter(
+          (p: any) => p.status === "refunded",
+        ).length,
+        totalRevenue: paymentsData.payments
+          .filter((p: any) => p.status === "completed")
+          .reduce((sum: number, p: any) => sum + Number(p.amount), 0),
+      }
+    : {
+        total: 0,
+        completed: 0,
+        pending: 0,
+        failed: 0,
+        refunded: 0,
+        totalRevenue: 0,
+      };
 
   const handleRefund = (payment: any) => {
     setSelectedPayment(payment);
     setShowRefundDialog(true);
   };
 
-
-
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">관리자 대시보드</h1>
@@ -426,19 +505,31 @@ export default function AdminPage() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="dashboard" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="dashboard"
+              className="flex items-center space-x-2"
+            >
               <BarChart className="h-4 w-4" />
               <span>대시보드</span>
             </TabsTrigger>
-            <TabsTrigger value="courses" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="courses"
+              className="flex items-center space-x-2"
+            >
               <BookOpen className="h-4 w-4" />
               <span>과정관리</span>
             </TabsTrigger>
-            <TabsTrigger value="seminars" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="seminars"
+              className="flex items-center space-x-2"
+            >
               <Calendar className="h-4 w-4" />
               <span>세미나관리</span>
             </TabsTrigger>
-            <TabsTrigger value="notices" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="notices"
+              className="flex items-center space-x-2"
+            >
               <Bell className="h-4 w-4" />
               <span>공지관리</span>
             </TabsTrigger>
@@ -446,7 +537,10 @@ export default function AdminPage() {
               <Users className="h-4 w-4" />
               <span>회원관리</span>
             </TabsTrigger>
-            <TabsTrigger value="payments" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="payments"
+              className="flex items-center space-x-2"
+            >
               <CreditCard className="h-4 w-4" />
               <span>결제관리</span>
             </TabsTrigger>
@@ -457,45 +551,61 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">총 과정 수</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    총 과정 수
+                  </CardTitle>
                   <BookOpen className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats?.totalCourses || coursesData?.total || 0}</div>
+                  <div className="text-2xl font-bold">
+                    {stats?.totalCourses || coursesData?.total || 0}
+                  </div>
                   <p className="text-xs text-muted-foreground">활성화된 과정</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">총 세미나 수</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    총 세미나 수
+                  </CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats?.totalSeminars || 0}</div>
+                  <div className="text-2xl font-bold">
+                    {stats?.totalSeminars || 0}
+                  </div>
                   <p className="text-xs text-muted-foreground">예정된 세미나</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">총 결제 건수</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    총 결제 건수
+                  </CardTitle>
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats?.totalPayments || 0}</div>
+                  <div className="text-2xl font-bold">
+                    {stats?.totalPayments || 0}
+                  </div>
                   <p className="text-xs text-muted-foreground">완료된 결제</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">시스템 상태</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    시스템 상태
+                  </CardTitle>
                   <Settings className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-green-600">정상</div>
-                  <p className="text-xs text-muted-foreground">모든 시스템 정상 운영</p>
+                  <p className="text-xs text-muted-foreground">
+                    모든 시스템 정상 운영
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -510,21 +620,27 @@ export default function AdminPage() {
                   <div className="flex items-center space-x-4">
                     <div className="w-2 h-2 bg-primary rounded-full"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">새로운 과정이 등록되었습니다</p>
+                      <p className="text-sm font-medium">
+                        새로운 과정이 등록되었습니다
+                      </p>
                       <p className="text-xs text-gray-500">5분 전</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="w-2 h-2 bg-accent rounded-full"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">신규 회원이 가입했습니다</p>
+                      <p className="text-sm font-medium">
+                        신규 회원이 가입했습니다
+                      </p>
                       <p className="text-xs text-gray-500">15분 전</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="w-2 h-2 bg-warning rounded-full"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">결제가 완료되었습니다</p>
+                      <p className="text-sm font-medium">
+                        결제가 완료되었습니다
+                      </p>
                       <p className="text-xs text-gray-500">30분 전</p>
                     </div>
                   </div>
@@ -537,12 +653,13 @@ export default function AdminPage() {
           <TabsContent value="courses" className="mt-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">과정 관리</h2>
-              <Button onClick={() => {
-                resetCourseForm();
-                setShowCourseDialog(true);
-              }}>
-                <Plus className="h-4 w-4 mr-2" />
-                새 과정 추가
+              <Button
+                onClick={() => {
+                  resetCourseForm();
+                  setShowCourseDialog(true);
+                }}
+              >
+                <Plus className="h-4 w-4 mr-2" />새 과정 추가
               </Button>
             </div>
 
@@ -576,32 +693,52 @@ export default function AdminPage() {
                     <TableBody>
                       {coursesData?.courses?.map((course) => (
                         <TableRow key={course.id}>
-                          <TableCell className="font-medium">{course.title}</TableCell>
+                          <TableCell className="font-medium">
+                            {course.title}
+                          </TableCell>
                           <TableCell>{course.category}</TableCell>
                           <TableCell>
-                            <Badge variant={course.type === 'online' ? 'default' : 'secondary'}>
-                              {course.type === 'online' ? '온라인' : course.type === 'offline' ? '오프라인' : '블렌디드'}
+                            <Badge
+                              variant={
+                                course.type === "online"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                            >
+                              {course.type === "online"
+                                ? "온라인"
+                                : course.type === "offline"
+                                  ? "오프라인"
+                                  : "블렌디드"}
                             </Badge>
                           </TableCell>
                           <TableCell>{course.credit}학점</TableCell>
-                          <TableCell>{Number(course.price).toLocaleString()}원</TableCell>
-                          <TableCell>{course.currentStudents}/{course.maxStudents || '∞'}</TableCell>
                           <TableCell>
-                            <Badge variant={course.isActive ? 'default' : 'secondary'}>
-                              {course.isActive ? '활성' : '비활성'}
+                            {Number(course.price).toLocaleString()}원
+                          </TableCell>
+                          <TableCell>
+                            {course.currentStudents}/{course.maxStudents || "∞"}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                course.isActive ? "default" : "secondary"
+                              }
+                            >
+                              {course.isActive ? "활성" : "비활성"}
                             </Badge>
                           </TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 variant="outline"
                                 onClick={() => handleEditCourse(course)}
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 variant="outline"
                                 onClick={() => deleteCourse.mutate(course.id)}
                                 disabled={deleteCourse.isPending}
@@ -624,8 +761,7 @@ export default function AdminPage() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">세미나 관리</h2>
               <Button onClick={() => setShowSeminarDialog(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                새 세미나 추가
+                <Plus className="h-4 w-4 mr-2" />새 세미나 추가
               </Button>
             </div>
 
@@ -645,7 +781,9 @@ export default function AdminPage() {
                   </TableHeader>
                   <TableBody>
                     <TableRow>
-                      <TableCell className="font-medium">AI 교육 혁신 세미나</TableCell>
+                      <TableCell className="font-medium">
+                        AI 교육 혁신 세미나
+                      </TableCell>
                       <TableCell>교육 기술</TableCell>
                       <TableCell>김교수</TableCell>
                       <TableCell>2025-07-15 14:00</TableCell>
@@ -665,7 +803,9 @@ export default function AdminPage() {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-medium">디지털 리터러시 워크숍</TableCell>
+                      <TableCell className="font-medium">
+                        디지털 리터러시 워크숍
+                      </TableCell>
                       <TableCell>디지털 교육</TableCell>
                       <TableCell>이박사</TableCell>
                       <TableCell>2025-07-20 10:00</TableCell>
@@ -695,8 +835,7 @@ export default function AdminPage() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">공지사항 관리</h2>
               <Button onClick={() => setShowNoticeDialog(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                새 공지 작성
+                <Plus className="h-4 w-4 mr-2" />새 공지 작성
               </Button>
             </div>
 
@@ -728,7 +867,9 @@ export default function AdminPage() {
                     <TableBody>
                       {noticesData?.notices?.map((notice) => (
                         <TableRow key={notice.id}>
-                          <TableCell className="font-medium">{notice.title}</TableCell>
+                          <TableCell className="font-medium">
+                            {notice.title}
+                          </TableCell>
                           <TableCell>
                             <Badge variant="outline">{notice.category}</Badge>
                           </TableCell>
@@ -738,24 +879,30 @@ export default function AdminPage() {
                             )}
                           </TableCell>
                           <TableCell>
-                            {new Date(notice.createdAt).toLocaleDateString('ko-KR')}
+                            {new Date(notice.createdAt).toLocaleDateString(
+                              "ko-KR",
+                            )}
                           </TableCell>
                           <TableCell>
-                            <Badge variant={notice.isActive ? 'default' : 'secondary'}>
-                              {notice.isActive ? '활성' : '비활성'}
+                            <Badge
+                              variant={
+                                notice.isActive ? "default" : "secondary"
+                              }
+                            >
+                              {notice.isActive ? "활성" : "비활성"}
                             </Badge>
                           </TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 variant="outline"
                                 onClick={() => handleEditNotice(notice)}
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 variant="outline"
                                 onClick={() => deleteNotice.mutate(notice.id)}
                                 disabled={deleteNotice.isPending}
@@ -824,29 +971,49 @@ export default function AdminPage() {
                     <TableBody>
                       {filteredUsers.map((user: any) => (
                         <TableRow key={user.id}>
-                          <TableCell className="font-medium">{user.name}</TableCell>
+                          <TableCell className="font-medium">
+                            {user.name}
+                          </TableCell>
                           <TableCell>{user.email}</TableCell>
                           <TableCell>{user.username}</TableCell>
                           <TableCell>
-                            <Badge variant={user.userType === 'business' ? 'secondary' : 'outline'}>
-                              {user.userType === 'individual' ? '개인' : '기관'}
+                            <Badge
+                              variant={
+                                user.userType === "business"
+                                  ? "secondary"
+                                  : "outline"
+                              }
+                            >
+                              {user.userType === "individual" ? "개인" : "기관"}
                             </Badge>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center space-x-2">
-                              <Badge variant={user.isAdmin ? 'default' : 'outline'}>
-                                {user.role === 'admin' ? '슈퍼관리자' : user.isAdmin ? '관리자' : '사용자'}
+                              <Badge
+                                variant={user.isAdmin ? "default" : "outline"}
+                              >
+                                {user.role === "admin"
+                                  ? "슈퍼관리자"
+                                  : user.isAdmin
+                                    ? "관리자"
+                                    : "사용자"}
                               </Badge>
-                              {user.isAdmin && <Shield className="h-4 w-4 text-primary" />}
+                              {user.isAdmin && (
+                                <Shield className="h-4 w-4 text-primary" />
+                              )}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={user.isActive ? 'default' : 'secondary'}>
-                              {user.isActive ? '활성' : '비활성'}
+                            <Badge
+                              variant={user.isActive ? "default" : "secondary"}
+                            >
+                              {user.isActive ? "활성" : "비활성"}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            {new Date(user.createdAt).toLocaleDateString('ko-KR')}
+                            {new Date(user.createdAt).toLocaleDateString(
+                              "ko-KR",
+                            )}
                           </TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
@@ -854,30 +1021,46 @@ export default function AdminPage() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => updateUserStatus.mutate({ 
-                                  userId: user.id, 
-                                  isActive: !user.isActive 
-                                })}
+                                onClick={() =>
+                                  updateUserStatus.mutate({
+                                    userId: user.id,
+                                    isActive: !user.isActive,
+                                  })
+                                }
                                 disabled={updateUserStatus.isPending}
                                 title={user.isActive ? "비활성화" : "활성화"}
                               >
-                                {user.isActive ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+                                {user.isActive ? (
+                                  <X className="h-4 w-4" />
+                                ) : (
+                                  <Check className="h-4 w-4" />
+                                )}
                               </Button>
-                              
+
                               {/* Toggle Admin Role */}
-                              {user.role !== 'admin' && (
+                              {user.role !== "admin" && (
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => updateUserRole.mutate({ 
-                                    userId: user.id, 
-                                    role: user.isAdmin ? 'user' : 'admin',
-                                    isAdmin: !user.isAdmin
-                                  })}
+                                  onClick={() =>
+                                    updateUserRole.mutate({
+                                      userId: user.id,
+                                      role: user.isAdmin ? "user" : "admin",
+                                      isAdmin: !user.isAdmin,
+                                    })
+                                  }
                                   disabled={updateUserRole.isPending}
-                                  title={user.isAdmin ? "관리자 해제" : "관리자 권한 부여"}
+                                  title={
+                                    user.isAdmin
+                                      ? "관리자 해제"
+                                      : "관리자 권한 부여"
+                                  }
                                 >
-                                  {user.isAdmin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+                                  {user.isAdmin ? (
+                                    <ShieldOff className="h-4 w-4" />
+                                  ) : (
+                                    <Shield className="h-4 w-4" />
+                                  )}
                                 </Button>
                               )}
                             </div>
@@ -894,23 +1077,32 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">전체 회원</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    전체 회원
+                  </CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{usersData?.length || 0}</div>
-                  <p className="text-xs text-muted-foreground">등록된 회원 수</p>
+                  <div className="text-2xl font-bold">
+                    {usersData?.length || 0}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    등록된 회원 수
+                  </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">개인 회원</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    개인 회원
+                  </CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {usersData?.filter((u: any) => u.userType === 'individual').length || 0}
+                    {usersData?.filter((u: any) => u.userType === "individual")
+                      .length || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">개인 회원</p>
                 </CardContent>
@@ -918,12 +1110,15 @@ export default function AdminPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">기관 회원</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    기관 회원
+                  </CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {usersData?.filter((u: any) => u.userType === 'business').length || 0}
+                    {usersData?.filter((u: any) => u.userType === "business")
+                      .length || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">기관 회원</p>
                 </CardContent>
@@ -968,7 +1163,9 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">전체 결제</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    전체 결제
+                  </CardTitle>
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -983,7 +1180,9 @@ export default function AdminPage() {
                   <Check className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{paymentStats.completed}</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {paymentStats.completed}
+                  </div>
                   <p className="text-xs text-muted-foreground">완료된 결제</p>
                 </CardContent>
               </Card>
@@ -994,18 +1193,24 @@ export default function AdminPage() {
                   <RefreshCw className="h-4 w-4 text-yellow-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-yellow-600">{paymentStats.pending}</div>
+                  <div className="text-2xl font-bold text-yellow-600">
+                    {paymentStats.pending}
+                  </div>
                   <p className="text-xs text-muted-foreground">처리 대기중</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">실패/환불</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    실패/환불
+                  </CardTitle>
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-red-600">{paymentStats.failed + paymentStats.refunded}</div>
+                  <div className="text-2xl font-bold text-red-600">
+                    {paymentStats.failed + paymentStats.refunded}
+                  </div>
                   <p className="text-xs text-muted-foreground">실패 및 환불</p>
                 </CardContent>
               </Card>
@@ -1019,7 +1224,9 @@ export default function AdminPage() {
                   <div className="text-2xl font-bold text-green-600">
                     {paymentStats.totalRevenue.toLocaleString()}원
                   </div>
-                  <p className="text-xs text-muted-foreground">완료된 결제 총액</p>
+                  <p className="text-xs text-muted-foreground">
+                    완료된 결제 총액
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -1054,25 +1261,39 @@ export default function AdminPage() {
                     <TableBody>
                       {filteredPayments.map((payment: any) => (
                         <TableRow key={payment.id}>
-                          <TableCell className="font-medium">#{payment.id}</TableCell>
+                          <TableCell className="font-medium">
+                            #{payment.id}
+                          </TableCell>
                           <TableCell>
                             {payment.user ? (
                               <div>
-                                <div className="font-medium">{payment.user.name}</div>
-                                <div className="text-sm text-gray-500">{payment.user.email}</div>
+                                <div className="font-medium">
+                                  {payment.user.name}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {payment.user.email}
+                                </div>
                               </div>
                             ) : (
-                              <span className="text-gray-400">사용자 정보 없음</span>
+                              <span className="text-gray-400">
+                                사용자 정보 없음
+                              </span>
                             )}
                           </TableCell>
                           <TableCell>
                             {payment.course ? (
                               <div>
-                                <div className="font-medium">{payment.course.title}</div>
-                                <div className="text-sm text-gray-500">{payment.course.category}</div>
+                                <div className="font-medium">
+                                  {payment.course.title}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {payment.course.category}
+                                </div>
                               </div>
                             ) : (
-                              <span className="text-gray-400">과정 정보 없음</span>
+                              <span className="text-gray-400">
+                                과정 정보 없음
+                              </span>
                             )}
                           </TableCell>
                           <TableCell className="font-medium">
@@ -1084,34 +1305,46 @@ export default function AdminPage() {
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge 
+                            <Badge
                               variant={
-                                payment.status === 'completed' ? 'default' : 
-                                payment.status === 'pending' ? 'secondary' : 
-                                payment.status === 'failed' ? 'destructive' : 
-                                'outline'
+                                payment.status === "completed"
+                                  ? "default"
+                                  : payment.status === "pending"
+                                    ? "secondary"
+                                    : payment.status === "failed"
+                                      ? "destructive"
+                                      : "outline"
                               }
                             >
-                              {payment.status === 'completed' ? '완료' :
-                               payment.status === 'pending' ? '대기중' :
-                               payment.status === 'failed' ? '실패' :
-                               payment.status === 'refunded' ? '환불' : payment.status}
+                              {payment.status === "completed"
+                                ? "완료"
+                                : payment.status === "pending"
+                                  ? "대기중"
+                                  : payment.status === "failed"
+                                    ? "실패"
+                                    : payment.status === "refunded"
+                                      ? "환불"
+                                      : payment.status}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            {new Date(payment.createdAt).toLocaleDateString('ko-KR')}
+                            {new Date(payment.createdAt).toLocaleDateString(
+                              "ko-KR",
+                            )}
                           </TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
-                              {payment.status === 'pending' && (
+                              {payment.status === "pending" && (
                                 <>
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    onClick={() => updatePaymentStatus.mutate({ 
-                                      paymentId: payment.id, 
-                                      status: 'completed' 
-                                    })}
+                                    onClick={() =>
+                                      updatePaymentStatus.mutate({
+                                        paymentId: payment.id,
+                                        status: "completed",
+                                      })
+                                    }
                                     disabled={updatePaymentStatus.isPending}
                                     title="결제 승인"
                                   >
@@ -1120,10 +1353,12 @@ export default function AdminPage() {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    onClick={() => updatePaymentStatus.mutate({ 
-                                      paymentId: payment.id, 
-                                      status: 'failed' 
-                                    })}
+                                    onClick={() =>
+                                      updatePaymentStatus.mutate({
+                                        paymentId: payment.id,
+                                        status: "failed",
+                                      })
+                                    }
                                     disabled={updatePaymentStatus.isPending}
                                     title="결제 실패 처리"
                                   >
@@ -1131,7 +1366,7 @@ export default function AdminPage() {
                                   </Button>
                                 </>
                               )}
-                              {payment.status === 'completed' && (
+                              {payment.status === "completed" && (
                                 <Button
                                   size="sm"
                                   variant="outline"
@@ -1156,16 +1391,26 @@ export default function AdminPage() {
       </div>
 
       {/* Course Dialog */}
-      <Dialog open={showCourseDialog} onOpenChange={(open) => {
-        setShowCourseDialog(open);
-        if (!open) resetCourseForm();
-      }}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto" aria-describedby="course-dialog-description">
+      <Dialog
+        open={showCourseDialog}
+        onOpenChange={(open) => {
+          setShowCourseDialog(open);
+          if (!open) resetCourseForm();
+        }}
+      >
+        <DialogContent
+          className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto"
+          aria-describedby="course-dialog-description"
+        >
           <DialogHeader>
-            <DialogTitle>{editingCourse ? "과정 수정" : "새 과정 추가"}</DialogTitle>
+            <DialogTitle>
+              {editingCourse ? "과정 수정" : "새 과정 추가"}
+            </DialogTitle>
           </DialogHeader>
           <div id="course-dialog-description" className="sr-only">
-            {editingCourse ? "기존 과정의 정보를 수정할 수 있습니다." : "새로운 교육 과정을 추가할 수 있습니다."}
+            {editingCourse
+              ? "기존 과정의 정보를 수정할 수 있습니다."
+              : "새로운 교육 과정을 추가할 수 있습니다."}
           </div>
           <form onSubmit={handleCourseSubmit}>
             <div className="grid gap-4 py-4">
@@ -1175,13 +1420,20 @@ export default function AdminPage() {
                   <Input
                     id="title"
                     value={courseForm.title}
-                    onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                    onChange={(e) =>
+                      setCourseForm({ ...courseForm, title: e.target.value })
+                    }
                     required
                   />
                 </div>
                 <div>
                   <Label htmlFor="category">카테고리</Label>
-                  <Select value={courseForm.category} onValueChange={(value) => setCourseForm({ ...courseForm, category: value })}>
+                  <Select
+                    value={courseForm.category}
+                    onValueChange={(value) =>
+                      setCourseForm({ ...courseForm, category: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="카테고리 선택" />
                     </SelectTrigger>
@@ -1215,7 +1467,12 @@ export default function AdminPage() {
                 <Textarea
                   id="description"
                   value={courseForm.description}
-                  onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
+                  onChange={(e) =>
+                    setCourseForm({
+                      ...courseForm,
+                      description: e.target.value,
+                    })
+                  }
                   rows={3}
                   required
                 />
@@ -1227,7 +1484,12 @@ export default function AdminPage() {
                     id="price"
                     type="number"
                     value={courseForm.price || ""}
-                    onChange={(e) => setCourseForm({ ...courseForm, price: parseInt(e.target.value) || 0 })}
+                    onChange={(e) =>
+                      setCourseForm({
+                        ...courseForm,
+                        price: parseInt(e.target.value) || 0,
+                      })
+                    }
                     required
                   />
                 </div>
@@ -1237,7 +1499,12 @@ export default function AdminPage() {
                     id="capacity"
                     type="number"
                     value={courseForm.maxStudents || ""}
-                    onChange={(e) => setCourseForm({ ...courseForm, maxStudents: parseInt(e.target.value) || 0 })}
+                    onChange={(e) =>
+                      setCourseForm({
+                        ...courseForm,
+                        maxStudents: parseInt(e.target.value) || 0,
+                      })
+                    }
                     required
                   />
                 </div>
@@ -1248,14 +1515,21 @@ export default function AdminPage() {
                   <Input
                     id="duration"
                     value={courseForm.duration}
-                    onChange={(e) => setCourseForm({ ...courseForm, duration: e.target.value })}
+                    onChange={(e) =>
+                      setCourseForm({ ...courseForm, duration: e.target.value })
+                    }
                     placeholder="예: 4주, 2개월"
                     required
                   />
                 </div>
                 <div>
                   <Label htmlFor="level">수준</Label>
-                  <Select value={courseForm.level} onValueChange={(value) => setCourseForm({ ...courseForm, level: value })}>
+                  <Select
+                    value={courseForm.level}
+                    onValueChange={(value) =>
+                      setCourseForm({ ...courseForm, level: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="수준 선택" />
                     </SelectTrigger>
@@ -1274,7 +1548,12 @@ export default function AdminPage() {
                     id="startDate"
                     type="date"
                     value={courseForm.startDate}
-                    onChange={(e) => setCourseForm({ ...courseForm, startDate: e.target.value })}
+                    onChange={(e) =>
+                      setCourseForm({
+                        ...courseForm,
+                        startDate: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -1283,7 +1562,9 @@ export default function AdminPage() {
                     id="endDate"
                     type="date"
                     value={courseForm.endDate}
-                    onChange={(e) => setCourseForm({ ...courseForm, endDate: e.target.value })}
+                    onChange={(e) =>
+                      setCourseForm({ ...courseForm, endDate: e.target.value })
+                    }
                   />
                 </div>
                 <div>
@@ -1292,7 +1573,12 @@ export default function AdminPage() {
                     id="applicationDeadline"
                     type="date"
                     value={courseForm.applicationDeadline}
-                    onChange={(e) => setCourseForm({ ...courseForm, applicationDeadline: e.target.value })}
+                    onChange={(e) =>
+                      setCourseForm({
+                        ...courseForm,
+                        applicationDeadline: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -1300,17 +1586,27 @@ export default function AdminPage() {
                 <Checkbox
                   id="isActive"
                   checked={courseForm.isActive}
-                  onCheckedChange={(checked) => setCourseForm({ ...courseForm, isActive: !!checked })}
+                  onCheckedChange={(checked) =>
+                    setCourseForm({ ...courseForm, isActive: !!checked })
+                  }
                 />
                 <Label htmlFor="isActive">활성 상태</Label>
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowCourseDialog(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowCourseDialog(false)}
+              >
                 취소
               </Button>
               <Button type="submit" disabled={courseMutation.isPending}>
-                {courseMutation.isPending ? "저장 중..." : editingCourse ? "수정" : "추가"}
+                {courseMutation.isPending
+                  ? "저장 중..."
+                  : editingCourse
+                    ? "수정"
+                    : "추가"}
               </Button>
             </DialogFooter>
           </form>
@@ -1318,16 +1614,26 @@ export default function AdminPage() {
       </Dialog>
 
       {/* Notice Dialog */}
-      <Dialog open={showNoticeDialog} onOpenChange={(open) => {
-        setShowNoticeDialog(open);
-        if (!open) resetNoticeForm();
-      }}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto" aria-describedby="notice-dialog-description">
+      <Dialog
+        open={showNoticeDialog}
+        onOpenChange={(open) => {
+          setShowNoticeDialog(open);
+          if (!open) resetNoticeForm();
+        }}
+      >
+        <DialogContent
+          className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto"
+          aria-describedby="notice-dialog-description"
+        >
           <DialogHeader>
-            <DialogTitle>{editingNotice ? "공지사항 수정" : "새 공지사항 작성"}</DialogTitle>
+            <DialogTitle>
+              {editingNotice ? "공지사항 수정" : "새 공지사항 작성"}
+            </DialogTitle>
           </DialogHeader>
           <div id="notice-dialog-description" className="sr-only">
-            {editingNotice ? "기존 공지사항을 수정할 수 있습니다." : "새로운 공지사항을 작성할 수 있습니다."}
+            {editingNotice
+              ? "기존 공지사항을 수정할 수 있습니다."
+              : "새로운 공지사항을 작성할 수 있습니다."}
           </div>
           <form onSubmit={handleNoticeSubmit}>
             <div className="grid gap-4 py-4">
@@ -1337,13 +1643,20 @@ export default function AdminPage() {
                   <Input
                     id="noticeTitle"
                     value={noticeForm.title}
-                    onChange={(e) => setNoticeForm({ ...noticeForm, title: e.target.value })}
+                    onChange={(e) =>
+                      setNoticeForm({ ...noticeForm, title: e.target.value })
+                    }
                     required
                   />
                 </div>
                 <div>
                   <Label htmlFor="noticeCategory">카테고리</Label>
-                  <Select value={noticeForm.category} onValueChange={(value) => setNoticeForm({ ...noticeForm, category: value })}>
+                  <Select
+                    value={noticeForm.category}
+                    onValueChange={(value) =>
+                      setNoticeForm({ ...noticeForm, category: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="카테고리 선택" />
                     </SelectTrigger>
@@ -1367,7 +1680,9 @@ export default function AdminPage() {
                 <Textarea
                   id="noticeContent"
                   value={noticeForm.content}
-                  onChange={(e) => setNoticeForm({ ...noticeForm, content: e.target.value })}
+                  onChange={(e) =>
+                    setNoticeForm({ ...noticeForm, content: e.target.value })
+                  }
                   rows={6}
                   required
                 />
@@ -1377,7 +1692,9 @@ export default function AdminPage() {
                   <Checkbox
                     id="isImportant"
                     checked={noticeForm.isImportant}
-                    onCheckedChange={(checked) => setNoticeForm({ ...noticeForm, isImportant: !!checked })}
+                    onCheckedChange={(checked) =>
+                      setNoticeForm({ ...noticeForm, isImportant: !!checked })
+                    }
                   />
                   <Label htmlFor="isImportant">중요 공지</Label>
                 </div>
@@ -1385,18 +1702,28 @@ export default function AdminPage() {
                   <Checkbox
                     id="noticeIsActive"
                     checked={noticeForm.isActive}
-                    onCheckedChange={(checked) => setNoticeForm({ ...noticeForm, isActive: !!checked })}
+                    onCheckedChange={(checked) =>
+                      setNoticeForm({ ...noticeForm, isActive: !!checked })
+                    }
                   />
                   <Label htmlFor="noticeIsActive">활성 상태</Label>
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowNoticeDialog(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowNoticeDialog(false)}
+              >
                 취소
               </Button>
               <Button type="submit" disabled={noticeMutation.isPending}>
-                {noticeMutation.isPending ? "저장 중..." : editingNotice ? "수정" : "작성"}
+                {noticeMutation.isPending
+                  ? "저장 중..."
+                  : editingNotice
+                    ? "수정"
+                    : "작성"}
               </Button>
             </DialogFooter>
           </form>
@@ -1423,14 +1750,19 @@ export default function AdminPage() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRefundDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowRefundDialog(false)}
+            >
               취소
             </Button>
-            <Button 
-              onClick={() => processRefund.mutate({ 
-                paymentId: selectedPayment?.id, 
-                reason: refundReason 
-              })}
+            <Button
+              onClick={() =>
+                processRefund.mutate({
+                  paymentId: selectedPayment?.id,
+                  reason: refundReason,
+                })
+              }
               disabled={processRefund.isPending || !refundReason.trim()}
             >
               환불 처리

@@ -31,25 +31,25 @@ export default function ChatWidget() {
     if (isOpen && user) {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/ws`;
-      
+
       try {
         const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
 
         ws.onopen = () => {
           setIsConnected(true);
-          console.log('WebSocket connected');
+          console.log("WebSocket connected");
         };
 
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            
-            if (data.type === 'chat') {
-              setMessages(prev => [...prev, data.data]);
-            } else if (data.type === 'chat_history') {
+
+            if (data.type === "chat") {
+              setMessages((prev) => [...prev, data.data]);
+            } else if (data.type === "chat_history") {
               setMessages(data.data.reverse()); // Reverse to show newest at bottom
-            } else if (data.type === 'error') {
+            } else if (data.type === "error") {
               toast({
                 title: "채팅 오류",
                 description: data.message,
@@ -57,17 +57,17 @@ export default function ChatWidget() {
               });
             }
           } catch (error) {
-            console.error('Error parsing WebSocket message:', error);
+            console.error("Error parsing WebSocket message:", error);
           }
         };
 
         ws.onclose = () => {
           setIsConnected(false);
-          console.log('WebSocket disconnected');
+          console.log("WebSocket disconnected");
         };
 
         ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
+          console.error("WebSocket error:", error);
           setIsConnected(false);
           toast({
             title: "연결 오류",
@@ -80,7 +80,7 @@ export default function ChatWidget() {
           ws.close();
         };
       } catch (error) {
-        console.error('Error creating WebSocket connection:', error);
+        console.error("Error creating WebSocket connection:", error);
         toast({
           title: "연결 오류",
           description: "채팅 서비스를 사용할 수 없습니다.",
@@ -96,15 +96,20 @@ export default function ChatWidget() {
   }, [messages]);
 
   const sendMessage = () => {
-    if (!message.trim() || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN || !user) {
+    if (
+      !message.trim() ||
+      !wsRef.current ||
+      wsRef.current.readyState !== WebSocket.OPEN ||
+      !user
+    ) {
       return;
     }
 
     const chatMessage = {
-      type: 'chat',
+      type: "chat",
       userId: user.id,
       message: message.trim(),
-      isAdmin: user.isAdmin || false
+      isAdmin: user.isAdmin || false,
     };
 
     wsRef.current.send(JSON.stringify(chatMessage));
@@ -112,16 +117,16 @@ export default function ChatWidget() {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
   };
 
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -153,7 +158,9 @@ export default function ChatWidget() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      <Card className={`w-80 transition-all duration-300 chat-slide-up ${isMinimized ? 'h-14' : 'h-96'} shadow-xl`}>
+      <Card
+        className={`w-80 transition-all duration-300 chat-slide-up ${isMinimized ? "h-14" : "h-96"} shadow-xl`}
+      >
         <CardHeader className="bg-accent text-white p-4 flex flex-row items-center justify-between space-y-0 rounded-t-lg">
           <div className="flex items-center space-x-2">
             <div className="relative">
@@ -183,7 +190,7 @@ export default function ChatWidget() {
             </Button>
           </div>
         </CardHeader>
-        
+
         {!isMinimized && (
           <CardContent className="p-0 flex flex-col h-80">
             {/* Connection Status */}
@@ -198,30 +205,47 @@ export default function ChatWidget() {
               {messages.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm py-8">
                   <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-                  <p>안녕하세요! 궁금한 점이 있으시면 언제든지 문의해 주세요.</p>
+                  <p>
+                    안녕하세요! 궁금한 점이 있으시면 언제든지 문의해 주세요.
+                  </p>
                 </div>
               ) : (
                 messages.map((msg) => (
-                  <div key={msg.id} className={`flex ${msg.userId === user?.id ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`flex items-start space-x-2 max-w-xs ${msg.userId === user?.id ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.userId === user?.id ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`flex items-start space-x-2 max-w-xs ${msg.userId === user?.id ? "flex-row-reverse space-x-reverse" : ""}`}
+                    >
                       <Avatar className="h-6 w-6 flex-shrink-0">
-                        <AvatarFallback className={`text-xs ${msg.isAdmin ? 'bg-accent text-white' : msg.userId === user?.id ? 'bg-primary text-white' : 'bg-gray-300'}`}>
-                          {msg.isAdmin ? 'A' : msg.userId === user?.id ? 'M' : 'U'}
+                        <AvatarFallback
+                          className={`text-xs ${msg.isAdmin ? "bg-accent text-white" : msg.userId === user?.id ? "bg-primary text-white" : "bg-gray-300"}`}
+                        >
+                          {msg.isAdmin
+                            ? "A"
+                            : msg.userId === user?.id
+                              ? "M"
+                              : "U"}
                         </AvatarFallback>
                       </Avatar>
-                      <div className={`rounded-lg p-3 ${
-                        msg.userId === user?.id 
-                          ? 'bg-primary text-white' 
-                          : msg.isAdmin 
-                            ? 'bg-accent text-white' 
-                            : 'bg-white border'
-                      }`}>
+                      <div
+                        className={`rounded-lg p-3 ${
+                          msg.userId === user?.id
+                            ? "bg-primary text-white"
+                            : msg.isAdmin
+                              ? "bg-accent text-white"
+                              : "bg-white border"
+                        }`}
+                      >
                         <p className="text-sm">{msg.message}</p>
-                        <span className={`text-xs mt-1 block ${
-                          msg.userId === user?.id || msg.isAdmin 
-                            ? 'text-white text-opacity-70' 
-                            : 'text-gray-500'
-                        }`}>
+                        <span
+                          className={`text-xs mt-1 block ${
+                            msg.userId === user?.id || msg.isAdmin
+                              ? "text-white text-opacity-70"
+                              : "text-gray-500"
+                          }`}
+                        >
                           {formatTime(msg.createdAt)}
                         </span>
                       </div>
@@ -253,7 +277,9 @@ export default function ChatWidget() {
                 </Button>
               </div>
               {!isConnected && (
-                <p className="text-xs text-red-500 mt-1">연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.</p>
+                <p className="text-xs text-red-500 mt-1">
+                  연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.
+                </p>
               )}
             </div>
           </CardContent>

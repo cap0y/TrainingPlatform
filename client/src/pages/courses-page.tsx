@@ -5,13 +5,19 @@ import Footer from "@/components/layout/footer";
 import CourseCard from "@/components/ui/course-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function CoursesPage() {
   const [filters, setFilters] = useState({
     category: "all",
-    type: "all", 
+    type: "all",
     level: "all",
     credit: "all",
     search: "",
@@ -24,7 +30,7 @@ export default function CoursesPage() {
   });
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
       page: 1, // Reset to first page when filters change
@@ -32,7 +38,7 @@ export default function CoursesPage() {
   };
 
   const handlePageChange = (page: number) => {
-    setFilters(prev => ({ ...prev, page }));
+    setFilters((prev) => ({ ...prev, page }));
   };
 
   const totalPages = Math.ceil((coursesData?.total || 0) / filters.limit);
@@ -40,12 +46,12 @@ export default function CoursesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 overflow-hidden">
         <div className="absolute inset-0 opacity-25">
-          <img 
-            src="/uploads/images/5c3b6edcb4dc90068fe0fa39e6431805_1750405130302.jpg" 
+          <img
+            src="/uploads/images/5c3b6edcb4dc90068fe0fa39e6431805_1750405130302.jpg"
             alt="Training Courses"
             className="w-full h-full object-cover"
           />
@@ -54,7 +60,8 @@ export default function CoursesPage() {
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">연수과정</h1>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              전문성 향상을 위한 다양한 연수과정을 만나보세요. 체계적인 교육과정으로 역량을 강화하실 수 있습니다.
+              전문성 향상을 위한 다양한 연수과정을 만나보세요. 체계적인
+              교육과정으로 역량을 강화하실 수 있습니다.
             </p>
             <div className="text-lg font-medium">
               총 {coursesData?.total || 0}개 과정
@@ -64,7 +71,6 @@ export default function CoursesPage() {
       </section>
 
       <div className="container mx-auto px-4 py-8">
-
         {/* Filters */}
         <Card className="mb-8">
           <CardContent className="p-6">
@@ -73,7 +79,12 @@ export default function CoursesPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   카테고리
                 </label>
-                <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
+                <Select
+                  value={filters.category}
+                  onValueChange={(value) =>
+                    handleFilterChange("category", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
@@ -92,7 +103,10 @@ export default function CoursesPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   수업형태
                 </label>
-                <Select value={filters.type} onValueChange={(value) => handleFilterChange("type", value)}>
+                <Select
+                  value={filters.type}
+                  onValueChange={(value) => handleFilterChange("type", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
@@ -109,7 +123,10 @@ export default function CoursesPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   수준
                 </label>
-                <Select value={filters.level} onValueChange={(value) => handleFilterChange("level", value)}>
+                <Select
+                  value={filters.level}
+                  onValueChange={(value) => handleFilterChange("level", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
@@ -126,7 +143,10 @@ export default function CoursesPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   학점
                 </label>
-                <Select value={filters.credit} onValueChange={(value) => handleFilterChange("credit", value)}>
+                <Select
+                  value={filters.credit}
+                  onValueChange={(value) => handleFilterChange("credit", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="전체" />
                   </SelectTrigger>
@@ -147,9 +167,16 @@ export default function CoursesPage() {
                   <Input
                     placeholder="과정명 검색"
                     value={filters.search}
-                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        search: e.target.value,
+                      }))
+                    }
                   />
-                  <Button onClick={() => handleFilterChange("search", filters.search)}>
+                  <Button
+                    onClick={() => handleFilterChange("search", filters.search)}
+                  >
                     검색
                   </Button>
                 </div>
@@ -162,7 +189,10 @@ export default function CoursesPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 animate-pulse">
+              <div
+                key={i}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 animate-pulse"
+              >
                 <div className="w-full h-48 bg-gray-200"></div>
                 <div className="p-6 space-y-4">
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -175,11 +205,23 @@ export default function CoursesPage() {
         ) : coursesData?.courses?.length === 0 ? (
           <div className="text-center py-12">
             <i className="fas fa-search text-4xl text-gray-300 mb-4"></i>
-            <p className="text-gray-500 text-lg">검색 조건에 맞는 과정이 없습니다.</p>
-            <Button 
-              variant="outline" 
+            <p className="text-gray-500 text-lg">
+              검색 조건에 맞는 과정이 없습니다.
+            </p>
+            <Button
+              variant="outline"
               className="mt-4"
-              onClick={() => setFilters({ category: "all", type: "all", level: "all", credit: "all", search: "", page: 1, limit: 12 })}
+              onClick={() =>
+                setFilters({
+                  category: "all",
+                  type: "all",
+                  level: "all",
+                  credit: "all",
+                  search: "",
+                  page: 1,
+                  limit: 12,
+                })
+              }
             >
               전체 보기
             </Button>
@@ -203,7 +245,7 @@ export default function CoursesPage() {
               >
                 이전
               </Button>
-              
+
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 const page = i + 1;
                 return (
@@ -216,7 +258,7 @@ export default function CoursesPage() {
                   </Button>
                 );
               })}
-              
+
               <Button
                 variant="outline"
                 onClick={() => handlePageChange(filters.page + 1)}

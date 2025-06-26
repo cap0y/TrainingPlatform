@@ -29,21 +29,31 @@ interface User {
   organizationName?: string;
 }
 
-export default function MessageCompose({ onClose, onBack, replyTo }: MessageComposeProps) {
+export default function MessageCompose({
+  onClose,
+  onBack,
+  replyTo,
+}: MessageComposeProps) {
   const { user } = useAuth();
   const { toast } = useToast();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedReceiver, setSelectedReceiver] = useState<User | null>(
-    replyTo ? {
-      id: replyTo.receiverId,
-      name: replyTo.receiverName,
-      email: "",
-      userType: "",
-    } : null
+    replyTo
+      ? {
+          id: replyTo.receiverId,
+          name: replyTo.receiverName,
+          email: "",
+          userType: "",
+        }
+      : null,
   );
   const [subject, setSubject] = useState(
-    replyTo ? (replyTo.originalSubject.startsWith("Re: ") ? replyTo.originalSubject : `Re: ${replyTo.originalSubject}`) : ""
+    replyTo
+      ? replyTo.originalSubject.startsWith("Re: ")
+        ? replyTo.originalSubject
+        : `Re: ${replyTo.originalSubject}`
+      : "",
   );
   const [content, setContent] = useState("");
   const [showUserSearch, setShowUserSearch] = useState(!replyTo);
@@ -53,7 +63,10 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
     queryKey: ["/api/users/search", searchQuery],
     queryFn: async () => {
       if (!searchQuery.trim()) return [];
-      const res = await apiRequest("GET", `/api/users/search?q=${encodeURIComponent(searchQuery)}`);
+      const res = await apiRequest(
+        "GET",
+        `/api/users/search?q=${encodeURIComponent(searchQuery)}`,
+      );
       return await res.json();
     },
     enabled: !!searchQuery.trim() && showUserSearch,
@@ -71,7 +84,9 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/messages/unread/count"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/messages/unread/count"],
+      });
       toast({
         title: "쪽지 전송 완료",
         description: "쪽지가 성공적으로 전송되었습니다.",
@@ -81,7 +96,8 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
     onError: (error: any) => {
       toast({
         title: "전송 실패",
-        description: error?.response?.data?.message || "쪽지 전송 중 오류가 발생했습니다.",
+        description:
+          error?.response?.data?.message || "쪽지 전송 중 오류가 발생했습니다.",
         variant: "destructive",
       });
     },
@@ -95,7 +111,7 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedReceiver) {
       toast({
         title: "받는 사람 선택",
@@ -144,7 +160,7 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
             <X className="h-4 w-4" />
           </Button>
         </CardHeader>
-        
+
         <CardContent className="flex-1 overflow-y-auto">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* 받는 사람 */}
@@ -182,7 +198,7 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
                     />
                     <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                  
+
                   {searchResults && searchResults.length > 0 && (
                     <div className="border rounded-md max-h-40 overflow-y-auto">
                       {searchResults.map((user) => (
@@ -199,7 +215,7 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
                               </span>
                             </div>
                             <Badge variant="outline" className="text-xs">
-                              {user.userType === 'business' ? '기관' : '개인'}
+                              {user.userType === "business" ? "기관" : "개인"}
                             </Badge>
                           </div>
                           {user.organizationName && (
@@ -211,12 +227,14 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
                       ))}
                     </div>
                   )}
-                  
-                  {searchQuery && searchResults && searchResults.length === 0 && (
-                    <div className="text-sm text-gray-500 p-2">
-                      검색 결과가 없습니다.
-                    </div>
-                  )}
+
+                  {searchQuery &&
+                    searchResults &&
+                    searchResults.length === 0 && (
+                      <div className="text-sm text-gray-500 p-2">
+                        검색 결과가 없습니다.
+                      </div>
+                    )}
                 </div>
               )}
             </div>
@@ -254,8 +272,8 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
               <Button type="button" variant="outline" onClick={onBack}>
                 취소
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={sendMessageMutation.isPending || !selectedReceiver}
               >
                 <Send className="h-4 w-4 mr-2" />
@@ -267,4 +285,4 @@ export default function MessageCompose({ onClose, onBack, replyTo }: MessageComp
       </Card>
     </div>
   );
-} 
+}
