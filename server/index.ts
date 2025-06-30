@@ -73,8 +73,12 @@ app.use("/images", express.static("public/images"));
 
 // Host bypass middleware - must come before Vite middleware
 app.use((req, res, next) => {
-  // Override host check for Replit environments
-  if (req.headers.host && (req.headers.host.includes('replit.dev') || req.headers.host.includes('replit.app'))) {
+  // Override host check for Replit environments and custom domains
+  if (req.headers.host && (
+    req.headers.host.includes('replit.dev') || 
+    req.headers.host.includes('replit.app') ||
+    req.headers.host.includes('decomsoft.com')
+  )) {
     req.headers.host = 'localhost:5000';
   }
   next();
