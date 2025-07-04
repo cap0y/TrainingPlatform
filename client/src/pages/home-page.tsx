@@ -244,7 +244,7 @@ export default function HomePage() {
               전문가가 되는 <span className="text-yellow-300">첫걸음</span>
             </h1>
             <p className="text-lg md:text-xl mb-6 text-gray-100 leading-relaxed">
-              지누켐과 함께하는 체계적인 연수 프로그램으로
+              BrainAI과 함께하는 체계적인 교육 프로그램으로
               <br />
               여러분의 전문성을 한 단계 높여보세요
             </p>
@@ -255,7 +255,7 @@ export default function HomePage() {
                   className="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 text-base font-semibold"
                 >
                   <BookOpen className="h-4 w-4 mr-2" />
-                  연수과정 보기
+                  AI교육과정 보기
                 </Button>
               </Link>
               <Link href="/seminars">
@@ -2292,7 +2292,7 @@ export default function HomePage() {
                   <div>
                     <div className="text-sm text-gray-600">전화 문의</div>
                     <div className="font-semibold text-gray-900">
-                      055-772-2226
+                      010-8545-6342
                     </div>
                   </div>
                 </div>
@@ -2302,7 +2302,7 @@ export default function HomePage() {
                   <div>
                     <div className="text-sm text-gray-600">이메일 문의</div>
                     <div className="font-semibold text-gray-900">
-                      support@eduplatform.kr
+                      dongseom63@gmail.com
                     </div>
                   </div>
                 </div>

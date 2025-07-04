@@ -23,23 +23,23 @@ export default function Footer() {
             <div className="flex items-center mb-4">
               <img
                 src="/uploads/images/logo_1749658792927.webp"
-                alt="Jinuchem 로고"
+                alt="BrinaAI 로고"
                 className="h-6 lg:h-8 w-auto mr-2 lg:mr-3"
               />
-              <span className="text-lg lg:text-xl font-bold">연수플랫폼</span>
+              <span className="text-lg lg:text-xl font-bold">AI교육플랫폼</span>
             </div>
             <div className="text-gray-400 text-xs lg:text-sm space-y-1 lg:space-y-2 mb-4">
-              <p className="font-medium text-white">(주)지누켐</p>
+              <p className="font-medium text-white">BrainAI</p>
               <p className="hidden lg:block">
-                경상남도 진주시 진주대로 501, 창업보육센터 B동 202호
+                경상남도 진주시 동진로 55, 경상국립대 산학협력관 315호
               </p>
-              <p className="lg:hidden">경남 진주시 진주대로 501</p>
+              <p className="lg:hidden">경남 진주시 진주대로 55</p>
               <p className="hidden lg:block">
-                대표 : 김병선 | 사업자 등록번호 : 470-81-02870
+                대표 : 강미숙 | 사업자 등록번호 : 729-05-02007
               </p>
-              <p className="lg:hidden">대표 : 김병선</p>
+              <p className="lg:hidden">대표 : 강미숙</p>
               <p className="mt-2 lg:mt-4 text-gray-500 text-xs">
-                Copyright © Jinuchem
+                Copyright © BrainAI. All rights reserved.
               </p>
             </div>
             <div className="flex space-x-3 lg:space-x-4 mb-8 md:mb-0">
@@ -173,13 +173,13 @@ export default function Footer() {
                   <li className="flex items-center">
                     <Phone className="h-3 lg:h-4 w-3 lg:w-4 mr-2 flex-shrink-0" />
                     <span className="text-xs lg:text-sm whitespace-nowrap">
-                      055-772-2226
+                      010-8545-6342
                     </span>
                   </li>
                   <li className="flex items-center">
                     <Mail className="h-3 lg:h-4 w-3 lg:w-4 mr-2 flex-shrink-0" />
                     <span className="text-xs lg:text-sm whitespace-nowrap">
-                      bkim@jinuchem.co.kr
+                      dongseom63@gmail.com
                     </span>
                   </li>
                   <li className="flex items-start">
@@ -209,7 +209,7 @@ export default function Footer() {
         <div className="border-t border-gray-700 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              &copy; {currentYear} 연수플랫폼. All rights reserved.
+              &copy; {currentYear} AI교육플랫폼. All rights reserved.
             </p>
             <div className="flex space-x-4 mt-4 md:mt-0 text-sm text-gray-400">
               <Link
@@ -239,13 +239,13 @@ export default function Footer() {
         {/* Business Info */}
         <div className="mt-4 pt-4 border-t border-gray-700 text-xs text-gray-500">
           <p>
-            사업자등록번호: 470-81-02870 | 대표자: 김병선 | 통신판매업신고번호:
-            2024-경남진주-1234 | 개인정보보호책임자: 김병선
-            (bkim@jinuchem.co.kr)
+            사업자등록번호: 470-81-02870 | 대표자: 강미숙 | 통신판매업신고번호:
+            2024-경남진주-1234 | 개인정보보호책임자: 강미숙
+            (dongseom63@gmail.com)
           </p>
           <p className="mt-1">
-            연수플랫폼은 교육부에서 인정하는 정식 교원연수기관입니다. (인가번호:
-            교육부-2024-001)
+            AI교육플랫폼은 교육부에서 인정하는 정식 교원연수기관입니다.
+            (인가번호: 교육부-2024-001)
           </p>
         </div>
       </div>

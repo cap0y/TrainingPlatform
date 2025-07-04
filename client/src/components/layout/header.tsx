@@ -232,7 +232,7 @@ const megaMenuItems = [
         icon: <HelpCircle className="w-4 h-4 text-red-600" />,
       },
       {
-        name: "지누켐 소개",
+        name: "BrainAI 소개",
         href: "/support/about",
         icon: <Building2 className="w-4 h-4 text-red-600" />,
       },
@@ -289,7 +289,7 @@ export default function Header({
               <Link href="/" className="flex items-center">
                 <img
                   src="/uploads/images/logo_1749658792927.webp"
-                  alt="Jinuchem 로고"
+                  alt="BrainAI 로고"
                   className="h-8 w-auto"
                 />
               </Link>
