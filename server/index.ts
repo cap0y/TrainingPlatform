@@ -77,7 +77,8 @@ app.use((req, res, next) => {
   if (req.headers.host && (
     req.headers.host.includes('replit.dev') || 
     req.headers.host.includes('replit.app') ||
-    req.headers.host.includes('decomsoft.com')
+    req.headers.host.includes('decomsoft.com') ||
+    req.headers.host.includes('brainai.ai.kr')
   )) {
     req.headers.host = 'localhost:5000';
   }

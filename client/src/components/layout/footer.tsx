@@ -187,9 +187,9 @@ export default function Footer() {
                     <div className="text-xs lg:text-sm">
                       <span className="lg:hidden">경남 진주시</span>
                       <span className="hidden lg:block">
-                        경상남도 진주시 진주대로 501
+                        경상남도 진주시 동진로 55,
                         <br />
-                        창업보육센터 B동 202호
+                        경상국립대 산학협력관 315호
                       </span>
                     </div>
                   </li>
