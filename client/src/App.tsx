@@ -34,54 +34,61 @@ import PrivacyPolicyPage from "@/pages/privacy-policy-page";
 import TermsOfServicePage from "@/pages/terms-of-service-page";
 import CookiePolicyPage from "@/pages/cookie-policy-page";
 import NotFound from "@/pages/not-found";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/auth" component={AuthPage} />
-      <Route path="/login" component={AuthPage} />
-      <Route path="/" component={HomePage} />
-      <Route path="/training" component={TrainingPage} />
-      <Route path="/courses" component={CoursesPage} />
-      <Route path="/courses/:id" component={CourseDetailPage} />
-      <Route path="/training-courses" component={TrainingCoursesPage} />
-      <Route path="/certificate-courses" component={CertificateCoursesPage} />
-      <Route
-        path="/professional-development"
-        component={ProfessionalDevelopmentPage}
-      />
-      <Route path="/seminars" component={SeminarsPage} />
-      <Route
-        path="/seminars/category/:category"
-        component={SeminarCategoryPage}
-      />
-      <Route path="/seminars/:id" component={SeminarDetailPage} />
-      <Route path="/announcements" component={AllAnnouncementsPage} />
-      <Route path="/help" component={HelpCenterPage} />
-      <Route path="/study-abroad" component={StudyAbroadListPage} />
-      <Route
-        path="/study-abroad/category/:category"
-        component={OverseasCategoryPage}
-      />
-      <Route path="/study-abroad/:id" component={StudyAbroadDetailPage} />
-      <Route
-        path="/all-training-programs"
-        component={AllTrainingProgramsPage}
-      />
-      <Route path="/support/about" component={AboutPage} />
-      <Route path="/privacy-policy" component={PrivacyPolicyPage} />
-      <Route path="/terms-of-service" component={TermsOfServicePage} />
-      <Route path="/cookie-policy" component={CookiePolicyPage} />
-      <ProtectedRoute path="/cart" component={CartPage} />
-      <ProtectedRoute
-        path="/business-dashboard"
-        component={BusinessDashboardPage}
-      />
-      <ProtectedRoute path="/super-admin" component={SuperAdminPage} />
-      <ProtectedRoute path="/enhanced-notice" component={EnhancedNoticePage} />
-      <ProtectedRoute path="/mypage" component={MyPage} />
-      <Route component={NotFound} />
-    </Switch>
+    <div className="w-full bg-gray-900" style={{ margin: 0, padding: 0 }}>
+      <Switch>
+        <Route path="/auth" component={AuthPage} />
+        <Route path="/login" component={AuthPage} />
+        <Route path="/" component={HomePage} />
+        <Route path="/training" component={TrainingPage} />
+        <Route path="/courses" component={CoursesPage} />
+        <Route path="/courses/:id" component={CourseDetailPage} />
+        <Route path="/training-courses" component={TrainingCoursesPage} />
+        <Route path="/certificate-courses" component={CertificateCoursesPage} />
+        <Route
+          path="/professional-development"
+          component={ProfessionalDevelopmentPage}
+        />
+        <Route path="/seminars" component={SeminarsPage} />
+        <Route
+          path="/seminars/category/:category"
+          component={SeminarCategoryPage}
+        />
+        <Route path="/seminars/:id" component={SeminarDetailPage} />
+        <Route path="/announcements" component={AllAnnouncementsPage} />
+        <Route path="/help" component={HelpCenterPage} />
+        <Route path="/study-abroad" component={StudyAbroadListPage} />
+        <Route
+          path="/study-abroad/category/:category"
+          component={OverseasCategoryPage}
+        />
+        <Route path="/study-abroad/:id" component={StudyAbroadDetailPage} />
+        <Route
+          path="/all-training-programs"
+          component={AllTrainingProgramsPage}
+        />
+        <Route path="/support/about" component={AboutPage} />
+        <Route path="/privacy-policy" component={PrivacyPolicyPage} />
+        <Route path="/terms-of-service" component={TermsOfServicePage} />
+        <Route path="/cookie-policy" component={CookiePolicyPage} />
+        <ProtectedRoute path="/cart" component={CartPage} />
+        <ProtectedRoute
+          path="/business-dashboard"
+          component={BusinessDashboardPage}
+        />
+        <ProtectedRoute path="/super-admin" component={SuperAdminPage} />
+        <ProtectedRoute
+          path="/enhanced-notice"
+          component={EnhancedNoticePage}
+        />
+        <ProtectedRoute path="/mypage" component={MyPage} />
+        <Route component={NotFound} />
+      </Switch>
+      <PWAInstallPrompt />
+    </div>
   );
 }
 
