@@ -14,6 +14,7 @@ export async function setupProductionVite(app: Express, server: Server) {
       hmr: false,
       host: "0.0.0.0",
       origin: "http://localhost:5000",
+      allowedHosts: ["trainingplatform-e835.onrender.com"],
     },
     resolve: {
       alias: {
