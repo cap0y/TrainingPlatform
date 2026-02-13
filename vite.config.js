@@ -32,6 +32,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
+    allowedHosts: ["trainingplatform-e835.onrender.com"],
     fs: {
       strict: false,
       allow: [".."],
@@ -43,7 +44,6 @@ export default defineConfig({
       port: 24678,
       host: "0.0.0.0",
     },
-    disableHostCheck: true,
     origin: "http://0.0.0.0:5173",
   },
 });
