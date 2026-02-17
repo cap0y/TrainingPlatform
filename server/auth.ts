@@ -46,20 +46,23 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  const isProduction = process.env.NODE_ENV === "production";
+
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "default-secret-key-for-development",
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      secure: false,
-      httpOnly: false,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: "lax",
+      secure: isProduction,        // 프로덕션(HTTPS)에서는 secure 쿠키 사용
+      httpOnly: true,               // XSS 공격 방지를 위해 httpOnly 활성화
+      maxAge: 24 * 60 * 60 * 1000,  // 24 hours
+      sameSite: isProduction ? "none" : "lax",  // 크로스사이트 요청 시 쿠키 전달 허용
       domain: undefined,
     },
     name: "connect.sid",
     rolling: true,
+    proxy: isProduction,            // 리버스 프록시 뒤에서 secure 쿠키 사용 시 필수
   };
 
   app.use(session(sessionSettings));

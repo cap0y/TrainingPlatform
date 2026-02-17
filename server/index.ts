@@ -22,6 +22,10 @@ const __dirname = dirname(__filename);
 const app = express();
 const server = createServer(app);
 
+// Render 등 리버스 프록시 뒤에서 동작할 때 필수 설정
+// 프록시가 전달하는 X-Forwarded-Proto, X-Forwarded-For 헤더를 신뢰
+app.set("trust proxy", 1);
+
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
