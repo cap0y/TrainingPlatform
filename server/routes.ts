@@ -17,10 +17,11 @@ import {
 import multer from "multer";
 import path from "path";
 import express from "express";
+import { uploadToCloudinary } from "./cloudinary";
 
-// Configure multer for file uploads
+// Cloudinary 업로드를 위해 메모리 스토리지 사용
 const upload = multer({
-  dest: "uploads/",
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
@@ -46,16 +47,22 @@ export function registerRoutes(app: Express): void {
   // Static file serving for uploads
   app.use("/uploads", express.static("uploads"));
 
-  // Image upload endpoint
-  app.post("/api/upload/image", upload.single("image"), (req, res) => {
+  // Image upload endpoint (Cloudinary)
+  app.post("/api/upload/image", upload.single("image"), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
       }
 
-      const imageUrl = `/uploads/${req.file.filename}`;
-      res.json({ imageUrl });
+      // Cloudinary에 이미지 업로드
+      const result = await uploadToCloudinary(req.file.buffer, {
+        folder: "training-platform/uploads",
+        resourceType: "image",
+      });
+
+      res.json({ imageUrl: result.url });
     } catch (error) {
+      console.error("Image upload error:", error);
       res.status(500).json({ message: "Error uploading image" });
     }
   });
@@ -575,8 +582,8 @@ export function registerRoutes(app: Express): void {
     }
   });
 
-  // File upload route
-  app.post("/api/upload", upload.single("file"), (req, res) => {
+  // File upload route (Cloudinary)
+  app.post("/api/upload", upload.single("file"), async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Authentication required" });
     }
@@ -585,12 +592,25 @@ export function registerRoutes(app: Express): void {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    res.json({
-      message: "File uploaded successfully",
-      filename: req.file.filename,
-      originalName: req.file.originalname,
-      size: req.file.size,
-    });
+    try {
+      // 이미지인지 문서인지에 따라 리소스 타입 결정
+      const isImage = /jpeg|jpg|png|gif|webp/.test(req.file.mimetype);
+      const result = await uploadToCloudinary(req.file.buffer, {
+        folder: "training-platform/uploads",
+        resourceType: isImage ? "image" : "raw",
+      });
+
+      res.json({
+        message: "File uploaded successfully",
+        filename: result.publicId,
+        originalName: req.file.originalname,
+        size: result.bytes,
+        url: result.url,
+      });
+    } catch (error) {
+      console.error("File upload error:", error);
+      res.status(500).json({ message: "Error uploading file" });
+    }
   });
 
   // Statistics route for admin dashboard

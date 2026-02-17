@@ -3,51 +3,16 @@ import { storage } from "../storage";
 import { insertCourseSchema } from "../../shared/schema.js";
 import multer from "multer";
 import path from "path";
-import fs from "fs";
 import type { Express } from "express";
 import { requireAuth } from "../auth";
+import { uploadToCloudinary } from "../cloudinary";
 
-// 파일 업로드 설정
-const learningMaterialsStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(
-      process.cwd(),
-      "uploads",
-      "learning-materials",
-    );
-    // 디렉토리가 없으면 생성
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    // 한글 파일명 처리를 위해 안전한 파일명만 사용 (확장자는 유지)
-    const ext = path.extname(file.originalname);
-    const safeName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}${ext}`;
-    cb(null, safeName);
-  },
-});
+// Cloudinary 업로드를 위해 메모리 스토리지 사용 (파일을 Buffer로 받음)
+const memoryStorage = multer.memoryStorage();
 
-// 강의 이미지 업로드 설정
-const courseImageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(process.cwd(), "uploads", "images");
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    // 이미지 파일명 생성
-    const ext = path.extname(file.originalname);
-    const safeName = `course-${Date.now()}-${Math.random().toString(36).substr(2, 9)}${ext}`;
-    cb(null, safeName);
-  },
-});
-
+// 학습 자료 업로드 설정
 const learningMaterialsUpload = multer({
-  storage: learningMaterialsStorage,
+  storage: memoryStorage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
     const allowedTypes = /pdf|doc|docx|ppt|pptx|xlsx|zip|rar/;
@@ -64,8 +29,9 @@ const learningMaterialsUpload = multer({
   },
 });
 
+// 강의 이미지 업로드 설정
 const courseImageUpload = multer({
-  storage: courseImageStorage,
+  storage: memoryStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -83,11 +49,11 @@ const courseImageUpload = multer({
 });
 
 export function registerBusinessRoutes(app: Express) {
-  // 학습 자료 업로드
+  // 학습 자료 업로드 (Cloudinary raw 파일 업로드)
   app.post(
     "/api/business/upload-learning-materials",
     learningMaterialsUpload.array("files", 4),
-    (req, res) => {
+    async (req, res) => {
       try {
         const files = req.files as Express.Multer.File[];
 
@@ -95,22 +61,30 @@ export function registerBusinessRoutes(app: Express) {
           return res.status(400).json({ message: "업로드된 파일이 없습니다." });
         }
 
-        const uploadedFiles = files.map((file) => {
-          // 한글 파일명을 안전하게 처리
-          const originalName = Buffer.from(
-            file.originalname,
-            "latin1",
-          ).toString("utf8");
+        const uploadedFiles = await Promise.all(
+          files.map(async (file) => {
+            // 한글 파일명을 안전하게 처리
+            const originalName = Buffer.from(
+              file.originalname,
+              "latin1",
+            ).toString("utf8");
 
-          return {
-            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            name: originalName, // 인코딩 처리된 원본 파일명
-            filename: file.filename, // 서버에 저장된 안전한 파일명
-            size: file.size,
-            type: file.mimetype,
-            url: `/api/business/download-learning-material/${file.filename}`,
-          };
-        });
+            // Cloudinary에 raw 파일로 업로드
+            const result = await uploadToCloudinary(file.buffer, {
+              folder: "training-platform/learning-materials",
+              resourceType: "raw",
+            });
+
+            return {
+              id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              name: originalName,
+              filename: result.publicId,
+              size: result.bytes,
+              type: file.mimetype,
+              url: result.url,
+            };
+          }),
+        );
 
         res.json({ files: uploadedFiles });
       } catch (error) {
@@ -122,11 +96,11 @@ export function registerBusinessRoutes(app: Express) {
     },
   );
 
-  // 강의 이미지 업로드
+  // 강의 이미지 업로드 (Cloudinary 이미지 업로드)
   app.post(
     "/api/business/upload-course-image",
     courseImageUpload.single("image"),
-    (req, res) => {
+    async (req, res) => {
       try {
         const file = req.file;
 
@@ -136,13 +110,19 @@ export function registerBusinessRoutes(app: Express) {
             .json({ message: "업로드된 이미지가 없습니다." });
         }
 
+        // Cloudinary에 이미지 업로드
+        const result = await uploadToCloudinary(file.buffer, {
+          folder: "training-platform/course-images",
+          resourceType: "image",
+        });
+
         const imageInfo = {
           id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          filename: file.filename,
+          filename: result.publicId,
           originalName: file.originalname,
-          size: file.size,
+          size: result.bytes,
           type: file.mimetype,
-          url: `/uploads/images/${file.filename}`,
+          url: result.url,
         };
 
         res.json({ image: imageInfo });
@@ -158,6 +138,7 @@ export function registerBusinessRoutes(app: Express) {
   // 샘플 이미지 목록 조회
   app.get("/api/business/sample-images", (req, res) => {
     try {
+      // 샘플 이미지는 로컬 uploads 폴더에서 제공 (기존 호환)
       const sampleImages = [
         {
           id: "sample-1",
@@ -200,11 +181,18 @@ export function registerBusinessRoutes(app: Express) {
     }
   });
 
-  // 학습 자료 파일 다운로드
+  // 학습 자료 파일 다운로드 (Cloudinary URL로 리다이렉트)
   app.get("/api/business/download-learning-material/:filename", (req, res) => {
     try {
       const filename = req.params.filename;
-      const originalName = req.query.originalName as string; // 쿼리 파라미터로 원본 파일명 받기
+      // Cloudinary URL이 쿼리 파라미터로 전달된 경우 리다이렉트
+      const fileUrl = req.query.url as string;
+
+      if (fileUrl) {
+        return res.redirect(fileUrl);
+      }
+
+      // 레거시 로컬 파일 지원 (기존 업로드된 파일 호환)
       const filepath = path.join(
         process.cwd(),
         "uploads",
@@ -212,15 +200,14 @@ export function registerBusinessRoutes(app: Express) {
         filename,
       );
 
-      // 파일 존재 확인
+      const fs = await import("fs");
       if (!fs.existsSync(filepath)) {
         return res.status(404).json({ message: "파일을 찾을 수 없습니다." });
       }
 
-      // 원본 파일명이 있으면 사용, 없으면 서버 파일명 사용
+      const originalName = req.query.originalName as string;
       const downloadName = originalName || filename;
 
-      // 한글 파일명 다운로드를 위한 헤더 설정
       res.setHeader(
         "Content-Disposition",
         `attachment; filename*=UTF-8''${encodeURIComponent(downloadName)}`,
