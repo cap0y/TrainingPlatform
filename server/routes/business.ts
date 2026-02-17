@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { insertCourseSchema } from "../../shared/schema.js";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import type { Express } from "express";
 import { requireAuth } from "../auth";
 import { uploadToCloudinary } from "../cloudinary";
@@ -200,7 +201,6 @@ export function registerBusinessRoutes(app: Express) {
         filename,
       );
 
-      const fs = await import("fs");
       if (!fs.existsSync(filepath)) {
         return res.status(404).json({ message: "파일을 찾을 수 없습니다." });
       }
