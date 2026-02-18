@@ -22,7 +22,7 @@ const __dirname = dirname(__filename);
 const app = express();
 const server = createServer(app);
 
-// Render 등 리버스 프록시 뒤에서 동작할 때 필수 설정
+// Railway 등 리버스 프록시 뒤에서 동작할 때 필수 설정
 // 프록시가 전달하는 X-Forwarded-Proto, X-Forwarded-For 헤더를 신뢰
 app.set("trust proxy", 1);
 
@@ -77,14 +77,15 @@ app.use("/images", express.static("public/images"));
 
 // Host bypass middleware - must come before Vite middleware
 app.use((req, res, next) => {
-  // Override host check for Replit environments and custom domains
+  // Override host check for Railway, Replit environments and custom domains
   if (req.headers.host && (
+    req.headers.host.includes('railway.app') ||
     req.headers.host.includes('replit.dev') || 
     req.headers.host.includes('replit.app') ||
     req.headers.host.includes('decomsoft.com') ||
     req.headers.host.includes('brainai.ai.kr')
   )) {
-    req.headers.host = 'localhost:5000';
+    req.headers.host = `localhost:${process.env.PORT || '5000'}`;
   }
   next();
 });
@@ -123,6 +124,11 @@ process.on('uncaughtException', (error) => {
       // Continue running even if seeding fails
     }
 
+    // Railway 헬스체크 엔드포인트
+    app.get("/api/health", (_req, res) => {
+      res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+    });
+
     // Setup authentication first
     setupAuth(app);
 
@@ -160,10 +166,8 @@ process.on('uncaughtException', (error) => {
       await setupVite(app, server);
     }
 
-    // ALWAYS serve the app on port 5000
-    // this serves both the API and the client.
-    // It is the only port that is not firewalled.
-    const port = 5000;
+    // Railway는 PORT 환경변수를 동적으로 할당하므로 이를 우선 사용
+    const port = parseInt(process.env.PORT || "5000", 10);
     server.listen(port, "0.0.0.0", () => {
       log(`serving on port ${port}`);
     });

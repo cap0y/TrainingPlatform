@@ -13,8 +13,8 @@ export async function setupProductionVite(app: Express, server: Server) {
       middlewareMode: true,
       hmr: false,
       host: "0.0.0.0",
-      origin: "http://localhost:5000",
-      allowedHosts: ["trainingplatform-e835.onrender.com"],
+      origin: `http://localhost:${process.env.PORT || "5000"}`,
+      allowedHosts: true,
     },
     resolve: {
       alias: {

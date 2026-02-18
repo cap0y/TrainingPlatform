@@ -32,7 +32,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    allowedHosts: ["trainingplatform-e835.onrender.com"],
+    allowedHosts: true,
     fs: {
       strict: false,
       allow: [".."],
